@@ -1,0 +1,4 @@
+@import "tailwindcss";
+.input {
+  @apply w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1;
+}

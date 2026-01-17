@@ -1,0 +1,67 @@
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { useMemo } from "react";
+
+export default function EquityCurve({ trades }) {
+  const data = useMemo(() => {
+    if (!Array.isArray(trades) || trades.length === 0) return [];
+
+    // ordenar por fecha de entrada
+    const sorted = [...trades]
+      .filter((t) => typeof t.profit_loss === "number")
+      .sort((a, b) => new Date(a.entry_date) - new Date(b.entry_date));
+
+    let capital = 100;
+    const base = 100;
+
+    return sorted.map((t, i) => {
+      capital = capital * (1 + t.profit_loss / base);
+
+      return {
+        index: i + 1,
+        equity: Number(capital.toFixed(2)),
+      };
+    });
+  }, [trades]);
+
+  return (
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+      <div className="text-sm text-zinc-400 mb-2">Equity Curve (%)</div>
+
+      {data.length === 0 ? (
+        <div className="text-zinc-500 text-sm">No equity data</div>
+      ) : (
+        <ResponsiveContainer width="100%" height={260}>
+          <LineChart data={data}>
+            <XAxis dataKey="index" tick={{ fill: "#a1a1aa", fontSize: 12 }} />
+            <YAxis
+              tick={{ fill: "#a1a1aa", fontSize: 12 }}
+              domain={["auto", "auto"]}
+            />
+            <Tooltip
+              contentStyle={{
+                background: "#18181b",
+                border: "1px solid #27272a",
+              }}
+              labelFormatter={(v) => `Trade ${v}`}
+              formatter={(v) => [`${v}%`, "Equity"]}
+            />
+            <Line
+              type="monotone"
+              dataKey="equity"
+              stroke="#6366f1"
+              strokeWidth={2}
+              dot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  );
+}
