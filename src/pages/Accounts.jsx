@@ -44,7 +44,7 @@ export default function Accounts() {
       if (editingId) {
         const updated = await updateAccount(editingId, form);
         setAccounts((prev) =>
-          prev.map((a) => (a._id === updated._id ? updated : a))
+          prev.map((a) => (a._id === updated._id ? updated : a)),
         );
       } else {
         const created = await createAccount(form);
@@ -64,7 +64,7 @@ export default function Accounts() {
     try {
       const updated = await archiveAccount(id);
       setAccounts((prev) =>
-        prev.map((a) => (a._id === updated._id ? updated : a))
+        prev.map((a) => (a._id === updated._id ? updated : a)),
       );
     } catch {
       alert("Error archivando cuenta");
@@ -154,4 +154,57 @@ export default function Accounts() {
 
       {/* List */}
       <div className="space-y-3">
-        {accounts.map((a) =
+        {accounts.map((a) => (
+          <div
+            key={a._id}
+            className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex items-center justify-between"
+          >
+            <div>
+              <div className="font-medium">
+                {a.name}{" "}
+                {activeAccount?._id === a._id && (
+                  <span className="text-xs text-green-400">(activa)</span>
+                )}
+              </div>
+              <div className="text-xs text-zinc-400">
+                {a.provider} · {a.accountType} · {a.currency}
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => changeAccount(a._id)}
+                className="px-3 py-1 text-xs bg-zinc-700 rounded"
+              >
+                Activar
+              </button>
+              <button
+                onClick={() => startEdit(a)}
+                className="px-3 py-1 text-xs bg-zinc-700 rounded"
+              >
+                Editar
+              </button>
+              {a.status === "active" && (
+                <button
+                  onClick={() => archive(a._id)}
+                  className="px-3 py-1 text-xs bg-red-700 rounded"
+                >
+                  Archivar
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, children }) {
+  return (
+    <div className="space-y-1">
+      <div className="text-sm text-zinc-400">{label}</div>
+      {children}
+    </div>
+  );
+}
