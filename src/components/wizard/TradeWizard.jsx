@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { createTrade, updateTrade, getTradeById } from "../../api/trades";
+import { useAccount } from "../../context/AccountContext";
 
 import EntryImageUploader from "../EntryImageUploader";
 import ReviewImageUploader from "../ReviewImageUploader";
@@ -26,6 +27,8 @@ export default function TradeWizard() {
   const isEdit = Boolean(id);
 
   const navigate = useNavigate();
+  const { activeAccount, loading: accountLoading } = useAccount();
+
   const [trade, setTrade] = useState(EMPTY_TRADE);
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
@@ -34,7 +37,7 @@ export default function TradeWizard() {
   // LOAD TRADE (EDIT)
   // ======================
   useEffect(() => {
-    if (!isEdit) return;
+    if (!isEdit || !activeAccount || accountLoading) return;
 
     async function load() {
       try {
@@ -52,7 +55,7 @@ export default function TradeWizard() {
     }
 
     load();
-  }, [id, isEdit, navigate]);
+  }, [id, isEdit, navigate, activeAccount, accountLoading]);
 
   const update = (k, v) => {
     setTrade((t) => ({ ...t, [k]: v }));
@@ -62,13 +65,18 @@ export default function TradeWizard() {
   // SAVE
   // ======================
   const save = async () => {
+    if (!activeAccount) {
+      alert("No hay cuenta activa");
+      return;
+    }
+
     try {
       setSaving(true);
 
       if (isEdit) {
         await updateTrade(trade._id, trade);
       } else {
-        await createTrade(trade);
+        await createTrade(trade); // backend asigna cuenta activa
       }
 
       navigate("/dashboard");
@@ -79,15 +87,26 @@ export default function TradeWizard() {
     }
   };
 
-  if (loading) {
+  if (loading || accountLoading) {
     return <div className="p-6 text-zinc-400">Cargando trade…</div>;
   }
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold">
-        {isEdit ? "Editar trade" : "Nuevo trade"}
-      </h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">
+          {isEdit ? "Editar trade" : "Nuevo trade"}
+        </h1>
+
+        {activeAccount && (
+          <div className="text-xs text-zinc-400">
+            Cuenta activa:{" "}
+            <span className="text-zinc-200 font-medium">
+              {activeAccount.name}
+            </span>
+          </div>
+        )}
+      </div>
 
       {/* ===== BASIC ===== */}
       <Card title="Datos básicos">
@@ -172,9 +191,9 @@ export default function TradeWizard() {
             onChange={(e) => update("outcome", e.target.value)}
           >
             <option value="">—</option>
-            <option value="win">Win</option>
-            <option value="loss">Loss</option>
-            <option value="breakeven">Breakeven</option>
+            <option value="Win">Win</option>
+            <option value="Loss">Loss</option>
+            <option value="Break-even">Break-even</option>
           </select>
         </Field>
 
@@ -200,49 +219,4 @@ export default function TradeWizard() {
       {isEdit && (
         <Card title="Imágenes">
           <EntryImageUploader trade={trade} setTrade={setTrade} />
-          <ReviewImageUploader trade={trade} setTrade={setTrade} />
-        </Card>
-      )}
-
-      {/* ===== ACTIONS ===== */}
-      <div className="flex justify-end gap-3">
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="px-4 py-2 rounded bg-zinc-700"
-        >
-          Cancelar
-        </button>
-
-        <button
-          onClick={save}
-          disabled={saving}
-          className="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
-        >
-          {saving ? "Guardando…" : "Guardar"}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ======================
-   UI HELPERS
-====================== */
-
-function Card({ title, children }) {
-  return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-4">
-      <div className="text-sm text-zinc-400">{title}</div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
-    </div>
-  );
-}
-
-function Field({ label, children }) {
-  return (
-    <div className="space-y-1">
-      <div className="text-sm text-zinc-400">{label}</div>
-      {children}
-    </div>
-  );
-}
+          <ReviewImageUploader trad

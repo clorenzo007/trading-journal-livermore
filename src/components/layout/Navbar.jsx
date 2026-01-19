@@ -1,8 +1,10 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useAccount } from "../../context/AccountContext";
 
 export default function Navbar() {
   const { logout, user } = useAuth();
+  const { accounts, activeAccount, changeAccount, loading } = useAccount();
   const navigate = useNavigate();
 
   const linkClass = ({ isActive }) =>
@@ -34,9 +36,29 @@ export default function Navbar() {
         <NavLink to="/concepts" className={linkClass}>
           Concepts
         </NavLink>
+
+        <NavLink to="/accounts" className={linkClass}>
+          Cuentas
+        </NavLink>
       </div>
 
       <div className="flex items-center gap-3">
+        {!loading && accounts.length > 0 && (
+          <select
+            value={activeAccount?._id || ""}
+            onChange={(e) => changeAccount(e.target.value)}
+            className="bg-zinc-800 text-xs px-2 py-1 rounded"
+          >
+            {accounts
+              .filter((a) => a.status === "active")
+              .map((a) => (
+                <option key={a._id} value={a._id}>
+                  {a.name}
+                </option>
+              ))}
+          </select>
+        )}
+
         <span className="text-xs text-zinc-400">{user?.email}</span>
         <button
           onClick={() => {

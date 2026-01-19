@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ProtectedLayout from "./components/layout/ProtectedLayout";
 import Review from "./pages/Review";
 import ImportTrades from "./pages/ImportTrades";
+import Accounts from "./pages/Accounts";
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="concepts" element={<Concepts />} />
           <Route path="review/:id" element={<Review />} />
           <Route path="import" element={<ImportTrades />} />
+          <Route path="accounts" element={<Accounts />} />
         </Route>
       </Route>
 

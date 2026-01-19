@@ -1,21 +1,19 @@
 const API = import.meta.env.VITE_API_URL;
 
-if (!API) {
-  throw new Error("VITE_API_URL no está definida");
-}
-
 export async function api(path, options = {}) {
   const token = localStorage.getItem("token");
+  const accountId = localStorage.getItem("activeAccountId");
 
-  const url = `${API.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
+  const headers = {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(accountId ? { "x-account-id": accountId } : {}),
+    ...(options.headers || {}),
+  };
 
-  const res = await fetch(url, {
+  const res = await fetch(`${API}${path}`, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options.headers || {}),
-    },
+    headers,
   });
 
   const text = await res.text();

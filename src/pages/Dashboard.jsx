@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { getTrades } from "../api/trades";
+import { useAccount } from "../context/AccountContext";
 
 import LocalTimeCard from "../components/dashboard/LocalTimeCard";
 import MarketTimesCard from "../components/dashboard/MarketTimesCard";
@@ -12,19 +13,21 @@ import TradesTable from "../components/dashboard/TradesTable";
 import { withSession } from "../utils/sessions";
 
 export default function Dashboard() {
+  const { activeAccount, loading: accountLoading } = useAccount();
+
   const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState("All");
 
   useEffect(() => {
-    console.log("Dashboard mounted");
+    if (!activeAccount || accountLoading) return;
 
     async function load() {
-      console.log("Calling getTrades...");
+      setLoading(true);
       try {
         const data = await getTrades();
-        console.log("TRADES RAW:", data);
-        setTrades(withSession(data.trades));
+        // Backend ya filtra por cuenta activa
+        setTrades(withSession(data));
       } catch (e) {
         console.error("Error loading trades", e);
       } finally {
@@ -33,14 +36,14 @@ export default function Dashboard() {
     }
 
     load();
-  }, []);
+  }, [activeAccount, accountLoading]);
 
   const filtered = useMemo(() => {
     if (session === "All") return trades;
     return trades.filter((t) => t._session === session);
   }, [trades, session]);
 
-  if (loading) {
+  if (loading || accountLoading) {
     return <div className="p-6 text-zinc-400">Loading dashboard...</div>;
   }
 
