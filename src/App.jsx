@@ -20,10 +20,11 @@ export default function App() {
         <Route element={<ProtectedLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/new-trade" element={<TradeWizard />} />
-          <Route path="/edit/:id" element={<TradeWizard />} /> {/* ← ESTA */}
+          <Route path="/edit/:id" element={<TradeWizard />} />
           <Route path="/entries" element={<Entries />} />
           <Route path="/concepts" element={<Concepts />} />
           <Route path="/review/:id" element={<Review />} />
+          <Route path="/import" element={<ImportTrades />} /> {/* ← ESTA */}
         </Route>
       </Route>
 
