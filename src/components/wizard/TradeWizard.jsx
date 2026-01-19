@@ -219,4 +219,49 @@ export default function TradeWizard() {
       {isEdit && (
         <Card title="Imágenes">
           <EntryImageUploader trade={trade} setTrade={setTrade} />
-          <ReviewImageUploader trad
+          <ReviewImageUploader trade={trade} setTrade={setTrade} />
+        </Card>
+      )}
+
+      {/* ===== ACTIONS ===== */}
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="px-4 py-2 rounded bg-zinc-700"
+        >
+          Cancelar
+        </button>
+
+        <button
+          onClick={save}
+          disabled={saving}
+          className="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
+        >
+          {saving ? "Guardando…" : "Guardar"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ======================
+   UI HELPERS
+====================== */
+
+function Card({ title, children }) {
+  return (
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-4">
+      <div className="text-sm text-zinc-400">{title}</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
+    </div>
+  );
+}
+
+function Field({ label, children }) {
+  return (
+    <div className="space-y-1">
+      <div className="text-sm text-zinc-400">{label}</div>
+      {children}
+    </div>
+  );
+}
