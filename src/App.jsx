@@ -28,7 +28,7 @@ export default function App() {
         </Route>
       </Route>
 
-      <Route path="*" element={<Navigate to="/dashboard" />} />
+      <Route path="*" element={<div>404 NOT FOUND</div>} />
     </Routes>
   );
 }
