@@ -28,7 +28,10 @@ export default function App() {
         </Route>
       </Route>
 
-      <Route path="*" element={<div>404 NOT FOUND</div>} />
+      <Route
+        path="*"
+        element={<div style={{ padding: 50 }}>404 NOT FOUND</div>}
+      />
     </Routes>
   );
 }
