@@ -45,5 +45,42 @@ export default function ImportTrades() {
     xhr.send(form);
   };
 
-  return (...)
+  return (
+    <div className="max-w-3xl mx-auto p-6 space-y-6">
+      <h1 className="text-2xl font-bold">Import MT5 Trades</h1>
+
+      <input
+        type="file"
+        accept=".xlsx,.csv"
+        onChange={(e) => setFile(e.target.files[0])}
+      />
+
+      <button
+        onClick={upload}
+        disabled={loading}
+        className="px-4 py-2 bg-indigo-600 rounded"
+      >
+        {loading ? "Importing..." : "Import trades"}
+      </button>
+
+      {loading && (
+        <div className="w-full bg-zinc-800 rounded h-3">
+          <div
+            className="bg-indigo-500 h-3 rounded transition-all"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      )}
+
+      {result && (
+        <div className="bg-zinc-900 border border-zinc-800 rounded p-4 space-y-2">
+          <div>Imported: {result.imported}</div>
+          <div>Skipped (duplicates): {result.skipped}</div>
+          {result.errors?.length > 0 && (
+            <div className="text-red-400">Errors: {result.errors.length}</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
