@@ -13,24 +13,30 @@ import ImportTrades from "./pages/ImportTrades";
 export default function App() {
   return (
     <Routes>
+      {/* Públicas */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
+      {/* Raíz */}
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+      {/* Protegidas */}
       <Route element={<ProtectedRoute />}>
         <Route element={<ProtectedLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/new-trade" element={<TradeWizard />} />
-          <Route path="/edit/:id" element={<TradeWizard />} />
-          <Route path="/entries" element={<Entries />} />
-          <Route path="/concepts" element={<Concepts />} />
-          <Route path="/review/:id" element={<Review />} />
-          <Route path="/import" element={<ImportTrades />} /> {/* ← ESTA */}
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="new-trade" element={<TradeWizard />} />
+          <Route path="edit/:id" element={<TradeWizard />} />
+          <Route path="entries" element={<Entries />} />
+          <Route path="concepts" element={<Concepts />} />
+          <Route path="review/:id" element={<Review />} />
+          <Route path="import" element={<ImportTrades />} />
         </Route>
       </Route>
 
+      {/* Fallback */}
       <Route
         path="*"
-        element={<div style={{ padding: 50 }}>404 NOT FOUND</div>}
+        element={<div style={{ padding: 40 }}>404 NOT FOUND</div>}
       />
     </Routes>
   );
