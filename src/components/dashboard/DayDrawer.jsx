@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import TradeDetailModal from "./TradeDetailModal";
+import useDailyStats from "../../hooks/useDailyStats";
 
 function formatDateHuman(dateStr) {
   const d = new Date(dateStr);
@@ -11,14 +12,6 @@ function formatDateHuman(dateStr) {
   });
 }
 
-function getOutcome(trade) {
-  const p = Number(trade.profit_loss);
-  if (isNaN(p)) return null;
-  if (p > 0) return "Win";
-  if (p < 0) return "Loss";
-  return "BE";
-}
-
 export default function DayDrawer({
   day,
   trades,
@@ -27,28 +20,21 @@ export default function DayDrawer({
   onNextDay,
 }) {
   const [selectedTrade, setSelectedTrade] = useState(null);
+  const stats = useDailyStats(trades);
 
-  const summary = useMemo(() => {
-    let total = 0;
-    const counts = { Win: 0, Loss: 0, BE: 0 };
-
-    trades.forEach((t) => {
-      const p = Number(t.profit_loss || 0);
-      total += p;
-
-      const o = getOutcome(t);
-      if (o) counts[o]++;
-    });
-
-    return { total, counts };
-  }, [trades]);
+  function statCard(label, value, color = "text-zinc-200") {
+    return (
+      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-3">
+        <div className="text-xs text-zinc-400">{label}</div>
+        <div className={`text-lg font-semibold ${color}`}>{value}</div>
+      </div>
+    );
+  }
 
   return (
     <>
-      {/* Backdrop */}
       <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
 
-      {/* Drawer */}
       <div className="fixed top-0 right-0 h-full w-[560px] bg-zinc-950 border-l border-zinc-800 z-50 p-4 flex flex-col">
         <div className="flex justify-between items-center mb-4">
           <div>
@@ -64,36 +50,33 @@ export default function DayDrawer({
           </button>
         </div>
 
-        {/* Summary */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-3 mb-4">
-          <div className="text-sm text-zinc-400 mb-1">Daily summary</div>
-          <div className="flex justify-between">
-            <div>
-              <div className="text-xs text-zinc-400">Total P/L</div>
-              <div
-                className={
-                  summary.total >= 0 ? "text-emerald-400" : "text-rose-400"
-                }
-              >
-                {summary.total.toFixed(2)}
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <div>
-                <div className="text-xs text-zinc-400">Wins</div>
-                <div>{summary.counts.Win}</div>
-              </div>
-              <div>
-                <div className="text-xs text-zinc-400">Losses</div>
-                <div>{summary.counts.Loss}</div>
-              </div>
-              <div>
-                <div className="text-xs text-zinc-400">BE</div>
-                <div>{summary.counts.BE}</div>
-              </div>
-            </div>
-          </div>
+        {/* Stats grid */}
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          {statCard(
+            "Total P/L",
+            stats.profitTotal.toFixed(2),
+            stats.profitTotal >= 0 ? "text-emerald-400" : "text-rose-400",
+          )}
+          {statCard("Trades", stats.tradeCount)}
+          {statCard("Winrate", `${stats.winrate.toFixed(1)}%`)}
+          {statCard("Avg Win", stats.avgWin.toFixed(2), "text-emerald-400")}
+          {statCard("Avg Loss", stats.avgLoss.toFixed(2), "text-rose-400")}
+          {statCard(
+            "Expectancy",
+            stats.expectancy.toFixed(2),
+            stats.expectancy >= 0 ? "text-emerald-400" : "text-rose-400",
+          )}
+          {statCard("Avg R", stats.avgR.toFixed(2))}
+          {statCard(
+            "Best trade",
+            stats.bestTrade ? stats.bestTrade.profit_loss : "—",
+            "text-emerald-400",
+          )}
+          {statCard(
+            "Worst trade",
+            stats.worstTrade ? stats.worstTrade.profit_loss : "—",
+            "text-rose-400",
+          )}
         </div>
 
         {/* Trades list */}
