@@ -20,16 +20,16 @@ export default function EconomicCalendarCard() {
 
       {expanded && (
         <div className="relative w-full h-[420px] overflow-hidden rounded-lg">
-          {/* Mask para tapar basura visual */}
+          {/* Máscaras para recortar basura visual */}
           <div className="pointer-events-none absolute inset-0 z-10">
-            {/* Top mask */}
-            <div className="absolute top-0 left-0 right-0 h-10 bg-zinc-900" />
-            {/* Left mask */}
+            {/* Header/banner superior */}
+            <div className="absolute top-0 left-0 right-0 h-12 bg-zinc-900" />
+            {/* Lateral izquierdo */}
             <div className="absolute top-0 bottom-0 left-0 w-4 bg-zinc-900" />
-            {/* Right mask */}
+            {/* Lateral derecho */}
             <div className="absolute top-0 bottom-0 right-0 w-4 bg-zinc-900" />
-            {/* Bottom mask */}
-            <div className="absolute bottom-0 left-0 right-0 h-8 bg-zinc-900" />
+            {/* Footer/banners inferiores */}
+            <div className="absolute bottom-0 left-0 right-0 h-10 bg-zinc-900" />
           </div>
 
           <iframe
@@ -38,7 +38,7 @@ export default function EconomicCalendarCard() {
             className="absolute inset-0 w-full h-full origin-top-left scale-[1.1]"
             style={{
               filter:
-                "invert(1) hue-rotate(180deg) brightness(0.92) contrast(1.1)",
+                "invert(1) hue-rotate(180deg) brightness(0.92) contrast(1.12)",
               border: "none",
             }}
           />
