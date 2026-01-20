@@ -4,6 +4,8 @@ import { useAccount } from "../context/AccountContext";
 
 import LocalTimeCard from "../components/dashboard/LocalTimeCard";
 import MarketTimesCard from "../components/dashboard/MarketTimesCard";
+import EconomicCalendarCard from "../components/dashboard/EconomicCalendarCard";
+
 import WinLossBar from "../components/dashboard/WinLossBar";
 import WinLossPie from "../components/dashboard/WinLossPie";
 import EquityCurve from "../components/dashboard/EquityCurve";
@@ -75,24 +77,29 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Top cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <LocalTimeCard />
         <MarketTimesCard />
+        <EconomicCalendarCard />
       </div>
 
+      {/* Session filter */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
         <div className="text-sm text-zinc-400 mb-2">Filter by session</div>
         <SessionFilter value={session} onChange={setSession} />
       </div>
 
+      {/* Charts */}
       <WinLossBar trades={filtered} />
       <WinLossPie trades={filtered} />
       <EquityCurve trades={filtered} />
 
+      {/* Calendar + Heatmap */}
       <Calendar trades={filtered} onSelectDay={setSelectedDay} />
-
       <Heatmap trades={filtered} />
 
+      {/* Selected day indicator */}
       {selectedDay && (
         <div className="text-sm text-zinc-400">
           Showing trades for: <b>{selectedDay}</b>
@@ -105,8 +112,10 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* Table */}
       <TradesTable trades={dayFiltered} />
 
+      {/* Drawer */}
       {selectedDay && (
         <DayDrawer
           day={selectedDay}
