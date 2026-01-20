@@ -10,10 +10,8 @@ export default function EconomicCalendarCard() {
 
   const url = useMemo(() => {
     const base =
-      "https://sslecal2.investing.com/?ecoDayBackground=%2318181b&defaultFont=%23e5e7eb";
+      "https://sslecal2.investing.com/?defaultFont=%23000000&showHeader=true&showFooter=false";
     const params = [
-      "showHeader=true",
-      "showFooter=false",
       "columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous",
       "importance=3",
       "features=timezone",
@@ -39,14 +37,16 @@ export default function EconomicCalendarCard() {
       </div>
 
       {open && (
-        <div className="flex-1 overflow-hidden rounded-lg border border-zinc-800">
+        <div className="flex-1 overflow-hidden rounded-lg border border-zinc-800 bg-white">
           <iframe
             src={url}
             width="100%"
             height="100%"
             frameBorder="0"
-            allowTransparency="true"
             className="w-full h-full"
+            style={{
+              zoom: 1.2,
+            }}
             title="Economic Calendar"
           />
         </div>
