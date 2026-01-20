@@ -9,9 +9,8 @@ function getMonthDays(year, month) {
   const lastDay = new Date(year, month + 1, 0);
 
   const days = [];
-  const startWeekday = firstDay.getDay(); // 0 = Sunday
+  const startWeekday = firstDay.getDay();
 
-  // Padding before
   for (let i = 0; i < startWeekday; i++) {
     days.push(null);
   }
@@ -23,7 +22,7 @@ function getMonthDays(year, month) {
   return days;
 }
 
-export default function Calendar({ trades }) {
+export default function Calendar({ trades, onSelectDay }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -120,7 +119,8 @@ export default function Calendar({ trades }) {
           return (
             <div
               key={i}
-              className={`h-16 rounded border border-zinc-800 p-1 text-xs flex flex-col justify-between ${color}`}
+              onClick={() => onSelectDay?.(key)}
+              className={`h-16 rounded border border-zinc-800 p-1 text-xs flex flex-col justify-between cursor-pointer hover:ring-2 hover:ring-indigo-500 ${color}`}
             >
               <div className="text-right">{d.getDate()}</div>
 

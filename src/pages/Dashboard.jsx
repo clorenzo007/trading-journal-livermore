@@ -20,6 +20,7 @@ export default function Dashboard() {
   const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState("All");
+  const [selectedDay, setSelectedDay] = useState(null);
 
   useEffect(() => {
     if (!activeAccount || accountLoading) return;
@@ -28,7 +29,6 @@ export default function Dashboard() {
       setLoading(true);
       try {
         const data = await getTrades();
-        // Backend ya filtra por cuenta activa
         setTrades(withSession(data));
       } catch (e) {
         console.error("Error loading trades", e);
@@ -44,6 +44,15 @@ export default function Dashboard() {
     if (session === "All") return trades;
     return trades.filter((t) => t._session === session);
   }, [trades, session]);
+
+  const dayFiltered = useMemo(() => {
+    if (!selectedDay) return filtered;
+
+    return filtered.filter((t) => {
+      const d = new Date(t.entry_date).toISOString().slice(0, 10);
+      return d === selectedDay;
+    });
+  }, [filtered, selectedDay]);
 
   if (loading || accountLoading) {
     return <div className="p-6 text-zinc-400">Loading dashboard...</div>;
@@ -62,17 +71,33 @@ export default function Dashboard() {
         <div className="text-sm text-zinc-400 mb-2">Filter by session</div>
         <SessionFilter value={session} onChange={setSession} />
       </div>
-      <Heatmap trades={filtered} />
-
-      <Calendar trades={filtered} />
 
       {/* Charts */}
       <WinLossBar trades={filtered} />
       <WinLossPie trades={filtered} />
       <EquityCurve trades={filtered} />
 
-      {/* TABLE */}
-      <TradesTable trades={filtered} />
+      {/* Calendar */}
+      <Calendar trades={filtered} onSelectDay={setSelectedDay} />
+
+      {/* Heatmap */}
+      <Heatmap trades={filtered} />
+
+      {/* Selected day info */}
+      {selectedDay && (
+        <div className="text-sm text-zinc-400">
+          Showing trades for: <b>{selectedDay}</b>
+          <button
+            onClick={() => setSelectedDay(null)}
+            className="ml-2 text-indigo-400 underline"
+          >
+            Clear
+          </button>
+        </div>
+      )}
+
+      {/* Table */}
+      <TradesTable trades={dayFiltered} />
     </div>
   );
 }
