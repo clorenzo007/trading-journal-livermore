@@ -14,14 +14,14 @@ export default function EquityCurve({ trades }) {
 
     // ordenar por fecha de entrada
     const sorted = [...trades]
-      .filter((t) => typeof t.profit_loss === "number")
+      .filter((t) => !isNaN(Number(t.profit_loss)))
       .sort((a, b) => new Date(a.entry_date) - new Date(b.entry_date));
 
     let capital = 100;
     const base = 100;
 
     return sorted.map((t, i) => {
-      capital = capital * (1 + t.profit_loss / base);
+      capital = capital * (1 + Number(t.profit_loss) / base);
 
       return {
         index: i + 1,

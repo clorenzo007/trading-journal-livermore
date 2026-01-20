@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import TradesFilters from "./TradesFilters";
-import { getTrades, updateTrade, deleteTrade } from "../../api/trades";
 import TradeDetailModal from "./TradeDetailModal";
 
 const EMPTY_FILTERS = {
@@ -13,54 +12,13 @@ const EMPTY_FILTERS = {
   maxPL: "",
 };
 
-export default function TradesTable() {
-  const [trades, setTrades] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function TradesTable({ trades }) {
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [showFilters, setShowFilters] = useState(true);
   const [selected, setSelected] = useState(null);
 
-  useEffect(() => {
-    load();
-  }, []);
-
-  async function load() {
-    try {
-      const data = await getTrades();
-
-      console.log("TRADES RAW:", data);
-
-      if (Array.isArray(data)) {
-        setTrades(data);
-      } else if (Array.isArray(data.trades)) {
-        setTrades(data.trades);
-      } else {
-        console.warn("Unexpected trades format", data);
-        setTrades([]);
-      }
-    } catch (e) {
-      console.error("Error loading trades", e);
-      setTrades([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const remove = async (id) => {
-    if (!confirm("¿Eliminar trade?")) return;
-    await deleteTrade(id);
-    setTrades((prev) => prev.filter((t) => t._id !== id));
-    setSelected(null);
-  };
-
-  const saveTrade = async (updated) => {
-    const res = await updateTrade(updated._id, updated);
-    setTrades((prev) => prev.map((t) => (t._id === updated._id ? res : t)));
-  };
-
   const filtered = useMemo(() => {
     return trades.filter((t) => {
-      // Search
       if (filters.search) {
         const s = filters.search.toLowerCase();
         const hay = [t.symbol, t.strategy_type, t.pattern, t.reason_for_entry]
@@ -69,20 +27,15 @@ export default function TradesTable() {
         if (!hay.includes(s)) return false;
       }
 
-      // Outcome
       if (filters.outcome && t.outcome !== filters.outcome) return false;
-
-      // Session
       if (filters.session && t._session !== filters.session) return false;
 
-      // From
       if (filters.from) {
         const d = new Date(t.entry_date);
         const f = new Date(filters.from);
         if (d < f) return false;
       }
 
-      // To
       if (filters.to) {
         const d = new Date(t.entry_date);
         const to = new Date(filters.to);
@@ -90,12 +43,10 @@ export default function TradesTable() {
         if (d > to) return false;
       }
 
-      // Min PL
       if (filters.minPL !== "") {
         if (Number(t.profit_loss) < Number(filters.minPL)) return false;
       }
 
-      // Max PL
       if (filters.maxPL !== "") {
         if (Number(t.profit_loss) > Number(filters.maxPL)) return false;
       }
@@ -104,13 +55,8 @@ export default function TradesTable() {
     });
   }, [trades, filters]);
 
-  if (loading) {
-    return <div className="p-6 text-zinc-400">Cargando trades…</div>;
-  }
-
   return (
     <div className="space-y-4">
-      {/* Header */}
       <div className="flex justify-between items-center">
         <div className="text-lg font-semibold">Trades</div>
         <button
@@ -121,7 +67,6 @@ export default function TradesTable() {
         </button>
       </div>
 
-      {/* Filters */}
       {showFilters && (
         <TradesFilters
           value={filters}
@@ -134,7 +79,6 @@ export default function TradesTable() {
         Mostrando {filtered.length} de {trades.length}
       </div>
 
-      {/* Table */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -185,14 +129,8 @@ export default function TradesTable() {
         )}
       </div>
 
-      {/* Modal */}
       {selected && (
-        <TradeDetailModal
-          trade={selected}
-          onClose={() => setSelected(null)}
-          onSave={saveTrade}
-          onDelete={remove}
-        />
+        <TradeDetailModal trade={selected} onClose={() => setSelected(null)} />
       )}
     </div>
   );

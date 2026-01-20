@@ -9,6 +9,8 @@ import WinLossPie from "../components/dashboard/WinLossPie";
 import EquityCurve from "../components/dashboard/EquityCurve";
 import SessionFilter from "../components/dashboard/SessionFilter";
 import TradesTable from "../components/dashboard/TradesTable";
+import Calendar from "../components/dashboard/Calendar";
+import Heatmap from "../components/dashboard/Heatmap";
 
 import { withSession } from "../utils/sessions";
 
@@ -60,6 +62,9 @@ export default function Dashboard() {
         <div className="text-sm text-zinc-400 mb-2">Filter by session</div>
         <SessionFilter value={session} onChange={setSession} />
       </div>
+      <Heatmap trades={filtered} />
+
+      <Calendar trades={filtered} />
 
       {/* Charts */}
       <WinLossBar trades={filtered} />

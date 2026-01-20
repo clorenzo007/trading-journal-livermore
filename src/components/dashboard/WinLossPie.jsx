@@ -31,7 +31,7 @@ export default function WinLossPie({ trades }) {
       { name: "Win", value: counts.Win },
       { name: "Loss", value: counts.Loss },
       { name: "BE", value: counts.BE },
-    ];
+    ].filter((d) => d.value > 0);
   }, [trades]);
 
   return (
