@@ -11,6 +11,7 @@ import SessionFilter from "../components/dashboard/SessionFilter";
 import TradesTable from "../components/dashboard/TradesTable";
 import Calendar from "../components/dashboard/Calendar";
 import Heatmap from "../components/dashboard/Heatmap";
+import DayDrawer from "../components/dashboard/DayDrawer";
 
 import { withSession } from "../utils/sessions";
 
@@ -54,36 +55,44 @@ export default function Dashboard() {
     });
   }, [filtered, selectedDay]);
 
+  function goPrevDay() {
+    if (!selectedDay) return;
+    const d = new Date(selectedDay);
+    d.setDate(d.getDate() - 1);
+    setSelectedDay(d.toISOString().slice(0, 10));
+  }
+
+  function goNextDay() {
+    if (!selectedDay) return;
+    const d = new Date(selectedDay);
+    d.setDate(d.getDate() + 1);
+    setSelectedDay(d.toISOString().slice(0, 10));
+  }
+
   if (loading || accountLoading) {
     return <div className="p-6 text-zinc-400">Loading dashboard...</div>;
   }
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Header cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <LocalTimeCard />
         <MarketTimesCard />
       </div>
 
-      {/* Session filter */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
         <div className="text-sm text-zinc-400 mb-2">Filter by session</div>
         <SessionFilter value={session} onChange={setSession} />
       </div>
 
-      {/* Charts */}
       <WinLossBar trades={filtered} />
       <WinLossPie trades={filtered} />
       <EquityCurve trades={filtered} />
 
-      {/* Calendar */}
       <Calendar trades={filtered} onSelectDay={setSelectedDay} />
 
-      {/* Heatmap */}
       <Heatmap trades={filtered} />
 
-      {/* Selected day info */}
       {selectedDay && (
         <div className="text-sm text-zinc-400">
           Showing trades for: <b>{selectedDay}</b>
@@ -96,8 +105,17 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Table */}
       <TradesTable trades={dayFiltered} />
+
+      {selectedDay && (
+        <DayDrawer
+          day={selectedDay}
+          trades={dayFiltered}
+          onClose={() => setSelectedDay(null)}
+          onPrevDay={goPrevDay}
+          onNextDay={goNextDay}
+        />
+      )}
     </div>
   );
 }
