@@ -1,44 +1,47 @@
-export default function StepIdentity({ data, onChange }) {
+export default function StepIdentity({ trade, setTrade, onNext }) {
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold">Identity</h2>
+      <h2 className="text-xl font-semibold">Trade Identity</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Symbol */}
+      <div className="space-y-4">
         <div>
-          <label className="block text-zinc-400 mb-1">Symbol</label>
+          <label className="block text-sm text-zinc-400">Symbol</label>
           <input
-            type="text"
-            value={data.symbol || ""}
-            onChange={(e) => onChange("symbol", e.target.value.toUpperCase())}
-            placeholder="EURUSD, XAUUSD..."
-            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 uppercase"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            value={trade.symbol || ""}
+            onChange={(e) => setTrade({ symbol: e.target.value })}
+            placeholder="EURUSD, XAUUSD, SPX..."
           />
         </div>
 
-        {/* Strategy */}
         <div>
-          <label className="block text-zinc-400 mb-1">Strategy</label>
+          <label className="block text-sm text-zinc-400">Strategy</label>
           <input
-            type="text"
-            value={data.strategy_type || ""}
-            onChange={(e) => onChange("strategy_type", e.target.value)}
-            placeholder="Breakout, Mean Reversion..."
-            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            value={trade.strategy_type || ""}
+            onChange={(e) => setTrade({ strategy_type: e.target.value })}
+            placeholder="Breakout, Pullback, Reversal..."
           />
         </div>
 
-        {/* Pattern */}
-        <div className="md:col-span-2">
-          <label className="block text-zinc-400 mb-1">Pattern</label>
+        <div>
+          <label className="block text-sm text-zinc-400">Pattern</label>
           <input
-            type="text"
-            value={data.pattern || ""}
-            onChange={(e) => onChange("pattern", e.target.value)}
-            placeholder="Flag, Head & Shoulders..."
-            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            value={trade.pattern || ""}
+            onChange={(e) => setTrade({ pattern: e.target.value })}
+            placeholder="Flag, Range, Liquidity sweep..."
           />
         </div>
+      </div>
+
+      <div className="flex justify-end pt-4">
+        <button
+          onClick={onNext}
+          className="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
+        >
+          Next
+        </button>
       </div>
     </div>
   );

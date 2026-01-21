@@ -1,81 +1,112 @@
-export default function StepConfirm({ form, next, back }) {
-  const violations = [];
-
-  if (!form.pattern) violations.push("No definiste un patrón.");
-  if (!form.stop_loss) violations.push("No definiste stop.");
-  if (Number(form.risk_percent) > 5) violations.push("Riesgo mayor al 5%.");
-  if (!form.reason_for_entry || form.reason_for_entry.length < 20)
-    violations.push("Razón de entrada débil o inexistente.");
-
-  const criticalViolations = violations.length > 0;
-
+export default function StepConfirm({ data, onReviewChange }) {
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold">Confirmación Pre-Trade</h1>
+      <h2 className="text-lg font-semibold">Confirm & Review</h2>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-2 text-sm">
+      {/* Summary */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded p-4 text-xs space-y-2">
         <div>
-          <b>Símbolo:</b> {form.symbol}
+          <b>Symbol:</b> {data.symbol}
         </div>
         <div>
-          <b>Estrategia:</b> {form.strategy_type}
+          <b>Strategy:</b> {data.strategy_type}
         </div>
         <div>
-          <b>Patrón:</b> {form.pattern}
+          <b>Pattern:</b> {data.pattern}
         </div>
         <div>
-          <b>Entrada:</b> {form.entry_price}
+          <b>Entry:</b> {data.entry_price} @ {data.entry_date}
         </div>
         <div>
-          <b>Tamaño:</b> {form.position_size}
+          <b>Exit:</b> {data.exit_price} @ {data.exit_date}
         </div>
         <div>
-          <b>Stop:</b> {form.stop_loss}
+          <b>P/L %:</b>{" "}
+          <span
+            className={
+              Number(data.profit_loss) >= 0
+                ? "text-emerald-400"
+                : "text-rose-400"
+            }
+          >
+            {data.profit_loss}%
+          </span>
         </div>
         <div>
-          <b>Riesgo %:</b> {form.risk_percent}
-        </div>
-        <div>
-          <b>Estado emocional:</b> {form.emotional_state_pre}
+          <b>Outcome:</b> {data.outcome}
         </div>
       </div>
 
-      {criticalViolations && (
-        <div className="bg-rose-900/40 border border-rose-700 text-rose-300 p-3 rounded-xl text-sm">
-          <b>Violaciones Livermore:</b>
-          <ul className="list-disc pl-5 mt-1">
-            {violations.map((v, i) => (
-              <li key={i}>{v}</li>
-            ))}
-          </ul>
+      {/* Review system */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Score */}
+        <div>
+          <label className="block text-zinc-400 mb-1">Score (1–5)</label>
+          <input
+            type="number"
+            min={1}
+            max={5}
+            value={data.review.score || ""}
+            onChange={(e) => onReviewChange("score", e.target.value)}
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          />
         </div>
-      )}
 
-      {!criticalViolations && (
-        <div className="bg-emerald-900/30 border border-emerald-700 text-emerald-300 p-3 rounded-xl text-sm">
-          ✔ Este trade cumple las reglas básicas de disciplina.
+        {/* Followed plan */}
+        <div>
+          <label className="block text-zinc-400 mb-1">Followed the plan?</label>
+          <select
+            value={data.review.followedPlan ? "yes" : "no"}
+            onChange={(e) =>
+              onReviewChange("followedPlan", e.target.value === "yes")
+            }
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          >
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
         </div>
-      )}
 
-      <div className="flex gap-3">
-        <button
-          onClick={back}
-          className="flex-1 h-12 rounded-xl bg-zinc-800 hover:bg-zinc-700"
-        >
-          ← Volver
-        </button>
+        {/* Rule broken */}
+        <div>
+          <label className="block text-zinc-400 mb-1">Rule broken</label>
+          <input
+            type="text"
+            value={data.review.ruleBroken || ""}
+            onChange={(e) => onReviewChange("ruleBroken", e.target.value)}
+            placeholder="If any..."
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          />
+        </div>
 
-        <button
-          disabled={criticalViolations}
-          onClick={next}
-          className={`flex-1 h-12 rounded-xl font-medium ${
-            !criticalViolations
-              ? "bg-blue-600 hover:bg-blue-500"
-              : "bg-zinc-700 cursor-not-allowed"
-          }`}
-        >
-          Confirmar Trade →
-        </button>
+        {/* Lesson */}
+        <div>
+          <label className="block text-zinc-400 mb-1">Lesson learned</label>
+          <input
+            type="text"
+            value={data.review.lesson || ""}
+            onChange={(e) => onReviewChange("lesson", e.target.value)}
+            placeholder="What did you learn?"
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          />
+        </div>
+
+        {/* Would repeat */}
+        <div>
+          <label className="block text-zinc-400 mb-1">
+            Would you repeat this setup?
+          </label>
+          <select
+            value={data.review.wouldRepeat ? "yes" : "no"}
+            onChange={(e) =>
+              onReviewChange("wouldRepeat", e.target.value === "yes")
+            }
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          >
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
       </div>
     </div>
   );

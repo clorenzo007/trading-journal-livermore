@@ -1,92 +1,71 @@
-export default function StepPsychologyPost({ form, updateField, next, back }) {
-  const errors = [];
+const PRESETS = [
+  "Satisfied",
+  "Frustrated",
+  "Relieved",
+  "Regretful",
+  "Confident",
+  "Disappointed",
+  "Neutral",
+  "Proud",
+];
 
-  if (!form.emotional_state_post)
-    errors.push("Falta el estado emocional posterior.");
-  if (!form.reason_for_exit || form.reason_for_exit.length < 20)
-    errors.push("La razón de salida debe tener al menos 20 caracteres.");
-  if (!form.review_notes || form.review_notes.length < 30)
-    errors.push("La reflexión debe tener al menos 30 caracteres.");
-
-  const canContinue = errors.length === 0;
-
+export default function StepPsychologyPost({ data = {}, onChange = () => {} }) {
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold">Psicología — Post Trade</h1>
+      <h2 className="text-lg font-semibold">Psychology (After Trade)</h2>
 
-      <div>
-        <label className="text-sm text-zinc-400">Estado emocional final</label>
-        <select
-          className="w-full h-12 bg-zinc-900 border border-zinc-700 rounded-xl px-4"
-          value={form.emotional_state_post || ""}
-          onChange={(e) => updateField("emotional_state_post", e.target.value)}
-        >
-          <option value="">Seleccionar</option>
-          <option value="Calm">Calmado</option>
-          <option value="Confident">Confiado</option>
-          <option value="Frustrated">Frustrado</option>
-          <option value="Greedy">Codicioso</option>
-          <option value="Fearful">Temeroso</option>
-          <option value="Satisfied">Satisfecho</option>
-          <option value="Disappointed">Decepcionado</option>
-        </select>
-      </div>
-
-      <div>
-        <label className="text-sm text-zinc-400">
-          Razón de salida (obligatoria)
-        </label>
-        <textarea
-          rows={4}
-          className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 resize-none"
-          placeholder="¿Por qué saliste? ¿Fue parte del plan o fue emocional?"
-          value={form.reason_for_exit || ""}
-          onChange={(e) => updateField("reason_for_exit", e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label className="text-sm text-zinc-400">
-          Reflexión / Lecciones aprendidas
-        </label>
-        <textarea
-          rows={5}
-          className="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 resize-none"
-          placeholder="¿Qué hiciste bien? ¿Qué hiciste mal? ¿Qué repetirías? ¿Qué no?"
-          value={form.review_notes || ""}
-          onChange={(e) => updateField("review_notes", e.target.value)}
-        />
-      </div>
-
-      {!canContinue && (
-        <div className="bg-rose-900/40 border border-rose-700 text-rose-300 p-3 rounded-xl text-sm">
-          <ul className="list-disc pl-5">
-            {errors.map((e, i) => (
-              <li key={i}>{e}</li>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Emotional state post */}
+        <div>
+          <label className="block text-zinc-400 mb-1">
+            Emotional state (post)
+          </label>
+          <input
+            list="emotional-post-presets"
+            value={data.emotional_state_post || ""}
+            onChange={(e) => onChange("emotional_state_post", e.target.value)}
+            placeholder="Select or type..."
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          />
+          <datalist id="emotional-post-presets">
+            {PRESETS.map((p) => (
+              <option key={p} value={p} />
             ))}
-          </ul>
+          </datalist>
         </div>
-      )}
 
-      <div className="flex gap-3">
-        <button
-          onClick={back}
-          className="flex-1 h-12 rounded-xl bg-zinc-800 hover:bg-zinc-700"
-        >
-          ← Volver
-        </button>
+        {/* Reason for exit */}
+        <div>
+          <label className="block text-zinc-400 mb-1">Reason for exit</label>
+          <input
+            list="reason-exit-presets"
+            value={data.reason_for_exit || ""}
+            onChange={(e) => onChange("reason_for_exit", e.target.value)}
+            placeholder="Select or type..."
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          />
+          <datalist id="reason-exit-presets">
+            <option value="Target hit" />
+            <option value="Stop loss" />
+            <option value="Manual exit" />
+            <option value="Invalidation" />
+            <option value="Time-based exit" />
+            <option value="News risk" />
+            <option value="Setup failure" />
+          </datalist>
+        </div>
 
-        <button
-          disabled={!canContinue}
-          onClick={next}
-          className={`flex-1 h-12 rounded-xl font-medium ${
-            canContinue
-              ? "bg-emerald-600 hover:bg-emerald-500"
-              : "bg-zinc-700 cursor-not-allowed"
-          }`}
-        >
-          Finalizar →
-        </button>
+        {/* Review notes */}
+        <div className="md:col-span-2">
+          <label className="block text-zinc-400 mb-1">Review notes</label>
+          <textarea
+            rows={4}
+            value={data.review_notes || ""}
+            onChange={(e) => onChange("review_notes", e.target.value)}
+            placeholder="What did you learn? What would you change?"
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 resize-none"
+          />
+        </div>
       </div>
     </div>
   );
