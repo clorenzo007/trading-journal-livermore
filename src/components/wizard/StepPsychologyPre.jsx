@@ -1,45 +1,63 @@
-const PRESETS = [
-  "Calm",
-  "Confident",
-  "Anxious",
-  "FOMO",
-  "Overconfident",
-  "Tired",
-  "Distracted",
-  "Focused",
-];
+export default function StepPsychologyPre({ trade, setTrade, onNext, onBack }) {
+  const presets = [
+    "Calm",
+    "Focused",
+    "Anxious",
+    "Overconfident",
+    "Fearful",
+    "Tired",
+    "Revenge mode",
+  ];
 
-export default function StepPsychologyPre({ data = {}, onChange = () => {} }) {
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold">Psychology (Before Trade)</h2>
+      <h2 className="text-xl font-semibold">Psychology (Before)</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-4">
         <div>
-          <label className="block text-zinc-400 mb-1">
-            Emotional state (pre)
-          </label>
+          <label className="block text-sm text-zinc-400">Emotional state</label>
           <input
-            list="emotional-presets"
-            value={data.emotional_state_pre || ""}
-            onChange={(e) => onChange("emotional_state_pre", e.target.value)}
-            className="w-full bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-xs"
+            list="emotions-pre"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            value={trade.emotional_state_pre || ""}
+            onChange={(e) => setTrade({ emotional_state_pre: e.target.value })}
+            placeholder="Select or type..."
           />
-          <datalist id="emotional-presets">
-            {PRESETS.map((p) => (
+          <datalist id="emotions-pre">
+            {presets.map((p) => (
               <option key={p} value={p} />
             ))}
           </datalist>
         </div>
 
         <div>
-          <label className="block text-zinc-400 mb-1">Reason for entry</label>
-          <input
-            value={data.reason_for_entry || ""}
-            onChange={(e) => onChange("reason_for_entry", e.target.value)}
-            className="w-full bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-xs"
+          <label className="block text-sm text-zinc-400">
+            Reason for entry
+          </label>
+          <textarea
+            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            rows={4}
+            value={trade.reason_for_entry || ""}
+            onChange={(e) => setTrade({ reason_for_entry: e.target.value })}
+            placeholder="Why did you take this trade?"
           />
         </div>
+      </div>
+
+      <div className="flex justify-between pt-4">
+        <button
+          onClick={onBack}
+          className="px-4 py-2 rounded bg-zinc-800 hover:bg-zinc-700"
+        >
+          Back
+        </button>
+
+        <button
+          onClick={onNext}
+          className="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
+        >
+          Next
+        </button>
       </div>
     </div>
   );

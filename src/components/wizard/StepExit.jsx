@@ -1,112 +1,72 @@
-import { useEffect, useRef } from "react";
-
-export default function StepExit({ data, onChange, setData }) {
-  const manualPL = useRef(false);
-  const manualOutcome = useRef(false);
-
-  useEffect(() => {
-    if (!data.entry_price || !data.exit_price) return;
-
-    if (!manualPL.current) {
-      const e = Number(data.entry_price);
-      const x = Number(data.exit_price);
-      if (!e || !x || isNaN(e) || isNaN(x)) return;
-
-      const isLong = x >= e;
-      let pl;
-
-      if (isLong) {
-        pl = ((x - e) / e) * 100;
-      } else {
-        pl = ((e - x) / e) * 100;
-      }
-
-      const rounded = Number(pl.toFixed(2));
-
-      setData((prev) => ({
-        ...prev,
-        profit_loss: rounded,
-        outcome: manualOutcome.current
-          ? prev.outcome
-          : rounded > 0
-            ? "Win"
-            : rounded < 0
-              ? "Loss"
-              : "Break-even",
-      }));
-    }
-  }, [data.entry_price, data.exit_price]);
-
+export default function StepExit({ trade, setTrade, onNext, onBack }) {
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold">Exit</h2>
+      <h2 className="text-xl font-semibold">Exit</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Exit date */}
+      <div className="space-y-4">
         <div>
-          <label className="block text-zinc-400 mb-1">Exit date</label>
+          <label className="block text-sm text-zinc-400">Exit date</label>
           <input
             type="datetime-local"
-            value={data.exit_date || ""}
-            onChange={(e) => onChange("exit_date", e.target.value)}
-            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            value={trade.exit_date || ""}
+            onChange={(e) => setTrade({ exit_date: e.target.value })}
           />
         </div>
 
-        {/* Exit price */}
         <div>
-          <label className="block text-zinc-400 mb-1">Exit price</label>
+          <label className="block text-sm text-zinc-400">Exit price</label>
           <input
             type="number"
-            step="0.0001"
-            value={data.exit_price || ""}
-            onChange={(e) => {
-              manualPL.current = false;
-              manualOutcome.current = false;
-              onChange("exit_price", e.target.value);
-            }}
-            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+            step="any"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            value={trade.exit_price || ""}
+            onChange={(e) => setTrade({ exit_price: e.target.value })}
+            placeholder="0.00"
           />
         </div>
 
-        {/* P/L % */}
         <div>
-          <label className="block text-zinc-400 mb-1">P/L (%)</label>
+          <label className="block text-sm text-zinc-400">Profit / Loss</label>
           <input
             type="number"
-            step="0.01"
-            value={data.profit_loss || ""}
-            onChange={(e) => {
-              manualPL.current = true;
-              onChange("profit_loss", e.target.value);
-            }}
-            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+            step="any"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            value={trade.profit_loss || ""}
+            onChange={(e) => setTrade({ profit_loss: e.target.value })}
+            placeholder="0.00"
           />
-          <div className="text-xs text-zinc-500 mt-1">
-            Auto-calculated. You can override.
-          </div>
         </div>
 
-        {/* Outcome */}
         <div>
-          <label className="block text-zinc-400 mb-1">Outcome</label>
+          <label className="block text-sm text-zinc-400">Outcome</label>
           <select
-            value={data.outcome || ""}
-            onChange={(e) => {
-              manualOutcome.current = true;
-              onChange("outcome", e.target.value);
-            }}
-            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            value={trade.outcome || ""}
+            onChange={(e) => setTrade({ outcome: e.target.value })}
           >
             <option value="">—</option>
             <option value="Win">Win</option>
             <option value="Loss">Loss</option>
             <option value="Break-even">Break-even</option>
           </select>
-          <div className="text-xs text-zinc-500 mt-1">
-            Auto-suggested. You can override.
-          </div>
         </div>
+      </div>
+
+      <div className="flex justify-between pt-4">
+        <button
+          onClick={onBack}
+          className="px-4 py-2 rounded bg-zinc-800 hover:bg-zinc-700"
+        >
+          Back
+        </button>
+
+        <button
+          onClick={onNext}
+          className="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
+        >
+          Next
+        </button>
       </div>
     </div>
   );

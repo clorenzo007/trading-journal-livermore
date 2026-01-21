@@ -1,72 +1,42 @@
-import { useNavigate } from "react-router-dom";
-
-export default function StepFinish({ form, restart }) {
-  const navigate = useNavigate();
-
+export default function StepFinish({ trade, onBack, onFinish }) {
   return (
     <div className="space-y-6 text-center">
-      <h1 className="text-2xl font-bold text-emerald-400">Trade registrado</h1>
+      <h2 className="text-xl font-semibold">Trade ready</h2>
 
       <p className="text-zinc-400">
-        Este trade ya forma parte de tu historial disciplinario.
+        Everything looks good. You can now save this trade.
       </p>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-sm text-left space-y-1">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 text-sm text-left space-y-2">
         <div>
-          <b>Símbolo:</b> {form.symbol}
+          <span className="text-zinc-400">Symbol:</span>{" "}
+          <span className="font-medium">{trade.symbol || "—"}</span>
         </div>
+
         <div>
-          <b>Estrategia:</b> {form.strategy_type}
+          <span className="text-zinc-400">Outcome:</span>{" "}
+          <span className="font-medium">{trade.outcome || "—"}</span>
         </div>
+
         <div>
-          <b>Patrón:</b> {form.pattern}
-        </div>
-        <div>
-          <b>Resultado:</b>{" "}
-          <span
-            className={
-              form.outcome === "Win"
-                ? "text-emerald-400"
-                : form.outcome === "Loss"
-                ? "text-rose-400"
-                : "text-zinc-300"
-            }
-          >
-            {form.outcome}
-          </span>
-        </div>
-        <div>
-          <b>PnL:</b>{" "}
-          <span
-            className={
-              form.profit_loss > 0
-                ? "text-emerald-400"
-                : form.profit_loss < 0
-                ? "text-rose-400"
-                : "text-zinc-300"
-            }
-          >
-            {form.profit_loss}
-          </span>
-        </div>
-        <div>
-          <b>Emoción final:</b> {form.emotional_state_post}
+          <span className="text-zinc-400">P/L:</span>{" "}
+          <span className="font-medium">{trade.profit_loss || "—"}</span>
         </div>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex justify-between pt-4">
         <button
-          onClick={restart}
-          className="flex-1 h-12 rounded-xl bg-zinc-800 hover:bg-zinc-700"
+          onClick={onBack}
+          className="px-4 py-2 rounded bg-zinc-800 hover:bg-zinc-700"
         >
-          Nuevo trade
+          Back
         </button>
 
         <button
-          onClick={() => navigate("/dashboard")}
-          className="flex-1 h-12 rounded-xl bg-blue-600 hover:bg-blue-500"
+          onClick={onFinish}
+          className="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
         >
-          Ir al dashboard
+          Save trade
         </button>
       </div>
     </div>

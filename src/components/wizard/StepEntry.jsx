@@ -1,48 +1,60 @@
-export default function StepEntry({ data, onChange }) {
+export default function StepEntry({ trade, setTrade, onNext, onBack }) {
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold">Entry</h2>
+      <h2 className="text-xl font-semibold">Entry</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Entry date */}
+      <div className="space-y-4">
         <div>
-          <label className="block text-zinc-400 mb-1">Entry date</label>
+          <label className="block text-sm text-zinc-400">Entry date</label>
           <input
             type="datetime-local"
-            value={data.entry_date || ""}
-            onChange={(e) => onChange("entry_date", e.target.value)}
-            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            value={trade.entry_date || ""}
+            onChange={(e) => setTrade({ entry_date: e.target.value })}
           />
         </div>
 
-        {/* Entry price */}
         <div>
-          <label className="block text-zinc-400 mb-1">Entry price</label>
+          <label className="block text-sm text-zinc-400">Entry price</label>
           <input
             type="number"
-            step="0.0001"
-            value={data.entry_price || ""}
-            onChange={(e) => onChange("entry_price", e.target.value)}
-            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+            step="any"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            value={trade.entry_price || ""}
+            onChange={(e) => setTrade({ entry_price: e.target.value })}
+            placeholder="0.00"
           />
         </div>
 
-        {/* Position size (lots) */}
         <div>
-          <label className="block text-zinc-400 mb-1">
+          <label className="block text-sm text-zinc-400">
             Position size (lots)
           </label>
           <input
             type="number"
-            step="0.01"
-            value={data.position_size || ""}
-            onChange={(e) => onChange("position_size", e.target.value)}
-            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+            step="any"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            value={trade.position_size || ""}
+            onChange={(e) => setTrade({ position_size: e.target.value })}
+            placeholder="0.01"
           />
-          <div className="text-xs text-zinc-500 mt-1">
-            Example: 0.10 = 1 mini lot, 1.00 = 1 standard lot
-          </div>
         </div>
+      </div>
+
+      <div className="flex justify-between pt-4">
+        <button
+          onClick={onBack}
+          className="px-4 py-2 rounded bg-zinc-800 hover:bg-zinc-700"
+        >
+          Back
+        </button>
+
+        <button
+          onClick={onNext}
+          className="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
+        >
+          Next
+        </button>
       </div>
     </div>
   );
