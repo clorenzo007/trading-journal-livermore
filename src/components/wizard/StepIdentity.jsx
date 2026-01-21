@@ -1,77 +1,45 @@
-export default function StepIdentity({ form, updateField, next }) {
-  const errors = [];
-
-  if (!form.symbol) errors.push("Falta el símbolo.");
-  if (!form.strategy_type) errors.push("Falta la estrategia.");
-  if (!form.pattern) errors.push("Falta el patrón.");
-
-  const canContinue = errors.length === 0;
-
+export default function StepIdentity({ data, onChange }) {
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold">Identidad del trade</h1>
+      <h2 className="text-lg font-semibold">Identity</h2>
 
-      <div>
-        <label className="text-sm text-zinc-400">Símbolo</label>
-        <input
-          className="w-full h-12 bg-zinc-900 border border-zinc-700 rounded-xl px-4"
-          placeholder="AAPL, BTCUSDT, XAUUSD..."
-          value={form.symbol}
-          onChange={(e) => updateField("symbol", e.target.value)}
-        />
-      </div>
-
-      <div>
-        <label className="text-sm text-zinc-400">Tipo de estrategia</label>
-        <select
-          className="w-full h-12 bg-zinc-900 border border-zinc-700 rounded-xl px-4"
-          value={form.strategy_type}
-          onChange={(e) => updateField("strategy_type", e.target.value)}
-        >
-          <option value="">Seleccionar</option>
-          <option value="Breakout">Breakout</option>
-          <option value="Reversal">Reversal</option>
-          <option value="Continuation">Continuation</option>
-          <option value="Range">Range</option>
-        </select>
-      </div>
-
-      <div>
-        <label className="text-sm text-zinc-400">Patrón (Livermore)</label>
-        <select
-          className="w-full h-12 bg-zinc-900 border border-zinc-700 rounded-xl px-4"
-          value={form.pattern}
-          onChange={(e) => updateField("pattern", e.target.value)}
-        >
-          <option value="">Seleccionar</option>
-          <option value="Pivotal Point">Pivotal Point</option>
-          <option value="Consolidation Breakout">Consolidation Breakout</option>
-          <option value="Spring">Spring</option>
-          <option value="Shakeout">Shakeout</option>
-        </select>
-      </div>
-
-      {!canContinue && (
-        <div className="bg-rose-900/40 border border-rose-700 text-rose-300 p-3 rounded-xl text-sm">
-          <ul className="list-disc pl-5">
-            {errors.map((e, i) => (
-              <li key={i}>{e}</li>
-            ))}
-          </ul>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Symbol */}
+        <div>
+          <label className="block text-zinc-400 mb-1">Symbol</label>
+          <input
+            type="text"
+            value={data.symbol || ""}
+            onChange={(e) => onChange("symbol", e.target.value.toUpperCase())}
+            placeholder="EURUSD, XAUUSD..."
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2 uppercase"
+          />
         </div>
-      )}
 
-      <button
-        disabled={!canContinue}
-        onClick={next}
-        className={`w-full h-12 rounded-xl font-medium ${
-          canContinue
-            ? "bg-blue-600 hover:bg-blue-500"
-            : "bg-zinc-700 cursor-not-allowed"
-        }`}
-      >
-        Continuar →
-      </button>
+        {/* Strategy */}
+        <div>
+          <label className="block text-zinc-400 mb-1">Strategy</label>
+          <input
+            type="text"
+            value={data.strategy_type || ""}
+            onChange={(e) => onChange("strategy_type", e.target.value)}
+            placeholder="Breakout, Mean Reversion..."
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          />
+        </div>
+
+        {/* Pattern */}
+        <div className="md:col-span-2">
+          <label className="block text-zinc-400 mb-1">Pattern</label>
+          <input
+            type="text"
+            value={data.pattern || ""}
+            onChange={(e) => onChange("pattern", e.target.value)}
+            placeholder="Flag, Head & Shoulders..."
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          />
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,119 +1,112 @@
-export default function StepExit({ form, updateField, next, back }) {
-  const errors = [];
+import { useEffect, useRef } from "react";
 
-  if (!form.exit_date) errors.push("Falta la fecha de salida.");
-  if (!form.exit_price) errors.push("Falta el precio de salida.");
+export default function StepExit({ data, onChange, setData }) {
+  const manualPL = useRef(false);
+  const manualOutcome = useRef(false);
 
-  const entry = Number(form.entry_price);
-  const exit = Number(form.exit_price);
-  const size = Number(form.position_size);
+  useEffect(() => {
+    if (!data.entry_price || !data.exit_price) return;
 
-  let pnl = null;
-  let outcome = null;
+    if (!manualPL.current) {
+      const e = Number(data.entry_price);
+      const x = Number(data.exit_price);
+      if (!e || !x || isNaN(e) || isNaN(x)) return;
 
-  if (entry && exit && size) {
-    pnl = (exit - entry) * size;
-    if (pnl > 0) outcome = "Win";
-    if (pnl < 0) outcome = "Loss";
-    if (pnl === 0) outcome = "Break-even";
-  }
+      const isLong = x >= e;
+      let pl;
 
-  const canContinue = errors.length === 0;
+      if (isLong) {
+        pl = ((x - e) / e) * 100;
+      } else {
+        pl = ((e - x) / e) * 100;
+      }
+
+      const rounded = Number(pl.toFixed(2));
+
+      setData((prev) => ({
+        ...prev,
+        profit_loss: rounded,
+        outcome: manualOutcome.current
+          ? prev.outcome
+          : rounded > 0
+            ? "Win"
+            : rounded < 0
+              ? "Loss"
+              : "Break-even",
+      }));
+    }
+  }, [data.entry_price, data.exit_price]);
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold">Salida del trade</h1>
+      <h2 className="text-lg font-semibold">Exit</h2>
 
-      <div>
-        <label className="text-sm text-zinc-400">Fecha y hora de salida</label>
-        <input
-          type="datetime-local"
-          className="w-full h-12 bg-zinc-900 border border-zinc-700 rounded-xl px-4"
-          value={form.exit_date || ""}
-          onChange={(e) => updateField("exit_date", e.target.value)}
-        />
-      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Exit date */}
+        <div>
+          <label className="block text-zinc-400 mb-1">Exit date</label>
+          <input
+            type="datetime-local"
+            value={data.exit_date || ""}
+            onChange={(e) => onChange("exit_date", e.target.value)}
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          />
+        </div>
 
-      <div>
-        <label className="text-sm text-zinc-400">Precio de salida</label>
-        <input
-          type="number"
-          step="any"
-          className="w-full h-12 bg-zinc-900 border border-zinc-700 rounded-xl px-4"
-          placeholder="Ej: 198.50"
-          value={form.exit_price || ""}
-          onChange={(e) => updateField("exit_price", e.target.value)}
-        />
-      </div>
+        {/* Exit price */}
+        <div>
+          <label className="block text-zinc-400 mb-1">Exit price</label>
+          <input
+            type="number"
+            step="0.0001"
+            value={data.exit_price || ""}
+            onChange={(e) => {
+              manualPL.current = false;
+              manualOutcome.current = false;
+              onChange("exit_price", e.target.value);
+            }}
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          />
+        </div>
 
-      {pnl !== null && (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-sm space-y-1">
-          <div>
-            <b>Resultado:</b>{" "}
-            <span
-              className={
-                outcome === "Win"
-                  ? "text-emerald-400"
-                  : outcome === "Loss"
-                  ? "text-rose-400"
-                  : "text-zinc-300"
-              }
-            >
-              {outcome}
-            </span>
-          </div>
-          <div>
-            <b>PnL:</b>{" "}
-            <span
-              className={
-                pnl > 0
-                  ? "text-emerald-400"
-                  : pnl < 0
-                  ? "text-rose-400"
-                  : "text-zinc-300"
-              }
-            >
-              {pnl.toFixed(2)}
-            </span>
+        {/* P/L % */}
+        <div>
+          <label className="block text-zinc-400 mb-1">P/L (%)</label>
+          <input
+            type="number"
+            step="0.01"
+            value={data.profit_loss || ""}
+            onChange={(e) => {
+              manualPL.current = true;
+              onChange("profit_loss", e.target.value);
+            }}
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          />
+          <div className="text-xs text-zinc-500 mt-1">
+            Auto-calculated. You can override.
           </div>
         </div>
-      )}
 
-      {errors.length > 0 && (
-        <div className="bg-rose-900/40 border border-rose-700 text-rose-300 p-3 rounded-xl text-sm">
-          <ul className="list-disc pl-5">
-            {errors.map((e, i) => (
-              <li key={i}>{e}</li>
-            ))}
-          </ul>
+        {/* Outcome */}
+        <div>
+          <label className="block text-zinc-400 mb-1">Outcome</label>
+          <select
+            value={data.outcome || ""}
+            onChange={(e) => {
+              manualOutcome.current = true;
+              onChange("outcome", e.target.value);
+            }}
+            className="w-full bg-zinc-900 border border-zinc-700 rounded px-3 py-2"
+          >
+            <option value="">—</option>
+            <option value="Win">Win</option>
+            <option value="Loss">Loss</option>
+            <option value="Break-even">Break-even</option>
+          </select>
+          <div className="text-xs text-zinc-500 mt-1">
+            Auto-suggested. You can override.
+          </div>
         </div>
-      )}
-
-      <div className="flex gap-3">
-        <button
-          onClick={back}
-          className="flex-1 h-12 rounded-xl bg-zinc-800 hover:bg-zinc-700"
-        >
-          ← Volver
-        </button>
-
-        <button
-          disabled={!canContinue}
-          onClick={() => {
-            if (pnl !== null) {
-              updateField("profit_loss", pnl);
-              updateField("outcome", outcome);
-            }
-            next();
-          }}
-          className={`flex-1 h-12 rounded-xl font-medium ${
-            canContinue
-              ? "bg-blue-600 hover:bg-blue-500"
-              : "bg-zinc-700 cursor-not-allowed"
-          }`}
-        >
-          Continuar →
-        </button>
       </div>
     </div>
   );
