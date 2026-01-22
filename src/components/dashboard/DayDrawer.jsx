@@ -87,7 +87,7 @@ export default function DayDrawer({
 
           {trades.map((t) => (
             <div
-              key={t._id}
+              key={t.id}
               onClick={() => setSelectedTrade(t)}
               className="p-3 rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800/50 cursor-pointer"
             >

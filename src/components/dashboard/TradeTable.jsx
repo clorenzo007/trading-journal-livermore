@@ -17,7 +17,7 @@ export default function TradeTable({ trades, onSelect }) {
         <tbody>
           {trades.map((t) => (
             <tr
-              key={t._id}
+              key={t.id}
               onClick={() => onSelect(t)}
               className="border-t border-zinc-800 hover:bg-zinc-800/40 cursor-pointer"
             >
@@ -29,8 +29,8 @@ export default function TradeTable({ trades, onSelect }) {
                   t.profit_loss > 0
                     ? "text-emerald-400"
                     : t.profit_loss < 0
-                    ? "text-rose-400"
-                    : "text-zinc-300"
+                      ? "text-rose-400"
+                      : "text-zinc-300"
                 }`}
               >
                 {t.profit_loss}

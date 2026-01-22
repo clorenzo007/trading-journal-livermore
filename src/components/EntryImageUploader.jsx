@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { uploadEntryImage, deleteEntryImage } from "../api/trades";
 
 export default function EntryImageUploader({ trade, setTrade }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    console.log("TRADE EN EntryImageUploader:", trade);
+  }, [trade]);
+
+  const getTradeId = () => trade?.id || trade?.id;
 
   const onSelect = (e) => {
     setError(null);
@@ -14,15 +20,23 @@ export default function EntryImageUploader({ trade, setTrade }) {
   };
 
   const onUpload = async () => {
+    const tradeId = getTradeId();
+
     if (!file) {
       setError("Seleccioná una imagen primero.");
+      return;
+    }
+
+    if (!tradeId) {
+      console.error("Trade sin ID:", trade);
+      setError("Trade inválido (sin ID)");
       return;
     }
 
     try {
       setLoading(true);
       setError(null);
-      const updated = await uploadEntryImage(trade._id, file);
+      const updated = await uploadEntryImage(tradeId, file);
       setTrade(updated);
       setFile(null);
     } catch (e) {
@@ -34,12 +48,20 @@ export default function EntryImageUploader({ trade, setTrade }) {
   };
 
   const onDelete = async () => {
+    const tradeId = getTradeId();
+
     if (!confirm("¿Borrar imagen de entrada?")) return;
+
+    if (!tradeId) {
+      console.error("Trade sin ID:", trade);
+      setError("Trade inválido (sin ID)");
+      return;
+    }
 
     try {
       setLoading(true);
       setError(null);
-      const updated = await deleteEntryImage(trade._id);
+      const updated = await deleteEntryImage(tradeId);
       setTrade(updated);
     } catch (e) {
       console.error(e);
@@ -48,6 +70,8 @@ export default function EntryImageUploader({ trade, setTrade }) {
       setLoading(false);
     }
   };
+
+  if (!trade) return null;
 
   return (
     <div className="space-y-2">

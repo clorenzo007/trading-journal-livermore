@@ -155,7 +155,7 @@ export default function TradeDetailModal({ trade, onClose, onSave, onDelete }) {
         {/* Actions */}
         <div className="flex justify-between pt-4 border-t border-zinc-800">
           <button
-            onClick={() => onDelete(local._id)}
+            onClick={() => onDelete(local.id)}
             className="bg-red-600 hover:bg-red-500 px-4 py-2 rounded"
           >
             Delete

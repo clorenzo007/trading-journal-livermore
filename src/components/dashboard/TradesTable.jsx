@@ -96,7 +96,7 @@ export default function TradesTable({ trades }) {
           <tbody>
             {filtered.map((t) => (
               <tr
-                key={t._id}
+                key={t.id}
                 onClick={() => setSelected(t)}
                 className="border-t border-zinc-800 hover:bg-zinc-800/40 cursor-pointer"
               >

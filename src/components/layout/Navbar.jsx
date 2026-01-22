@@ -45,14 +45,14 @@ export default function Navbar() {
       <div className="flex items-center gap-3">
         {!loading && accounts.length > 0 && (
           <select
-            value={activeAccount?._id || ""}
+            value={activeAccount?.id || ""}
             onChange={(e) => changeAccount(e.target.value)}
             className="bg-zinc-800 text-xs px-2 py-1 rounded"
           >
             {accounts
               .filter((a) => a.status === "active")
               .map((a) => (
-                <option key={a._id} value={a._id}>
+                <option key={a.id} value={a.id}>
                   {a.name}
                 </option>
               ))}

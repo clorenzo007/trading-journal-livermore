@@ -16,13 +16,13 @@ export const AccountProvider = ({ children }) => {
 
         const saved = localStorage.getItem("activeAccountId");
         let selected =
-          list.find((a) => a._id === saved && a.status === "active") ||
+          list.find((a) => a.id === saved && a.status === "active") ||
           list.find((a) => a.status === "active") ||
           null;
 
         if (selected) {
           setActiveAccount(selected);
-          localStorage.setItem("activeAccountId", selected._id);
+          localStorage.setItem("activeAccountId", selected.id);
         }
       } catch (err) {
         console.error("INIT ACCOUNTS ERROR:", err);
@@ -35,10 +35,10 @@ export const AccountProvider = ({ children }) => {
   }, []);
 
   const changeAccount = (id) => {
-    const acc = accounts.find((a) => a._id === id);
+    const acc = accounts.find((a) => a.id === id);
     if (!acc) return;
     setActiveAccount(acc);
-    localStorage.setItem("activeAccountId", acc._id);
+    localStorage.setItem("activeAccountId", acc.id);
   };
 
   return (

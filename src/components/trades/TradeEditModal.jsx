@@ -17,7 +17,7 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
     try {
       setLoading(true);
       setError(null);
-      await updateTrade(trade._id, form);
+      await updateTrade(trade.id, form);
       onSaved();
     } catch {
       setError("Error saving trade");
@@ -28,7 +28,7 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
 
   async function remove() {
     if (!confirm("Delete this trade?")) return;
-    await deleteTrade(trade._id);
+    await deleteTrade(trade.id);
     onSaved();
   }
 

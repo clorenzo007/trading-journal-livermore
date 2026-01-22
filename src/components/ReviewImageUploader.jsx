@@ -10,6 +10,8 @@ export default function ReviewImageUploader({ trade, setTrade }) {
     console.log("TRADE EN ReviewImageUploader:", trade);
   }, [trade]);
 
+  const getTradeId = () => trade?.id || trade?.id;
+
   const onSelect = (e) => {
     setError(null);
     const f = e.target.files?.[0];
@@ -18,18 +20,18 @@ export default function ReviewImageUploader({ trade, setTrade }) {
   };
 
   const onUpload = async () => {
+    const tradeId = getTradeId();
+
     if (!file) {
       setError("Seleccioná una imagen primero.");
       return;
     }
 
-    if (!trade?._id && !trade?.id) {
+    if (!tradeId) {
       console.error("Trade sin ID:", trade);
       setError("Trade inválido (sin ID)");
       return;
     }
-
-    const tradeId = trade._id || trade.id;
 
     try {
       setLoading(true);
@@ -46,15 +48,15 @@ export default function ReviewImageUploader({ trade, setTrade }) {
   };
 
   const onDelete = async () => {
+    const tradeId = getTradeId();
+
     if (!confirm("¿Borrar imagen de review?")) return;
 
-    if (!trade?._id && !trade?.id) {
+    if (!tradeId) {
       console.error("Trade sin ID:", trade);
       setError("Trade inválido (sin ID)");
       return;
     }
-
-    const tradeId = trade._id || trade.id;
 
     try {
       setLoading(true);
