@@ -2,16 +2,11 @@ import { useState } from "react";
 import EntryImageUploader from "../EntryImageUploader";
 import ReviewImageUploader from "../ReviewImageUploader";
 
-export default function TradeDetailModal({ trade, onClose, onSave, onDelete }) {
+export default function TradeDetailModal({ trade, onClose }) {
   const [local, setLocal] = useState(trade);
 
   const update = (k, v) => {
     setLocal((prev) => ({ ...prev, [k]: v }));
-  };
-
-  const save = () => {
-    onSave(local);
-    onClose();
   };
 
   if (!trade) return null;
@@ -21,7 +16,7 @@ export default function TradeDetailModal({ trade, onClose, onSave, onDelete }) {
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-3xl p-6 space-y-4 text-white max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold">{trade.symbol} — Edit trade</h2>
+          <h2 className="text-xl font-bold">{trade.symbol} — Trade</h2>
           <button onClick={onClose} className="text-zinc-400 hover:text-white">
             ✕
           </button>
@@ -152,29 +147,14 @@ export default function TradeDetailModal({ trade, onClose, onSave, onDelete }) {
           <ReviewImageUploader trade={local} setTrade={setLocal} />
         </div>
 
-        {/* Actions */}
-        <div className="flex justify-between pt-4 border-t border-zinc-800">
+        {/* Footer */}
+        <div className="flex justify-end pt-4 border-t border-zinc-800">
           <button
-            onClick={() => onDelete(local.id)}
-            className="bg-red-600 hover:bg-red-500 px-4 py-2 rounded"
+            onClick={onClose}
+            className="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded"
           >
-            Delete
+            Close
           </button>
-
-          <div className="space-x-2">
-            <button
-              onClick={onClose}
-              className="bg-zinc-700 hover:bg-zinc-600 px-4 py-2 rounded"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={save}
-              className="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded"
-            >
-              Save
-            </button>
-          </div>
         </div>
       </div>
     </div>
