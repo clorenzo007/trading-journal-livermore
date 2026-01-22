@@ -6,11 +6,12 @@ export default function ReviewImageUploader({ trade, setTrade }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const tradeId = trade?.id || trade?._id;
+  const isReady = Boolean(tradeId);
+
   useEffect(() => {
     console.log("TRADE EN ReviewImageUploader:", trade);
   }, [trade]);
-
-  const getTradeId = () => trade?.id || trade?.id;
 
   const onSelect = (e) => {
     setError(null);
@@ -20,16 +21,10 @@ export default function ReviewImageUploader({ trade, setTrade }) {
   };
 
   const onUpload = async () => {
-    const tradeId = getTradeId();
+    if (!isReady) return;
 
     if (!file) {
       setError("Seleccioná una imagen primero.");
-      return;
-    }
-
-    if (!tradeId) {
-      console.error("Trade sin ID:", trade);
-      setError("Trade inválido (sin ID)");
       return;
     }
 
@@ -48,15 +43,8 @@ export default function ReviewImageUploader({ trade, setTrade }) {
   };
 
   const onDelete = async () => {
-    const tradeId = getTradeId();
-
+    if (!isReady) return;
     if (!confirm("¿Borrar imagen de review?")) return;
-
-    if (!tradeId) {
-      console.error("Trade sin ID:", trade);
-      setError("Trade inválido (sin ID)");
-      return;
-    }
 
     try {
       setLoading(true);
@@ -77,6 +65,12 @@ export default function ReviewImageUploader({ trade, setTrade }) {
     <div className="space-y-2">
       <div className="text-sm text-zinc-400">Imagen de review</div>
 
+      {!isReady && (
+        <div className="text-xs text-zinc-500 italic">
+          Guardá el trade para poder subir imágenes
+        </div>
+      )}
+
       {trade.reviewImage?.url ? (
         <div className="space-y-2">
           <img
@@ -86,11 +80,11 @@ export default function ReviewImageUploader({ trade, setTrade }) {
           />
 
           <div className="flex gap-2">
-            <input type="file" onChange={onSelect} />
+            <input type="file" onChange={onSelect} disabled={!isReady} />
 
             <button
               onClick={onUpload}
-              disabled={loading}
+              disabled={loading || !isReady}
               className="px-3 py-1 rounded bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50"
             >
               {loading ? "Subiendo..." : "Reemplazar"}
@@ -98,7 +92,7 @@ export default function ReviewImageUploader({ trade, setTrade }) {
 
             <button
               onClick={onDelete}
-              disabled={loading}
+              disabled={loading || !isReady}
               className="px-3 py-1 rounded bg-red-600 hover:bg-red-500 disabled:opacity-50"
             >
               Borrar
@@ -108,11 +102,11 @@ export default function ReviewImageUploader({ trade, setTrade }) {
       ) : (
         <div className="border border-dashed border-zinc-700 rounded-lg p-4">
           <div className="flex items-center gap-2">
-            <input type="file" onChange={onSelect} />
+            <input type="file" onChange={onSelect} disabled={!isReady} />
 
             <button
               onClick={onUpload}
-              disabled={loading}
+              disabled={loading || !isReady}
               className="px-3 py-1 rounded bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50"
             >
               {loading ? "Subiendo..." : "Subir imagen"}

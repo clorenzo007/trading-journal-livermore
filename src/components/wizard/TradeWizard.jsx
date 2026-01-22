@@ -97,7 +97,10 @@ export default function TradeWizard() {
         profit_loss: trade.profit_loss ? Number(trade.profit_loss) : undefined,
       };
 
-      await createTrade(payload);
+      const created = await createTrade(payload);
+
+      // 🔹 IMPORTANTÍSIMO: guardar el trade real con ID
+      setTrade(created);
       setSaved(true);
     } catch (e) {
       console.error(e);
@@ -214,14 +217,25 @@ export default function TradeWizard() {
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 w-full max-w-sm text-center space-y-4">
             <h2 className="text-xl font-semibold">Trade saved</h2>
-            <p className="text-zinc-400">Your trade was successfully saved.</p>
+            <p className="text-zinc-400">
+              Your trade was successfully saved. You can now upload images.
+            </p>
 
-            <button
-              onClick={goDashboard}
-              className="w-full px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
-            >
-              Go to dashboard
-            </button>
+            <div className="space-y-2">
+              <button
+                onClick={() => setSaved(false)}
+                className="w-full px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
+              >
+                Upload images
+              </button>
+
+              <button
+                onClick={goDashboard}
+                className="w-full px-4 py-2 rounded bg-zinc-800 hover:bg-zinc-700"
+              >
+                Go to dashboard
+              </button>
+            </div>
           </div>
         </div>
       )}
