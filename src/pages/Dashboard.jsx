@@ -30,6 +30,8 @@ export default function Dashboard() {
 
     async function load() {
       setLoading(true);
+      setTrades([]); // 🔹 Limpia inmediatamente al cambiar de cuenta
+
       try {
         const data = await getTrades();
         setTrades(withSession(data));
