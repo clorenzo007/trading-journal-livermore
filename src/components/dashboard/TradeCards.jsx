@@ -3,7 +3,7 @@ export default function TradeCards({ trades, onSelect }) {
     <div className="space-y-3">
       {trades.map((t) => (
         <div
-          key={t._id}
+          key={t.id}
           onClick={() => onSelect(t)}
           className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-2 cursor-pointer hover:bg-zinc-800/40"
         >
@@ -14,8 +14,8 @@ export default function TradeCards({ trades, onSelect }) {
                 t.profit_loss > 0
                   ? "text-emerald-400"
                   : t.profit_loss < 0
-                  ? "text-rose-400"
-                  : "text-zinc-300"
+                    ? "text-rose-400"
+                    : "text-zinc-300"
               }
             >
               {t.profit_loss}
