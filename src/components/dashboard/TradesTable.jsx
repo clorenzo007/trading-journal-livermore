@@ -26,8 +26,10 @@ export default function TradesTable({ trades }) {
           .toLowerCase();
         if (!hay.includes(s)) return false;
       }
+
       if (filters.outcome && t.outcome !== filters.outcome) return false;
       if (filters.session && t._session !== filters.session) return false;
+
       return true;
     });
   }, [trades, filters]);
@@ -41,8 +43,8 @@ export default function TradesTable({ trades }) {
               <tr
                 key={t._id}
                 onClick={() => {
-                  console.log("CLICK FROM TABLE:", t);
-                  console.log("CLICK FROM TABLE _id:", t?._id);
+                  // 🔒 forzar cuenta correcta del trade
+                  localStorage.setItem("activeAccountId", t.account);
                   setSelected({ ...t });
                 }}
                 className="border-t border-zinc-800 hover:bg-zinc-800/40 cursor-pointer"

@@ -1,22 +1,24 @@
 import { uploadEntryImage } from "../api/trades";
 
 export default function EntryImageUploader({ trade, setTrade }) {
-  console.log("ENTRY UPLOADER trade IN:", trade);
-  console.log("ENTRY UPLOADER trade._id IN:", trade?._id);
-
-  async function upload(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    console.log("ENTRY UPLOAD START trade._id:", trade?._id);
+  async function onUpload(e) {
+    const file = e.target.files?.[0];
+    if (!file || !trade?._id) return;
 
     const updated = await uploadEntryImage(trade._id, file);
 
-    console.log("ENTRY UPLOAD RESPONSE:", updated);
-    console.log("ENTRY UPLOAD RESPONSE _id:", updated?._id);
-
-    setTrade(updated);
+    if (updated?.entryImage) {
+      setTrade((prev) => ({
+        ...prev,
+        entryImage: updated.entryImage,
+      }));
+    }
   }
 
-  return <input type="file" onChange={upload} />;
+  return (
+    <div>
+      <div className="text-sm text-zinc-400 mb-1">Entry image</div>
+      <input type="file" onChange={onUpload} />
+    </div>
+  );
 }

@@ -1,22 +1,24 @@
 import { uploadReviewImage } from "../api/trades";
 
 export default function ReviewImageUploader({ trade, setTrade }) {
-  console.log("REVIEW UPLOADER trade IN:", trade);
-  console.log("REVIEW UPLOADER trade._id IN:", trade?._id);
-
-  async function upload(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    console.log("REVIEW UPLOAD START trade._id:", trade?._id);
+  async function onUpload(e) {
+    const file = e.target.files?.[0];
+    if (!file || !trade?._id) return;
 
     const updated = await uploadReviewImage(trade._id, file);
 
-    console.log("REVIEW UPLOAD RESPONSE:", updated);
-    console.log("REVIEW UPLOAD RESPONSE _id:", updated?._id);
-
-    setTrade(updated);
+    if (updated?.reviewImage) {
+      setTrade((prev) => ({
+        ...prev,
+        reviewImage: updated.reviewImage,
+      }));
+    }
   }
 
-  return <input type="file" onChange={upload} />;
+  return (
+    <div>
+      <div className="text-sm text-zinc-400 mb-1">Review image</div>
+      <input type="file" onChange={onUpload} />
+    </div>
+  );
 }
