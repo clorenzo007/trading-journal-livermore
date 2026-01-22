@@ -17,9 +17,18 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
     try {
       setLoading(true);
       setError(null);
-      await updateTrade(trade.id, form);
-      onSaved();
-    } catch {
+
+      const updated = await updateTrade(form._id, form);
+
+      // Actualizar estado local
+      setForm(updated);
+
+      // Avisar al padre SIN romperlo
+      if (typeof onSaved === "function") {
+        onSaved(updated);
+      }
+    } catch (e) {
+      console.error(e);
       setError("Error saving trade");
     } finally {
       setLoading(false);
@@ -28,8 +37,10 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
 
   async function remove() {
     if (!confirm("Delete this trade?")) return;
-    await deleteTrade(trade.id);
-    onSaved();
+    await deleteTrade(form._id);
+    if (typeof onSaved === "function") {
+      onSaved();
+    }
   }
 
   return (
@@ -37,7 +48,7 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-3xl p-6 text-white max-h-[90vh] overflow-y-auto space-y-4">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold">Edit Trade — {trade.symbol}</h2>
+          <h2 className="text-xl font-bold">Edit Trade — {form.symbol}</h2>
           <button onClick={onClose}>✕</button>
         </div>
 
@@ -132,15 +143,6 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
                 type="number"
                 value={form.stop_loss ?? ""}
                 onChange={(e) => update("stop_loss", Number(e.target.value))}
-                className="input"
-              />
-            </Field>
-
-            <Field label="Take profit">
-              <input
-                type="number"
-                value={form.take_profit ?? ""}
-                onChange={(e) => update("take_profit", Number(e.target.value))}
                 className="input"
               />
             </Field>
