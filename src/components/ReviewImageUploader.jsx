@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { uploadReviewImage, deleteReviewImage } from "../api/trades";
 
 export default function ReviewImageUploader({ trade, setTrade }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    console.log("TRADE EN ReviewImageUploader:", trade);
+  }, [trade]);
 
   const onSelect = (e) => {
     setError(null);
@@ -19,10 +23,18 @@ export default function ReviewImageUploader({ trade, setTrade }) {
       return;
     }
 
+    if (!trade?._id && !trade?.id) {
+      console.error("Trade sin ID:", trade);
+      setError("Trade inválido (sin ID)");
+      return;
+    }
+
+    const tradeId = trade._id || trade.id;
+
     try {
       setLoading(true);
       setError(null);
-      const updated = await uploadReviewImage(trade._id, file);
+      const updated = await uploadReviewImage(tradeId, file);
       setTrade(updated);
       setFile(null);
     } catch (e) {
@@ -36,10 +48,18 @@ export default function ReviewImageUploader({ trade, setTrade }) {
   const onDelete = async () => {
     if (!confirm("¿Borrar imagen de review?")) return;
 
+    if (!trade?._id && !trade?.id) {
+      console.error("Trade sin ID:", trade);
+      setError("Trade inválido (sin ID)");
+      return;
+    }
+
+    const tradeId = trade._id || trade.id;
+
     try {
       setLoading(true);
       setError(null);
-      const updated = await deleteReviewImage(trade._id);
+      const updated = await deleteReviewImage(tradeId);
       setTrade(updated);
     } catch (e) {
       console.error(e);
@@ -48,6 +68,8 @@ export default function ReviewImageUploader({ trade, setTrade }) {
       setLoading(false);
     }
   };
+
+  if (!trade) return null;
 
   return (
     <div className="space-y-2">
