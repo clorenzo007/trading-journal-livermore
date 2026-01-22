@@ -6,7 +6,7 @@ export default function ReviewImageUploader({ trade, setTrade }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const tradeId = trade?.id || trade?._id;
+  const tradeId = trade?._id;
   const isReady = Boolean(tradeId);
 
   useEffect(() => {
