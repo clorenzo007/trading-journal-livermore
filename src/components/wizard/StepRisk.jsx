@@ -1,8 +1,14 @@
 import WizardCard from "./WizardCard";
 
-export default function StepRisk({ trade, setTrade, onNext, onBack }) {
+export default function StepRisk({
+  trade,
+  setTrade,
+  onNext,
+  onBack,
+  onCancel,
+}) {
   return (
-    <WizardCard title="Risk management">
+    <WizardCard title="Risk management" onCancel={onCancel}>
       <div className="space-y-4">
         <div>
           <label className="block text-sm text-zinc-400 mb-1">Stop loss</label>

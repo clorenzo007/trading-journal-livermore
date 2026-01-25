@@ -5,6 +5,7 @@ export default function StepPsychologyPost({
   setTrade,
   onNext,
   onBack,
+  onCancel,
 }) {
   const presets = [
     "Satisfied",
@@ -17,7 +18,7 @@ export default function StepPsychologyPost({
   ];
 
   return (
-    <WizardCard title="Psychology (After)">
+    <WizardCard title="Psychology (After)" onCancel={onCancel}>
       <div className="space-y-4">
         <div>
           <label className="block text-sm text-zinc-400 mb-1">

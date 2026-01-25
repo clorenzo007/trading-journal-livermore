@@ -1,8 +1,8 @@
 import WizardCard from "./WizardCard";
 
-export default function StepIdentity({ trade, setTrade, onNext }) {
+export default function StepIdentity({ trade, setTrade, onNext, onCancel }) {
   return (
-    <WizardCard title="Trade identity">
+    <WizardCard title="Trade identity" onCancel={onCancel}>
       <div className="space-y-4">
         <div>
           <label className="block text-sm text-zinc-400 mb-1">Symbol</label>

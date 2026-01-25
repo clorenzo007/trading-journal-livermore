@@ -22,9 +22,9 @@ function Row({ label, value }) {
   );
 }
 
-export default function StepConfirm({ trade, onNext, onBack }) {
+export default function StepConfirm({ trade, onNext, onBack, onCancel }) {
   return (
-    <WizardCard title="Confirm trade">
+    <WizardCard title="Confirm trade" onCancel={onCancel}>
       <div className="space-y-1">
         <Row label="Symbol" value={formatValue(trade.symbol)} />
         <Row label="Strategy" value={formatValue(trade.strategy_type)} />

@@ -1,6 +1,12 @@
 import WizardCard from "./WizardCard";
 
-export default function StepPsychologyPre({ trade, setTrade, onNext, onBack }) {
+export default function StepPsychologyPre({
+  trade,
+  setTrade,
+  onNext,
+  onBack,
+  onCancel,
+}) {
   const presets = [
     "Calm",
     "Focused",
@@ -12,7 +18,7 @@ export default function StepPsychologyPre({ trade, setTrade, onNext, onBack }) {
   ];
 
   return (
-    <WizardCard title="Psychology (Before)">
+    <WizardCard title="Psychology (Before)" onCancel={onCancel}>
       <div className="space-y-4">
         <div>
           <label className="block text-sm text-zinc-400 mb-1">

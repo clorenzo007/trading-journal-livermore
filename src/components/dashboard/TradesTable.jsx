@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TradesFilters from "./TradesFilters";
+import TradePreviewModal from "../trades/TradePreviewModal";
 
 const EMPTY_FILTERS = {
   search: "",
@@ -13,15 +14,16 @@ const EMPTY_FILTERS = {
 };
 
 export default function TradesTable({ trades }) {
+  const navigate = useNavigate();
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [showFilters, setShowFilters] = useState(true);
-  const navigate = useNavigate();
+  const [selected, setSelected] = useState(null);
 
   const filtered = useMemo(() => {
     return trades.filter((t) => {
       if (filters.search) {
         const s = filters.search.toLowerCase();
-        const hay = [t.symbol, t.strategy_type, t.pattern, t.reason_for_entry]
+        const hay = [t.symbol, t.strategy_type, t.pattern]
           .join(" ")
           .toLowerCase();
         if (!hay.includes(s)) return false;
@@ -54,17 +56,15 @@ export default function TradesTable({ trades }) {
         />
       )}
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-x-auto">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="border-b border-zinc-800 text-zinc-400">
-            <tr>
-              <th className="text-left px-3 py-2">Symbol</th>
-              <th className="text-left px-3 py-2">Strategy</th>
-              <th className="text-left px-3 py-2">Pattern</th>
-              <th className="text-left px-3 py-2">Entry</th>
-              <th className="text-left px-3 py-2">Exit</th>
-              <th className="text-left px-3 py-2">Outcome</th>
-              <th className="text-right px-3 py-2">P/L</th>
+          <thead>
+            <tr className="text-zinc-400">
+              <th className="text-left">Symbol</th>
+              <th className="text-left">Strategy</th>
+              <th className="text-left">Entry</th>
+              <th className="text-left">Exit</th>
+              <th className="text-right">P/L</th>
             </tr>
           </thead>
 
@@ -72,35 +72,37 @@ export default function TradesTable({ trades }) {
             {filtered.map((t) => (
               <tr
                 key={t._id}
-                onClick={() => {
-                  // 🔒 asegurar cuenta correcta
-                  localStorage.setItem("activeAccountId", t.account);
-                  navigate(`/edit/${t._id}`);
-                }}
+                onClick={() => setSelected(t)}
                 className="border-t border-zinc-800 hover:bg-zinc-800/40 cursor-pointer"
               >
-                <td className="px-3 py-2">{t.symbol}</td>
-                <td className="px-3 py-2">{t.strategy_type}</td>
-                <td className="px-3 py-2">{t.pattern}</td>
-                <td className="px-3 py-2">{t.entry_date?.slice(0, 16)}</td>
-                <td className="px-3 py-2">
+                <td className="px-2 py-1">{t.symbol}</td>
+                <td className="px-2 py-1">{t.strategy_type}</td>
+                <td className="px-2 py-1">{t.entry_date?.slice(0, 16)}</td>
+                <td className="px-2 py-1">
                   {t.exit_date?.slice(0, 16) || "—"}
                 </td>
-                <td className="px-3 py-2">{t.outcome || "—"}</td>
                 <td
-                  className={`px-3 py-2 text-right ${
+                  className={`px-2 py-1 text-right ${
                     Number(t.profit_loss) >= 0
                       ? "text-emerald-400"
                       : "text-rose-400"
                   }`}
                 >
-                  {t.profit_loss ?? "—"}
+                  {t.profit_loss}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {selected && (
+        <TradePreviewModal
+          trade={selected}
+          onClose={() => setSelected(null)}
+          onEdit={() => navigate(`/edit/${selected._id}`)}
+        />
+      )}
     </div>
   );
 }

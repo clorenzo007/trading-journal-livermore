@@ -1,8 +1,14 @@
 import WizardCard from "./WizardCard";
 
-export default function StepExit({ trade, setTrade, onNext, onBack }) {
+export default function StepExit({
+  trade,
+  setTrade,
+  onNext,
+  onBack,
+  onCancel,
+}) {
   return (
-    <WizardCard title="Exit">
+    <WizardCard title="Exit" onCancel={onCancel}>
       <div className="space-y-4">
         <div>
           <label className="block text-sm text-zinc-400 mb-1">Exit date</label>

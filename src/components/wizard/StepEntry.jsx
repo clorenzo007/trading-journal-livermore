@@ -1,8 +1,14 @@
 import WizardCard from "./WizardCard";
 
-export default function StepEntry({ trade, setTrade, onNext, onBack }) {
+export default function StepEntry({
+  trade,
+  setTrade,
+  onNext,
+  onBack,
+  onCancel,
+}) {
   return (
-    <WizardCard title="Entry">
+    <WizardCard title="Entry" onCancel={onCancel}>
       <div className="space-y-4">
         <div>
           <label className="block text-sm text-zinc-400 mb-1">Entry date</label>

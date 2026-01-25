@@ -1,8 +1,8 @@
 import WizardCard from "./WizardCard";
 
-export default function StepFinish({ trade, onBack, onFinish }) {
+export default function StepFinish({ trade, onBack, onFinish, onCancel }) {
   return (
-    <WizardCard title="Trade ready">
+    <WizardCard title="Trade ready" onCancel={onCancel}>
       <div className="space-y-4 text-center">
         <p className="text-zinc-400">
           Everything looks good. You can now save this trade.
