@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { createTrade } from "../../api/trades";
+import { createTrade, getTradeById, updateTrade } from "../../api/trades";
 
 import StepIdentity from "./StepIdentity";
 import StepEntry from "./StepEntry";
@@ -48,13 +48,16 @@ const EMPTY_TRADE = {
 
 export default function TradeWizard() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams(); // ← si existe, es edición
 
   const [step, setStep] = useState(0);
   const [trade, setTrade] = useState({ ...EMPTY_TRADE });
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState(false);
+
+  const isEdit = Boolean(id);
 
   const steps = [
     "Identity",
@@ -66,6 +69,28 @@ export default function TradeWizard() {
     "Confirm",
     "Finish",
   ];
+
+  // ======================
+  // Load trade if editing
+  // ======================
+  useEffect(() => {
+    if (!isEdit) return;
+
+    async function loadTrade() {
+      try {
+        setLoading(true);
+        const data = await getTradeById(id);
+        setTrade(data);
+      } catch (e) {
+        console.error(e);
+        setError("Failed to load trade");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadTrade();
+  }, [id, isEdit]);
 
   function next() {
     setStep((s) => Math.min(s + 1, steps.length - 1));
@@ -82,6 +107,9 @@ export default function TradeWizard() {
     }));
   }
 
+  // ======================
+  // Save (create or update)
+  // ======================
   async function saveTrade() {
     try {
       setSaving(true);
@@ -89,18 +117,24 @@ export default function TradeWizard() {
 
       const payload = {
         ...trade,
-        entry_price: Number(trade.entry_price),
-        position_size: Number(trade.position_size),
-        stop_loss: Number(trade.stop_loss),
-        risk_percent: Number(trade.risk_percent),
+        entry_price: trade.entry_price ? Number(trade.entry_price) : undefined,
+        position_size: trade.position_size
+          ? Number(trade.position_size)
+          : undefined,
+        stop_loss: trade.stop_loss ? Number(trade.stop_loss) : undefined,
+        risk_percent: trade.risk_percent
+          ? Number(trade.risk_percent)
+          : undefined,
         exit_price: trade.exit_price ? Number(trade.exit_price) : undefined,
         profit_loss: trade.profit_loss ? Number(trade.profit_loss) : undefined,
       };
 
-      const created = await createTrade(payload);
+      if (isEdit) {
+        await updateTrade(id, payload);
+      } else {
+        await createTrade(payload);
+      }
 
-      // 🔹 IMPORTANTÍSIMO: guardar el trade real con ID
-      setTrade(created);
       setSaved(true);
     } catch (e) {
       console.error(e);
@@ -127,11 +161,17 @@ export default function TradeWizard() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  if (loading) {
+    return <div className="p-6 text-zinc-400">Loading trade…</div>;
+  }
+
   return (
     <div className="fixed inset-0 bg-black text-zinc-100 flex flex-col">
       {/* Header */}
       <div className="border-b border-zinc-800 px-6 py-4 flex justify-between items-center">
-        <div className="font-mono text-sm text-zinc-400">TRADE TERMINAL</div>
+        <div className="font-mono text-sm text-zinc-400">
+          {isEdit ? "EDIT TRADE" : "NEW TRADE"}
+        </div>
         <div className="font-mono text-xs text-zinc-500">
           Step {step + 1} / {steps.length}
         </div>
@@ -212,30 +252,25 @@ export default function TradeWizard() {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Success modal */}
       {saved && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 w-full max-w-sm text-center space-y-4">
-            <h2 className="text-xl font-semibold">Trade saved</h2>
+            <h2 className="text-xl font-semibold">
+              {isEdit ? "Trade updated" : "Trade saved"}
+            </h2>
             <p className="text-zinc-400">
-              Your trade was successfully saved. You can now upload images.
+              {isEdit
+                ? "Your trade was successfully updated."
+                : "Your trade was successfully saved."}
             </p>
 
-            <div className="space-y-2">
-              <button
-                onClick={() => setSaved(false)}
-                className="w-full px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
-              >
-                Upload images
-              </button>
-
-              <button
-                onClick={goDashboard}
-                className="w-full px-4 py-2 rounded bg-zinc-800 hover:bg-zinc-700"
-              >
-                Go to dashboard
-              </button>
-            </div>
+            <button
+              onClick={goDashboard}
+              className="w-full px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
+            >
+              Go to dashboard
+            </button>
           </div>
         </div>
       )}

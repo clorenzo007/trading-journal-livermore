@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TradesFilters from "./TradesFilters";
-import TradeDetailModal from "./TradeDetailModal";
 
 const EMPTY_FILTERS = {
   search: "",
@@ -15,7 +15,7 @@ const EMPTY_FILTERS = {
 export default function TradesTable({ trades }) {
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [showFilters, setShowFilters] = useState(true);
-  const [selected, setSelected] = useState(null);
+  const navigate = useNavigate();
 
   const filtered = useMemo(() => {
     return trades.filter((t) => {
@@ -36,7 +36,6 @@ export default function TradesTable({ trades }) {
 
   return (
     <div className="space-y-4">
-      {/* Header */}
       <div className="flex justify-between items-center">
         <div className="text-lg font-semibold">Trades</div>
         <button
@@ -55,11 +54,6 @@ export default function TradesTable({ trades }) {
         />
       )}
 
-      <div className="text-sm text-zinc-400">
-        Mostrando {filtered.length} de {trades.length}
-      </div>
-
-      {/* Table */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="border-b border-zinc-800 text-zinc-400">
@@ -79,9 +73,9 @@ export default function TradesTable({ trades }) {
               <tr
                 key={t._id}
                 onClick={() => {
-                  // 🔒 forzar cuenta correcta del trade
+                  // 🔒 asegurar cuenta correcta
                   localStorage.setItem("activeAccountId", t.account);
-                  setSelected({ ...t });
+                  navigate(`/edit/${t._id}`);
                 }}
                 className="border-t border-zinc-800 hover:bg-zinc-800/40 cursor-pointer"
               >
@@ -106,17 +100,7 @@ export default function TradesTable({ trades }) {
             ))}
           </tbody>
         </table>
-
-        {filtered.length === 0 && (
-          <div className="text-center text-zinc-500 py-8">
-            No hay trades que coincidan con los filtros.
-          </div>
-        )}
       </div>
-
-      {selected && (
-        <TradeDetailModal trade={selected} onClose={() => setSelected(null)} />
-      )}
     </div>
   );
 }
