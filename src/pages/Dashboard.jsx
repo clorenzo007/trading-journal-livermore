@@ -18,8 +18,6 @@ import DayDrawer from "../components/dashboard/DayDrawer";
 import { withSession } from "../utils/sessions";
 import LivermorePanel from "../components/wizard/LivermorePanel";
 
-
-
 export default function Dashboard() {
   const { activeAccount, loading: accountLoading } = useAccount();
 
@@ -67,10 +65,6 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-  <h2 className="text-2xl font-bold mb-4">Livermore Checklist</h2>
-  <LivermorePanel form={{}} />
-</div>;
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       {/* Top row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -78,22 +72,22 @@ export default function Dashboard() {
         <MarketTimesCard />
         <EconomicCalendarCard />
       </div>
-
-      {/* Session filter */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+        <h2 className="text-2xl font-bold mb-4">Livermore Checklist</h2>
+        <LivermorePanel form={{}} />
+      </div>
+      ;{/* Session filter */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
         <div className="text-sm text-zinc-400 mb-2">Filter by session</div>
         <SessionFilter value={session} onChange={setSession} />
       </div>
-
       {/* Charts */}
       <WinLossBar trades={filtered} />
       <WinLossPie trades={filtered} />
       <EquityCurve trades={filtered} />
-
       {/* Calendar + Heatmap */}
       <Calendar trades={filtered} onSelectDay={setSelectedDay} />
       <Heatmap trades={filtered} />
-
       {/* Selected day */}
       {selectedDay && (
         <div className="text-sm text-zinc-400">
@@ -106,10 +100,8 @@ export default function Dashboard() {
           </button>
         </div>
       )}
-
       {/* Table */}
       <TradesTable trades={dayFiltered} />
-
       {/* Drawer */}
       {selectedDay && (
         <DayDrawer
