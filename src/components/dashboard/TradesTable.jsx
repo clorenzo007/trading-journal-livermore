@@ -36,8 +36,44 @@ export default function TradesTable({ trades }) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 overflow-x-auto">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div className="text-lg font-semibold">Trades</div>
+        <button
+          onClick={() => setShowFilters((v) => !v)}
+          className="px-3 py-1 rounded bg-zinc-800 hover:bg-zinc-700"
+        >
+          {showFilters ? "Ocultar filtros" : "Mostrar filtros"}
+        </button>
+      </div>
+
+      {showFilters && (
+        <TradesFilters
+          value={filters}
+          onChange={setFilters}
+          onReset={() => setFilters(EMPTY_FILTERS)}
+        />
+      )}
+
+      <div className="text-sm text-zinc-400">
+        Mostrando {filtered.length} de {trades.length}
+      </div>
+
+      {/* Table */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-x-auto">
         <table className="w-full text-sm">
+          <thead className="border-b border-zinc-800 text-zinc-400">
+            <tr>
+              <th className="text-left px-3 py-2">Symbol</th>
+              <th className="text-left px-3 py-2">Strategy</th>
+              <th className="text-left px-3 py-2">Pattern</th>
+              <th className="text-left px-3 py-2">Entry</th>
+              <th className="text-left px-3 py-2">Exit</th>
+              <th className="text-left px-3 py-2">Outcome</th>
+              <th className="text-right px-3 py-2">P/L</th>
+            </tr>
+          </thead>
+
           <tbody>
             {filtered.map((t) => (
               <tr
@@ -49,13 +85,33 @@ export default function TradesTable({ trades }) {
                 }}
                 className="border-t border-zinc-800 hover:bg-zinc-800/40 cursor-pointer"
               >
-                <td className="px-2 py-1">{t.symbol}</td>
-                <td className="px-2 py-1">{t.strategy_type}</td>
-                <td className="px-2 py-1">{t.pattern}</td>
+                <td className="px-3 py-2">{t.symbol}</td>
+                <td className="px-3 py-2">{t.strategy_type}</td>
+                <td className="px-3 py-2">{t.pattern}</td>
+                <td className="px-3 py-2">{t.entry_date?.slice(0, 16)}</td>
+                <td className="px-3 py-2">
+                  {t.exit_date?.slice(0, 16) || "—"}
+                </td>
+                <td className="px-3 py-2">{t.outcome || "—"}</td>
+                <td
+                  className={`px-3 py-2 text-right ${
+                    Number(t.profit_loss) >= 0
+                      ? "text-emerald-400"
+                      : "text-rose-400"
+                  }`}
+                >
+                  {t.profit_loss ?? "—"}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+
+        {filtered.length === 0 && (
+          <div className="text-center text-zinc-500 py-8">
+            No hay trades que coincidan con los filtros.
+          </div>
+        )}
       </div>
 
       {selected && (
