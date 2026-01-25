@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
 import { createTrade, getTradeById, updateTrade } from "../../api/trades";
 
 import StepIdentity from "./StepIdentity";
@@ -10,7 +11,13 @@ import StepPsychologyPre from "./StepPsychologyPre";
 import StepPsychologyPost from "./StepPsychologyPost";
 import StepConfirm from "./StepConfirm";
 import StepFinish from "./StepFinish";
+
 import ProgressBar from "./ProgressBar";
+import LivermorePanel from "./LivermorePanel";
+
+import EntryImageUploader from "../EntryImageUploader";
+import ReviewImageUploader from "../ReviewImageUploader";
+import WizardCard from "./WizardCard";
 
 const EMPTY_TRADE = {
   symbol: "",
@@ -35,20 +42,24 @@ const EMPTY_TRADE = {
   emotional_state_post: "",
   reason_for_exit: "",
   review_notes: "",
-
-  reviewed: false,
-  review: {
-    score: "",
-    followedPlan: false,
-    ruleBroken: "",
-    lesson: "",
-    wouldRepeat: false,
-  },
 };
+
+const STEPS = [
+  "Identity",
+  "Entry",
+  "Risk",
+  "Exit",
+  "Psychology (Pre)",
+  "Psychology (Post)",
+  "Images",
+  "Confirm",
+  "Finish",
+];
 
 export default function TradeWizard() {
   const navigate = useNavigate();
-  const { id } = useParams(); // ← si existe, es edición
+  const { id } = useParams();
+  const isEdit = Boolean(id);
 
   const [step, setStep] = useState(0);
   const [trade, setTrade] = useState({ ...EMPTY_TRADE });
@@ -57,43 +68,32 @@ export default function TradeWizard() {
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState(false);
 
-  const isEdit = Boolean(id);
-
-  const steps = [
-    "Identity",
-    "Entry",
-    "Risk",
-    "Exit",
-    "Psychology (Pre)",
-    "Psychology (Post)",
-    "Confirm",
-    "Finish",
-  ];
-
   // ======================
-  // Load trade if editing
+  // Load trade (edit mode)
   // ======================
   useEffect(() => {
     if (!isEdit) return;
 
-    async function loadTrade() {
+    async function load() {
       try {
         setLoading(true);
         const data = await getTradeById(id);
         setTrade(data);
-      } catch (e) {
-        console.error(e);
+      } catch {
         setError("Failed to load trade");
       } finally {
         setLoading(false);
       }
     }
 
-    loadTrade();
+    load();
   }, [id, isEdit]);
 
+  // ======================
+  // Helpers
+  // ======================
   function next() {
-    setStep((s) => Math.min(s + 1, steps.length - 1));
+    setStep((s) => Math.min(s + 1, STEPS.length - 1));
   }
 
   function back() {
@@ -101,14 +101,11 @@ export default function TradeWizard() {
   }
 
   function update(patch) {
-    setTrade((prev) => ({
-      ...prev,
-      ...patch,
-    }));
+    setTrade((prev) => ({ ...prev, ...patch }));
   }
 
   // ======================
-  // Save (create or update)
+  // Save
   // ======================
   async function saveTrade() {
     try {
@@ -136,8 +133,7 @@ export default function TradeWizard() {
       }
 
       setSaved(true);
-    } catch (e) {
-      console.error(e);
+    } catch {
       setError("Failed to save trade");
     } finally {
       setSaving(false);
@@ -147,19 +143,6 @@ export default function TradeWizard() {
   function goDashboard() {
     navigate("/dashboard");
   }
-
-  // ======================
-  // Keyboard navigation
-  // ======================
-  useEffect(() => {
-    function onKey(e) {
-      if (e.key === "Enter") next();
-      if (e.key === "Escape") back();
-    }
-
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
 
   if (loading) {
     return <div className="p-6 text-zinc-400">Loading trade…</div>;
@@ -173,21 +156,22 @@ export default function TradeWizard() {
           {isEdit ? "EDIT TRADE" : "NEW TRADE"}
         </div>
         <div className="font-mono text-xs text-zinc-500">
-          Step {step + 1} / {steps.length}
+          Step {step + 1} / {STEPS.length}
         </div>
       </div>
 
-      {/* Body */}
-      <div className="flex-1 overflow-y-auto px-6 py-10 max-w-3xl mx-auto w-full">
-        <ProgressBar steps={steps} current={step} />
+      {/* Content */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Wizard */}
+        <div className="flex-1 overflow-y-auto px-6 py-10 max-w-3xl mx-auto w-full space-y-6">
+          <ProgressBar steps={STEPS} current={step} />
 
-        {error && (
-          <div className="bg-red-900/30 border border-red-800 text-red-300 p-3 rounded mt-4">
-            {error}
-          </div>
-        )}
+          {error && (
+            <div className="bg-red-900/30 border border-red-800 text-red-300 p-3 rounded">
+              {error}
+            </div>
+          )}
 
-        <div className="mt-8">
           {step === 0 && (
             <StepIdentity trade={trade} setTrade={update} onNext={next} />
           )}
@@ -238,18 +222,40 @@ export default function TradeWizard() {
           )}
 
           {step === 6 && (
-            <StepConfirm trade={trade} onNext={next} onBack={back} />
+            <WizardCard title="Images">
+              <div className="space-y-6">
+                <EntryImageUploader trade={trade} setTrade={setTrade} />
+                <ReviewImageUploader trade={trade} setTrade={setTrade} />
+              </div>
+
+              <div className="flex justify-between pt-6">
+                <button
+                  onClick={back}
+                  className="px-5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={next}
+                  className="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-medium"
+                >
+                  Next
+                </button>
+              </div>
+            </WizardCard>
           )}
 
           {step === 7 && (
-            <StepFinish
-              trade={trade}
-              onBack={back}
-              onFinish={saveTrade}
-              saving={saving}
-            />
+            <StepConfirm trade={trade} onNext={next} onBack={back} />
+          )}
+
+          {step === 8 && (
+            <StepFinish trade={trade} onBack={back} onFinish={saveTrade} />
           )}
         </div>
+
+        {/* Livermore Panel */}
+        <LivermorePanel form={trade} />
       </div>
 
       {/* Success modal */}
@@ -259,11 +265,6 @@ export default function TradeWizard() {
             <h2 className="text-xl font-semibold">
               {isEdit ? "Trade updated" : "Trade saved"}
             </h2>
-            <p className="text-zinc-400">
-              {isEdit
-                ? "Your trade was successfully updated."
-                : "Your trade was successfully saved."}
-            </p>
 
             <button
               onClick={goDashboard}

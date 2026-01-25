@@ -16,6 +16,9 @@ import Heatmap from "../components/dashboard/Heatmap";
 import DayDrawer from "../components/dashboard/DayDrawer";
 
 import { withSession } from "../utils/sessions";
+import LivermorePanel from "../components/wizard/LivermorePanel";
+
+
 
 export default function Dashboard() {
   const { activeAccount, loading: accountLoading } = useAccount();
@@ -64,6 +67,10 @@ export default function Dashboard() {
   }
 
   return (
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+  <h2 className="text-2xl font-bold mb-4">Livermore Checklist</h2>
+  <LivermorePanel form={{}} />
+</div>;
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       {/* Top row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

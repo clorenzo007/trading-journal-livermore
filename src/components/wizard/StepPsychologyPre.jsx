@@ -1,3 +1,5 @@
+import WizardCard from "./WizardCard";
+
 export default function StepPsychologyPre({ trade, setTrade, onNext, onBack }) {
   const presets = [
     "Calm",
@@ -10,18 +12,18 @@ export default function StepPsychologyPre({ trade, setTrade, onNext, onBack }) {
   ];
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Psychology (Before)</h2>
-
+    <WizardCard title="Psychology (Before)">
       <div className="space-y-4">
         <div>
-          <label className="block text-sm text-zinc-400">Emotional state</label>
+          <label className="block text-sm text-zinc-400 mb-1">
+            Emotional state
+          </label>
           <input
             list="emotions-pre"
-            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
             value={trade.emotional_state_pre || ""}
             onChange={(e) => setTrade({ emotional_state_pre: e.target.value })}
-            placeholder="Select or type..."
+            placeholder="Select or type…"
           />
           <datalist id="emotions-pre">
             {presets.map((p) => (
@@ -31,12 +33,12 @@ export default function StepPsychologyPre({ trade, setTrade, onNext, onBack }) {
         </div>
 
         <div>
-          <label className="block text-sm text-zinc-400">
+          <label className="block text-sm text-zinc-400 mb-1">
             Reason for entry
           </label>
           <textarea
-            className="w-full bg-zinc-900 border border-zinc-800 rounded px-3 py-2"
             rows={4}
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
             value={trade.reason_for_entry || ""}
             onChange={(e) => setTrade({ reason_for_entry: e.target.value })}
             placeholder="Why did you take this trade?"
@@ -44,21 +46,21 @@ export default function StepPsychologyPre({ trade, setTrade, onNext, onBack }) {
         </div>
       </div>
 
-      <div className="flex justify-between pt-4">
+      <div className="flex justify-between pt-6">
         <button
           onClick={onBack}
-          className="px-4 py-2 rounded bg-zinc-800 hover:bg-zinc-700"
+          className="px-5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700"
         >
           Back
         </button>
 
         <button
           onClick={onNext}
-          className="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
+          className="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-medium"
         >
           Next
         </button>
       </div>
-    </div>
+    </WizardCard>
   );
 }
