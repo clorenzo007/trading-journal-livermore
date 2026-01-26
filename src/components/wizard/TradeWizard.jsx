@@ -17,22 +17,17 @@ const EMPTY_TRADE = {
   symbol: "",
   strategy_type: "",
   pattern: "",
-
   entry_date: "",
   entry_price: "",
   position_size: "",
-
   stop_loss: "",
   risk_percent: "",
-
   exit_date: "",
   exit_price: "",
   profit_loss: "",
   outcome: "",
-
   emotional_state_pre: "",
   reason_for_entry: "",
-
   emotional_state_post: "",
   reason_for_exit: "",
   review_notes: "",
@@ -52,48 +47,37 @@ export default function TradeWizard() {
   const TOTAL_STEPS = 9;
 
   // ======================
-  // LOAD TRADE (EDIT MODE)
+  // LOAD EXISTING TRADE
   // ======================
   useEffect(() => {
     if (!id) return;
 
-    async function loadTrade() {
+    async function load() {
       try {
         setLoading(true);
         const data = await getTradeById(id);
         setTrade(data);
-      } catch (e) {
-        console.error(e);
+      } catch {
         setError("Failed to load trade");
       } finally {
         setLoading(false);
       }
     }
 
-    loadTrade();
+    load();
   }, [id]);
 
   // ======================
-  // NAVIGATION
+  // NAV
   // ======================
-  function next() {
-    setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
-  }
+  const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
+  const back = () => setStep((s) => Math.max(s - 1, 0));
+  const cancel = () => navigate("/dashboard");
 
-  function back() {
-    setStep((s) => Math.max(s - 1, 0));
-  }
-
-  function cancel() {
-    navigate("/dashboard");
-  }
-
-  function update(patch) {
-    setTrade((prev) => ({ ...prev, ...patch }));
-  }
+  const update = (patch) => setTrade((prev) => ({ ...prev, ...patch }));
 
   // ======================
-  // SAVE
+  // SAVE (ONLY HERE)
   // ======================
   async function saveTrade() {
     try {
@@ -116,9 +100,8 @@ export default function TradeWizard() {
         await createTrade(payload);
       }
 
-      next();
-    } catch (e) {
-      console.error(e);
+      navigate("/dashboard");
+    } catch {
       setError("Failed to save trade");
     } finally {
       setSaving(false);
@@ -136,11 +119,10 @@ export default function TradeWizard() {
   return (
     <div className="fixed inset-0 bg-black text-zinc-100 flex flex-col">
       {/* HEADER */}
-      <div className="border-b border-zinc-800 px-6 py-4 flex justify-between items-center">
+      <div className="border-b border-zinc-800 px-6 py-4 flex justify-between">
         <div className="font-semibold">
           {isEdit ? "Edit trade" : "New trade"}
         </div>
-
         <button
           onClick={cancel}
           className="text-sm text-zinc-400 hover:text-white"
@@ -162,7 +144,6 @@ export default function TradeWizard() {
         {step === 0 && (
           <StepIdentity trade={trade} setTrade={update} onNext={next} />
         )}
-
         {step === 1 && (
           <StepEntry
             trade={trade}
@@ -171,7 +152,6 @@ export default function TradeWizard() {
             onBack={back}
           />
         )}
-
         {step === 2 && (
           <StepRisk
             trade={trade}
@@ -180,7 +160,6 @@ export default function TradeWizard() {
             onBack={back}
           />
         )}
-
         {step === 3 && (
           <StepExit
             trade={trade}
@@ -189,7 +168,6 @@ export default function TradeWizard() {
             onBack={back}
           />
         )}
-
         {step === 4 && (
           <StepPsychologyPre
             trade={trade}
@@ -198,7 +176,6 @@ export default function TradeWizard() {
             onBack={back}
           />
         )}
-
         {step === 5 && (
           <StepPsychologyPost
             trade={trade}
@@ -207,7 +184,6 @@ export default function TradeWizard() {
             onBack={back}
           />
         )}
-
         {step === 6 && (
           <StepImages
             trade={trade}
@@ -216,11 +192,9 @@ export default function TradeWizard() {
             onBack={back}
           />
         )}
-
         {step === 7 && (
           <StepConfirm trade={trade} onNext={next} onBack={back} />
         )}
-
         {step === 8 && (
           <StepFinish
             trade={trade}
