@@ -117,7 +117,16 @@ export default function TradesTable({ trades = [] }) {
                   )}
                 </td>
 
-                <td className="px-2 py-1">{t.symbol}</td>
+                <td className="px-2 py-1 flex items-center gap-2">
+                  {t.entryImage?.url && (
+                    <img
+                      src={t.entryImage.url}
+                      className="w-8 h-8 object-cover rounded border border-zinc-700"
+                    />
+                  )}
+                  <span>{t.symbol}</span>
+                </td>
+
                 <td className="px-2 py-1">{t.strategy_type}</td>
                 <td className="px-2 py-1">{t.pattern}</td>
                 <td className="px-2 py-1">{t.entry_date?.slice(0, 16)}</td>

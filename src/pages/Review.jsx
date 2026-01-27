@@ -70,6 +70,10 @@ export default function Review() {
           </div>
         )}
 
+        {!trade.entryImage?.url && (
+          <div className="text-zinc-600 text-sm">No entry image</div>
+        )}
+
         {trade.reviewImage?.url && (
           <div>
             <div className="text-sm text-zinc-400 mb-2">Review Image</div>
@@ -81,6 +85,9 @@ export default function Review() {
           </div>
         )}
       </div>
+      {!trade.reviewImage?.url && (
+        <div className="text-zinc-600 text-sm">No review image</div>
+      )}
 
       {/* ACTIONS */}
       <div className="flex justify-between">
