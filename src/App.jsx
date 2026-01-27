@@ -10,6 +10,7 @@ import ProtectedLayout from "./components/layout/ProtectedLayout";
 import Review from "./pages/Review";
 import ImportTrades from "./pages/ImportTrades";
 import Accounts from "./pages/Accounts";
+import Trades from "./pages/Trades";
 
 export default function App() {
   return (
@@ -25,15 +26,14 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<ProtectedLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="trades" element={<Trades />} /> {/* LISTA */}
+          <Route path="trades/:id" element={<Review />} /> {/* VISTA */}
           <Route path="new-trade" element={<TradeWizard />} />
           <Route path="edit/:id" element={<TradeWizard />} />
           <Route path="entries" element={<Entries />} />
           <Route path="concepts" element={<Concepts />} />
-          <Route path="review/:id" element={<Review />} />
           <Route path="import" element={<ImportTrades />} />
           <Route path="accounts" element={<Accounts />} />
-          <Route path="trades" element={<Trades />} />
-          <Route path="trades/:id" element={<Review />} />
         </Route>
       </Route>
 
