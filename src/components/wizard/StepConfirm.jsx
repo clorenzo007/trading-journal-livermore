@@ -1,76 +1,54 @@
-import WizardCard from "./WizardCard";
+export default function StepConfirm({ trade, onNext, onBack }) {
+  function Row({ label, value }) {
+    return (
+      <div className="flex justify-between border-b border-zinc-800 py-1">
+        <span className="text-zinc-400">{label}</span>
+        <span className="font-medium">{value || "—"}</span>
+      </div>
+    );
+  }
 
-function formatDate(value) {
-  if (!value) return "—";
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime()) || d.getTime() === 0) return "—";
-  return d.toLocaleString();
-}
-
-function formatValue(value) {
-  if (value === null || value === undefined || value === "" || value === 0)
-    return "—";
-  return String(value);
-}
-
-function Row({ label, value }) {
   return (
-    <div className="flex justify-between gap-4 border-b border-zinc-800 py-2 text-sm">
-      <span className="text-zinc-400">{label}</span>
-      <span className="font-medium text-right break-all">{value}</span>
-    </div>
-  );
-}
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold">Confirm trade</h2>
 
-export default function StepConfirm({ trade, onNext, onBack, onCancel }) {
-  return (
-    <WizardCard title="Confirm trade" onCancel={onCancel}>
-      <div className="space-y-1">
-        <Row label="Symbol" value={formatValue(trade.symbol)} />
-        <Row label="Strategy" value={formatValue(trade.strategy_type)} />
-        <Row label="Pattern" value={formatValue(trade.pattern)} />
-
-        <Row label="Entry date" value={formatDate(trade.entry_date)} />
-        <Row label="Entry price" value={formatValue(trade.entry_price)} />
-        <Row label="Position size" value={formatValue(trade.position_size)} />
-
-        <Row label="Stop loss" value={formatValue(trade.stop_loss)} />
-        <Row label="Risk %" value={formatValue(trade.risk_percent)} />
-
-        <Row label="Exit date" value={formatDate(trade.exit_date)} />
-        <Row label="Exit price" value={formatValue(trade.exit_price)} />
-        <Row label="P/L" value={formatValue(trade.profit_loss)} />
-        <Row label="Outcome" value={formatValue(trade.outcome)} />
-
-        <Row
-          label="Emotion (pre)"
-          value={formatValue(trade.emotional_state_pre)}
-        />
-        <Row label="Reason entry" value={formatValue(trade.reason_for_entry)} />
-
-        <Row
-          label="Emotion (post)"
-          value={formatValue(trade.emotional_state_post)}
-        />
-        <Row label="Reason exit" value={formatValue(trade.reason_for_exit)} />
-        <Row label="Notes" value={formatValue(trade.review_notes)} />
+      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 space-y-2 text-sm">
+        <Row label="Symbol" value={trade.symbol} />
+        <Row label="Strategy" value={trade.strategy_type} />
+        <Row label="Pattern" value={trade.pattern} />
+        <Row label="Entry date" value={trade.entry_date} />
+        <Row label="Entry price" value={trade.entry_price} />
+        <Row label="Stop loss" value={trade.stop_loss} />
+        <Row label="Risk %" value={trade.risk_percent} />
+        <Row label="Exit price" value={trade.exit_price} />
+        <Row label="P/L" value={trade.profit_loss} />
+        <Row label="Outcome" value={trade.outcome} />
       </div>
 
-      <div className="flex justify-between pt-6">
-        <button
-          onClick={onBack}
-          className="px-5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700"
-        >
+      {/* IMAGES PREVIEW */}
+      <div className="grid grid-cols-2 gap-4">
+        {trade.entryImage?.url && (
+          <img
+            src={trade.entryImage.url}
+            className="h-32 object-cover rounded border border-zinc-800"
+          />
+        )}
+        {trade.reviewImage?.url && (
+          <img
+            src={trade.reviewImage.url}
+            className="h-32 object-cover rounded border border-zinc-800"
+          />
+        )}
+      </div>
+
+      <div className="flex justify-between pt-4">
+        <button onClick={onBack} className="px-4 py-2 bg-zinc-800 rounded">
           Back
         </button>
-
-        <button
-          onClick={onNext}
-          className="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 font-medium"
-        >
+        <button onClick={onNext} className="px-4 py-2 bg-emerald-600 rounded">
           Confirm
         </button>
       </div>
-    </WizardCard>
+    </div>
   );
 }
