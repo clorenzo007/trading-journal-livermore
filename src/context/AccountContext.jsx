@@ -1,22 +1,34 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getAccounts } from "../services/accounts";
+import { useAuth } from "./AuthContext";
 
 const AccountContext = createContext();
 
 export const AccountProvider = ({ children }) => {
+  const { token, loading: authLoading } = useAuth();
+
   const [accounts, setAccounts] = useState([]);
   const [activeAccount, setActiveAccount] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 🔥 SOLO CARGA CUENTAS CUANDO YA EXISTE TOKEN
   useEffect(() => {
-    const init = async () => {
+    if (authLoading) return;
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    async function init() {
       try {
+        setLoading(true);
+
         const list = await getAccounts();
         setAccounts(list);
 
         const saved = localStorage.getItem("activeAccountId");
 
-        let selected =
+        const selected =
           list.find((a) => a._id === saved && a.status === "active") ||
           list.find((a) => a.status === "active") ||
           null;
@@ -30,13 +42,13 @@ export const AccountProvider = ({ children }) => {
       } finally {
         setLoading(false);
       }
-    };
+    }
 
     init();
-  }, []);
+  }, [token, authLoading]);
 
   const changeAccount = (id) => {
-    const acc = accounts.find((a) => a.id === id || a._id === id);
+    const acc = accounts.find((a) => a._id === id);
     if (!acc) return;
     setActiveAccount(acc);
     localStorage.setItem("activeAccountId", acc._id);
