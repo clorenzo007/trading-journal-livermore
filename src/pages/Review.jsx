@@ -1,176 +1,104 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getTradeById, reviewTrade } from "../api/trades";
-import ReviewImageUploader from "../components/ReviewImageUploader";
+import { getTradeById } from "../api/trades";
+import FullscreenViewer from "../components/FullscreenViewer";
 
-export default function Review() {
+export default function TradeView() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [trade, setTrade] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-
-  const [form, setForm] = useState({
-    score: 3,
-    followedPlan: true,
-    ruleBroken: "",
-    lesson: "",
-    wouldRepeat: true,
-  });
+  const [viewer, setViewer] = useState(null);
 
   useEffect(() => {
     async function load() {
-      try {
-        const data = await getTradeById(id);
-
-        if (data.reviewed) {
-          alert("Este trade ya fue revisado.");
-          navigate("/dashboard");
-          return;
-        }
-
-        setTrade(data);
-      } catch (err) {
-        alert("Error cargando trade");
-        navigate("/dashboard");
-      } finally {
-        setLoading(false);
-      }
+      const data = await getTradeById(id);
+      console.log("VIEW TRADE DATA:", data);
+      setTrade(data);
     }
-
     load();
-  }, [id, navigate]);
+  }, [id]);
 
-  const update = (k, v) => {
-    setForm((f) => ({ ...f, [k]: v }));
-  };
+  if (!trade) return <div className="p-6 text-zinc-400">Loading trade...</div>;
 
-  const handleSubmit = async () => {
-    try {
-      setSaving(true);
-      await reviewTrade(id, form);
-      navigate("/dashboard");
-    } catch {
-      alert("Error guardando review");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  if (loading) {
-    return <div className="p-6 text-zinc-400">Cargando...</div>;
+  function Row({ label, value }) {
+    return (
+      <div className="flex justify-between border-b border-zinc-800 py-2 text-sm">
+        <span className="text-zinc-400">{label}</span>
+        <span className="font-medium">{value || "—"}</span>
+      </div>
+    );
   }
 
-  if (!trade) return null;
+  function ImageBlock({ label, src }) {
+    return (
+      <div className="space-y-2">
+        <div className="text-sm text-zinc-400">{label}</div>
+
+        {src ? (
+          <img
+            src={src}
+            alt={label}
+            onClick={() => setViewer(src)}
+            className="w-48 rounded border border-zinc-700 cursor-pointer hover:opacity-80"
+          />
+        ) : (
+          <div className="text-zinc-500 text-sm">No image uploaded</div>
+        )}
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold">Review — {trade.symbol}</h1>
-        <p className="text-zinc-400 text-sm">
-          {trade.strategy_type} · {trade.pattern}
-        </p>
+    <div className="p-6 max-w-5xl mx-auto space-y-8">
+      <h1 className="text-2xl font-semibold">Trade Overview</h1>
+
+      {/* INFO */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-1">
+        <Row label="Symbol" value={trade.symbol} />
+        <Row label="Strategy" value={trade.strategy_type} />
+        <Row label="Pattern" value={trade.pattern} />
+        <Row label="Entry date" value={trade.entry_date} />
+        <Row label="Entry price" value={trade.entry_price} />
+        <Row label="Position size" value={trade.position_size} />
+        <Row label="Stop loss" value={trade.stop_loss} />
+        <Row label="Risk %" value={trade.risk_percent} />
+        <Row label="Exit date" value={trade.exit_date} />
+        <Row label="Exit price" value={trade.exit_price} />
+        <Row label="P/L" value={trade.profit_loss} />
+        <Row label="Outcome" value={trade.outcome} />
+        <Row label="Emotion (pre)" value={trade.emotional_state_pre} />
+        <Row label="Reason entry" value={trade.reason_for_entry} />
+        <Row label="Emotion (post)" value={trade.emotional_state_post} />
+        <Row label="Reason exit" value={trade.reason_for_exit} />
+        <Row label="Review notes" value={trade.review_notes} />
       </div>
 
-      {/* Card */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-6">
-        {/* Score */}
-        <div>
-          <label className="text-sm text-zinc-400">Score</label>
-          <input
-            type="range"
-            min="1"
-            max="5"
-            value={form.score}
-            onChange={(e) => update("score", Number(e.target.value))}
-            className="w-full mt-2"
-          />
-          <div className="text-sm text-zinc-400 mt-1">{form.score} / 5</div>
-        </div>
-
-        {/* Toggles */}
-        <Toggle
-          label="¿Seguí mi plan?"
-          value={form.followedPlan}
-          onChange={(v) => update("followedPlan", v)}
-        />
-
-        <Toggle
-          label="¿Lo repetiría?"
-          value={form.wouldRepeat}
-          onChange={(v) => update("wouldRepeat", v)}
-        />
-
-        {/* Rule broken */}
-        <Field label="Regla rota (si hubo)">
-          <input
-            value={form.ruleBroken}
-            onChange={(e) => update("ruleBroken", e.target.value)}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2"
-          />
-        </Field>
-
-        {/* Lesson */}
-        <Field label="Lección aprendida">
-          <textarea
-            value={form.lesson}
-            onChange={(e) => update("lesson", e.target.value)}
-            className="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2 h-24"
-          />
-        </Field>
-
-        {/* Imagen de review */}
-        <div className="border-t border-zinc-800 pt-4">
-          <ReviewImageUploader trade={trade} setTrade={setTrade} />
-        </div>
-
-        {/* Actions */}
-        <div className="flex justify-end gap-2 pt-4 border-t border-zinc-800">
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="px-4 py-2 rounded bg-zinc-700 hover:bg-zinc-600"
-          >
-            Cancelar
-          </button>
-
-          <button
-            onClick={handleSubmit}
-            disabled={saving}
-            className="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
-          >
-            {saving ? "Guardando..." : "Guardar review"}
-          </button>
-        </div>
+      {/* IMAGES */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 grid grid-cols-2 gap-8">
+        <ImageBlock label="Entry Image" src={trade.entryImage} />
+        <ImageBlock label="Review Image" src={trade.reviewImage} />
       </div>
-    </div>
-  );
-}
 
-function Field({ label, children }) {
-  return (
-    <div className="space-y-1">
-      <div className="text-sm text-zinc-400">{label}</div>
-      {children}
-    </div>
-  );
-}
+      {/* ACTIONS */}
+      <div className="flex justify-between">
+        <button
+          onClick={() => navigate(-1)}
+          className="bg-zinc-700 px-4 py-2 rounded"
+        >
+          Exit
+        </button>
 
-function Toggle({ label, value, onChange }) {
-  return (
-    <div className="flex items-center justify-between">
-      <div className="text-sm text-zinc-400">{label}</div>
-      <button
-        onClick={() => onChange(!value)}
-        className={`px-3 py-1 rounded text-sm ${
-          value
-            ? "bg-emerald-600/20 text-emerald-400"
-            : "bg-zinc-700 text-zinc-300"
-        }`}
-      >
-        {value ? "Sí" : "No"}
-      </button>
+        <button
+          onClick={() => navigate(`/edit/${trade._id}`)}
+          className="bg-indigo-600 px-4 py-2 rounded"
+        >
+          Edit Trade
+        </button>
+      </div>
+
+      {viewer && (
+        <FullscreenViewer src={viewer} onClose={() => setViewer(null)} />
+      )}
     </div>
   );
 }

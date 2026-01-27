@@ -25,12 +25,16 @@ export default function Navbar() {
           Nuevo Trade
         </NavLink>
 
-        <NavLink to="/entries" className={linkClass}>
-          Entries
-        </NavLink>
-
         <NavLink to="/import" className={linkClass}>
           Import Trades
+        </NavLink>
+
+        <NavLink to="/review" className={linkClass}>
+          Review Trades
+        </NavLink>
+
+        <NavLink to="/entries" className={linkClass}>
+          Entries
         </NavLink>
 
         <NavLink to="/concepts" className={linkClass}>
