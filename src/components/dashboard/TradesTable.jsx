@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import TradesFilters from "./TradesFilters";
-import TradeDetailModal from "./TradeDetailModal";
 
 const EMPTY_FILTERS = {
   search: "",
@@ -13,11 +13,13 @@ const EMPTY_FILTERS = {
 };
 
 export default function TradesTable({ trades = [] }) {
+  const navigate = useNavigate();
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [showFilters, setShowFilters] = useState(true);
-  const [selected, setSelected] = useState(null);
 
   const filtered = useMemo(() => {
+    if (!Array.isArray(trades)) return [];
+
     return trades.filter((t) => {
       if (filters.search) {
         const s = filters.search.toLowerCase();
@@ -83,7 +85,6 @@ export default function TradesTable({ trades = [] }) {
         <table className="w-full text-sm">
           <thead>
             <tr className="text-zinc-400">
-              <th className="text-left w-14">Img</th>
               <th className="text-left">Symbol</th>
               <th className="text-left">Strategy</th>
               <th className="text-left">Pattern</th>
@@ -98,27 +99,15 @@ export default function TradesTable({ trades = [] }) {
             {filtered.map((t) => (
               <tr
                 key={t._id}
-                onClick={() => setSelected(t)}
+                onClick={() => navigate(`/edit/${t._id}`)}
                 className="border-t border-zinc-800 hover:bg-zinc-800/40 cursor-pointer"
               >
-                {/* IMAGE COLUMN */}
-                <td className="px-2 py-1">
-                  {t.entryImage?.url ? (
-                    <img
-                      src={t.entryImage.url}
-                      className="w-10 h-10 object-cover rounded border border-zinc-700"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 flex items-center justify-center text-zinc-600 text-xs border border-zinc-800 rounded">
-                      —
-                    </div>
-                  )}
-                </td>
-
                 <td className="px-2 py-1">{t.symbol}</td>
                 <td className="px-2 py-1">{t.strategy_type}</td>
                 <td className="px-2 py-1">{t.pattern}</td>
-                <td className="px-2 py-1">{t.entry_date?.slice(0, 16)}</td>
+                <td className="px-2 py-1">
+                  {t.entry_date?.slice(0, 16) || "—"}
+                </td>
                 <td className="px-2 py-1">
                   {t.exit_date?.slice(0, 16) || "—"}
                 </td>
@@ -143,10 +132,6 @@ export default function TradesTable({ trades = [] }) {
           </div>
         )}
       </div>
-
-      {selected && (
-        <TradeDetailModal trade={selected} onClose={() => setSelected(null)} />
-      )}
     </div>
   );
 }
