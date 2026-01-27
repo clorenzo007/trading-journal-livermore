@@ -30,7 +30,7 @@ export default function Navbar() {
         </NavLink>
 
         <NavLink to="/trades" className={linkClass}>
-          Trades
+          Review Trades
         </NavLink>
 
         <NavLink to="/entries" className={linkClass}>

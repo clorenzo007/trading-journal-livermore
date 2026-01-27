@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getTradeById } from "../api/trades";
 import FullscreenViewer from "../components/FullscreenViewer";
 
-export default function TradeView() {
+export default function Review() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [trade, setTrade] = useState(null);
@@ -11,9 +11,12 @@ export default function TradeView() {
 
   useEffect(() => {
     async function load() {
-      const data = await getTradeById(id);
-      console.log("VIEW TRADE DATA:", data);
-      setTrade(data);
+      try {
+        const data = await getTradeById(id);
+        setTrade(data);
+      } catch (err) {
+        console.error("LOAD TRADE ERROR:", err);
+      }
     }
     load();
   }, [id]);
@@ -24,36 +27,17 @@ export default function TradeView() {
     return (
       <div className="flex justify-between border-b border-zinc-800 py-2 text-sm">
         <span className="text-zinc-400">{label}</span>
-        <span className="font-medium">{value || "—"}</span>
-      </div>
-    );
-  }
-
-  function ImageBlock({ label, src }) {
-    return (
-      <div className="space-y-2">
-        <div className="text-sm text-zinc-400">{label}</div>
-
-        {src ? (
-          <img
-            src={src}
-            alt={label}
-            onClick={() => setViewer(src)}
-            className="w-48 rounded border border-zinc-700 cursor-pointer hover:opacity-80"
-          />
-        ) : (
-          <div className="text-zinc-500 text-sm">No image uploaded</div>
-        )}
+        <span>{value || "—"}</span>
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-8">
+    <div className="p-6 max-w-5xl mx-auto space-y-6">
       <h1 className="text-2xl font-semibold">Trade Overview</h1>
 
-      {/* INFO */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-1">
+      {/* DATA CARD */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-1">
         <Row label="Symbol" value={trade.symbol} />
         <Row label="Strategy" value={trade.strategy_type} />
         <Row label="Pattern" value={trade.pattern} />
@@ -74,9 +58,28 @@ export default function TradeView() {
       </div>
 
       {/* IMAGES */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 grid grid-cols-2 gap-8">
-        <ImageBlock label="Entry Image" src={trade.entryImage} />
-        <ImageBlock label="Review Image" src={trade.reviewImage} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {trade.entryImage?.url && (
+          <div>
+            <div className="text-sm text-zinc-400 mb-2">Entry Image</div>
+            <img
+              src={trade.entryImage.url}
+              className="rounded-lg border border-zinc-800 cursor-pointer hover:opacity-80"
+              onClick={() => setViewer(trade.entryImage.url)}
+            />
+          </div>
+        )}
+
+        {trade.reviewImage?.url && (
+          <div>
+            <div className="text-sm text-zinc-400 mb-2">Review Image</div>
+            <img
+              src={trade.reviewImage.url}
+              className="rounded-lg border border-zinc-800 cursor-pointer hover:opacity-80"
+              onClick={() => setViewer(trade.reviewImage.url)}
+            />
+          </div>
+        )}
       </div>
 
       {/* ACTIONS */}
@@ -96,6 +99,7 @@ export default function TradeView() {
         </button>
       </div>
 
+      {/* FULLSCREEN VIEWER */}
       {viewer && (
         <FullscreenViewer src={viewer} onClose={() => setViewer(null)} />
       )}
