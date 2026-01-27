@@ -29,8 +29,8 @@ export default function Navbar() {
           Import Trades
         </NavLink>
 
-        <NavLink to="/review" className={linkClass}>
-          Review Trades
+        <NavLink to="/trades" className={linkClass}>
+          Trades
         </NavLink>
 
         <NavLink to="/entries" className={linkClass}>

@@ -29,9 +29,11 @@ export default function App() {
           <Route path="edit/:id" element={<TradeWizard />} />
           <Route path="entries" element={<Entries />} />
           <Route path="concepts" element={<Concepts />} />
-          <Route path="review" element={<Review />} />
+          <Route path="review/:id" element={<Review />} />
           <Route path="import" element={<ImportTrades />} />
           <Route path="accounts" element={<Accounts />} />
+          <Route path="trades" element={<Trades />} />
+          <Route path="trades/:id" element={<Review />} />
         </Route>
       </Route>
 
