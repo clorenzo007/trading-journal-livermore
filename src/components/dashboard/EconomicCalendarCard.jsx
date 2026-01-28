@@ -1,49 +1,25 @@
 import { useState } from "react";
+import EconomicCalendarFullscreen from "./EconomicCalendarFullscreen";
 
 export default function EconomicCalendarCard() {
-  const [expanded, setExpanded] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col h-full">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-sm text-zinc-400">
-          Economic calendar (Today + Tomorrow)
-        </div>
-        <button
-          onClick={() => setExpanded((v) => !v)}
-          className="text-xs text-indigo-400 hover:underline"
-        >
-          {expanded ? "Hide" : "Show"}
-        </button>
+    <>
+      <div
+        onClick={() => setOpen(true)}
+        className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 cursor-pointer hover:border-indigo-500 transition"
+      >
+        <div className="text-sm text-zinc-400 mb-2">Economic Calendar</div>
+
+        <iframe
+          src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance&importance=1,2,3&features=datepicker&countries=25,32,5,72&calType=day&timeZone=12&lang=1"
+          className="w-full h-40 rounded"
+          title="Economic Calendar"
+        />
       </div>
 
-      {expanded && (
-        <div className="relative w-full h-[420px] overflow-hidden rounded-lg">
-          {/* Máscaras para recortar basura visual */}
-          <div className="pointer-events-none absolute inset-0 z-10">
-            {/* Header/banner superior */}
-            <div className="absolute top-0 left-0 right-0 h-12 bg-zinc-900" />
-            {/* Lateral izquierdo */}
-            <div className="absolute top-0 bottom-0 left-0 w-4 bg-zinc-900" />
-            {/* Lateral derecho */}
-            <div className="absolute top-0 bottom-0 right-0 w-4 bg-zinc-900" />
-            {/* Footer/banners inferiores */}
-            <div className="absolute bottom-0 left-0 right-0 h-10 bg-zinc-900" />
-          </div>
-
-          <iframe
-            src="https://www.investing.com/economic-calendar/"
-            title="Economic Calendar"
-            className="absolute inset-0 w-full h-full origin-top-left scale-[1.1]"
-            style={{
-              filter:
-                "invert(1) hue-rotate(180deg) brightness(0.92) contrast(1.12)",
-              border: "none",
-            }}
-          />
-        </div>
-      )}
-    </div>
+      {open && <EconomicCalendarFullscreen onClose={() => setOpen(false)} />}
+    </>
   );
 }
