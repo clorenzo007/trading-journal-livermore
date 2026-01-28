@@ -17,6 +17,7 @@ import DayDrawer from "../components/dashboard/DayDrawer";
 
 import { withSession } from "../utils/sessions";
 import LivermorePanel from "../components/wizard/LivermorePanel";
+import { exportTradesToExcel } from "../utils/exportTrades";
 
 export default function Dashboard() {
   const { activeAccount, loading: accountLoading } = useAccount();
@@ -63,9 +64,20 @@ export default function Dashboard() {
   if (loading || accountLoading) {
     return <div className="p-6 text-zinc-400">Loading dashboard...</div>;
   }
+  const handleExport = () => {
+    exportTradesToExcel(filtered);
+  };
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
+      <div className="flex justify-end">
+        <button
+          onClick={handleExport}
+          className="px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-500"
+        >
+          Export to Excel
+        </button>
+      </div>
       {/* Top row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <LocalTimeCard />
