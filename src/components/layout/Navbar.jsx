@@ -46,6 +46,14 @@ export default function Navbar() {
         </NavLink>
       </div>
 
+      {/* Habilita menu de admin de usuarios */}
+
+      {user?.role === "admin" && (
+        <NavLink to="/admin" className={linkClass}>
+          Admin
+        </NavLink>
+      )}
+
       <div className="flex items-center gap-3">
         {!loading && accounts.length > 0 && (
           <select
