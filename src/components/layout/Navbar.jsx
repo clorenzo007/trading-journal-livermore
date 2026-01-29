@@ -14,6 +14,7 @@ export default function Navbar() {
 
   return (
     <div className="h-14 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-4">
+      {/* LEFT */}
       <div className="flex items-center gap-4">
         <span className="font-semibold text-white">Trading Journal</span>
 
@@ -44,17 +45,18 @@ export default function Navbar() {
         <NavLink to="/accounts" className={linkClass}>
           Cuentas
         </NavLink>
+
+        {/* ADMIN */}
+        {user?.role === "admin" && (
+          <NavLink to="/admin" className={linkClass}>
+            Admin
+          </NavLink>
+        )}
       </div>
 
-      {/* Habilita menu de admin de usuarios */}
-
-      {user?.role === "admin" && (
-        <NavLink to="/admin" className={linkClass}>
-          Admin
-        </NavLink>
-      )}
-
+      {/* RIGHT */}
       <div className="flex items-center gap-3">
+        {/* ACCOUNT SELECTOR */}
         {!loading && accounts.length > 0 && (
           <select
             value={activeAccount?._id || ""}
@@ -72,6 +74,7 @@ export default function Navbar() {
         )}
 
         <span className="text-xs text-zinc-400">{user?.email}</span>
+
         <button
           onClick={() => {
             logout();
