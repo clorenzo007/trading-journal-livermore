@@ -27,26 +27,48 @@ export default function Dashboard() {
   const [session, setSession] = useState("All");
   const [selectedDay, setSelectedDay] = useState(null);
 
+  // ==========================
+  // LOAD TRADES
+  // ==========================
   useEffect(() => {
-    if (!activeAccount || accountLoading) return;
+    if (accountLoading) return;
+    if (!activeAccount?._id) {
+      setTrades([]);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
 
     async function load() {
       setLoading(true);
-      setTrades([]); // 🔹 Limpia inmediatamente al cambiar de cuenta
+      setTrades([]);
+      setSelectedDay(null);
 
       try {
         const data = await getTrades();
-        setTrades(withSession(data));
+
+        if (!cancelled) {
+          const safe = Array.isArray(data) ? data : [];
+          setTrades(withSession(safe));
+        }
       } catch (e) {
         console.error("Error loading trades", e);
+        if (!cancelled) setTrades([]);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     load();
-  }, [activeAccount, accountLoading]);
+    return () => {
+      cancelled = true;
+    };
+  }, [activeAccount?._id, accountLoading]);
 
+  // ==========================
+  // FILTERS
+  // ==========================
   const filtered = useMemo(() => {
     if (session === "All") return trades;
     return trades.filter((t) => t._session === session);
@@ -56,20 +78,26 @@ export default function Dashboard() {
     if (!selectedDay) return filtered;
 
     return filtered.filter((t) => {
+      if (!t.entry_date) return false;
       const d = new Date(t.entry_date).toISOString().slice(0, 10);
       return d === selectedDay;
     });
   }, [filtered, selectedDay]);
 
   if (loading || accountLoading) {
-    return <div className="p-6 text-zinc-400">Loading dashboard...</div>;
+    return <div className="p-6 text-zinc-400">Loading dashboard…</div>;
   }
+
   const handleExport = () => {
     exportTradesToExcel(filtered);
   };
 
+  // ==========================
+  // RENDER
+  // ==========================
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
+      {/* Export */}
       <div className="flex justify-end">
         <button
           onClick={handleExport}
@@ -78,28 +106,35 @@ export default function Dashboard() {
           Export to Excel
         </button>
       </div>
-      {/* Top row */}
+
+      {/* Top cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <LocalTimeCard />
         <MarketTimesCard />
         <EconomicCalendarCard />
       </div>
+
+      {/* Livermore */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
         <h2 className="text-2xl font-bold mb-4">Livermore Checklist</h2>
-        <LivermorePanel form={{}} />
+        <LivermorePanel form={filtered[0] || {}} />
       </div>
-      ;{/* Session filter */}
+
+      {/* Session filter */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
         <div className="text-sm text-zinc-400 mb-2">Filter by session</div>
         <SessionFilter value={session} onChange={setSession} />
       </div>
+
       {/* Charts */}
       <WinLossBar trades={filtered} />
       <WinLossPie trades={filtered} />
       <EquityCurve trades={filtered} />
+
       {/* Calendar + Heatmap */}
       <Calendar trades={filtered} onSelectDay={setSelectedDay} />
       <Heatmap trades={filtered} />
+
       {/* Selected day */}
       {selectedDay && (
         <div className="text-sm text-zinc-400">
@@ -112,8 +147,10 @@ export default function Dashboard() {
           </button>
         </div>
       )}
+
       {/* Table */}
       <TradesTable trades={dayFiltered} />
+
       {/* Drawer */}
       {selectedDay && (
         <DayDrawer
