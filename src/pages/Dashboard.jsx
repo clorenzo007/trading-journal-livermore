@@ -32,13 +32,12 @@ export default function Dashboard() {
   // ==========================
   useEffect(() => {
     if (accountLoading) return;
-    if (!activeAccount?._id) {
+
+    if (!activeAccount?.id) {
       setTrades([]);
       setLoading(false);
       return;
     }
-
-    let cancelled = false;
 
     async function load() {
       setLoading(true);
@@ -47,24 +46,17 @@ export default function Dashboard() {
 
       try {
         const data = await getTrades();
-
-        if (!cancelled) {
-          const safe = Array.isArray(data) ? data : [];
-          setTrades(withSession(safe));
-        }
+        setTrades(withSession(Array.isArray(data) ? data : []));
       } catch (e) {
         console.error("Error loading trades", e);
-        if (!cancelled) setTrades([]);
+        setTrades([]);
       } finally {
-        if (!cancelled) setLoading(false);
+        setLoading(false);
       }
     }
 
     load();
-    return () => {
-      cancelled = true;
-    };
-  }, [activeAccount?._id, accountLoading]);
+  }, [activeAccount?.id, accountLoading]);
 
   // ==========================
   // FILTERS
