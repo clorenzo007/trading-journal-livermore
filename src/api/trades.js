@@ -1,6 +1,15 @@
-import { api } from "./api";
+iimport { api } from "./api";
 
 const API_URL = import.meta.env.VITE_API_URL;
+
+// =======================
+// HELPERS
+// =======================
+
+function withAccount(data = {}) {
+  const accountId = localStorage.getItem("activeAccountId");
+  return { ...data, account: accountId };
+}
 
 // =======================
 // CRUD
@@ -17,14 +26,14 @@ export function getTradeById(id) {
 export function createTrade(data) {
   return api("/trades", {
     method: "POST",
-    body: JSON.stringify(data),
+    body: JSON.stringify(withAccount(data)), // 🔥 FIX
   });
 }
 
 export function updateTrade(id, data) {
   return api(`/trades/${id}`, {
     method: "PUT",
-    body: JSON.stringify(data),
+    body: JSON.stringify(withAccount(data)), // 🔥 FIX
   });
 }
 
@@ -41,12 +50,12 @@ export function deleteTrade(id) {
 export function reviewTrade(id, data) {
   return api(`/trades/${id}/review`, {
     method: "POST",
-    body: JSON.stringify(data),
+    body: JSON.stringify(withAccount(data)), // 🔥 FIX
   });
 }
 
 // =======================
-// UPLOADS (CON ACCOUNT ID)
+// UPLOADS
 // =======================
 
 function uploadWithProgress(url, file, onProgress) {
@@ -60,18 +69,12 @@ function uploadWithProgress(url, file, onProgress) {
     const token = localStorage.getItem("token");
     const accountId = localStorage.getItem("activeAccountId");
 
-    if (token) {
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-    }
-
-    if (accountId) {
-      xhr.setRequestHeader("x-account-id", accountId);
-    }
+    if (token) xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    if (accountId) xhr.setRequestHeader("x-account-id", accountId);
 
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable && onProgress) {
-        const percent = Math.round((e.loaded / e.total) * 100);
-        onProgress(percent);
+        onProgress(Math.round((e.loaded / e.total) * 100));
       }
     };
 
@@ -93,7 +96,7 @@ export function uploadEntryImage(tradeId, file, onProgress) {
   return uploadWithProgress(
     `${API_URL}/trades/${tradeId}/entry-image`,
     file,
-    onProgress,
+    onProgress
   );
 }
 
@@ -101,7 +104,7 @@ export function uploadReviewImage(tradeId, file, onProgress) {
   return uploadWithProgress(
     `${API_URL}/trades/${tradeId}/review-image`,
     file,
-    onProgress,
+    onProgress
   );
 }
 
@@ -110,15 +113,11 @@ export function uploadReviewImage(tradeId, file, onProgress) {
 // =======================
 
 export function deleteEntryImage(tradeId) {
-  return api(`/trades/${tradeId}/entry-image`, {
-    method: "DELETE",
-  });
+  return api(`/trades/${tradeId}/entry-image`, { method: "DELETE" });
 }
 
 export function deleteReviewImage(tradeId) {
-  return api(`/trades/${tradeId}/review-image`, {
-    method: "DELETE",
-  });
+  return api(`/trades/${tradeId}/review-image`, { method: "DELETE" });
 }
 
 // =======================
