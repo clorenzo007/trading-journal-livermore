@@ -19,7 +19,7 @@ export default function ImportTrades() {
 
   useEffect(() => {
     if (activeAccount) {
-      setSelectedAccountId(activeAccount.id);
+      setSelectedAccountId(activeAccount._id);
     }
   }, [activeAccount]);
 
@@ -98,7 +98,7 @@ export default function ImportTrades() {
           {accounts
             .filter((a) => a.status === "active")
             .map((a) => (
-              <option key={a.id} value={a.id}>
+              <option key={a._id} value={a._id}>
                 {a.name}
               </option>
             ))}

@@ -33,7 +33,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (accountLoading) return;
 
-    if (!activeAccount?.id) {
+    if (!activeAccount?._id) {
       setTrades([]);
       setLoading(false);
       return;
@@ -56,7 +56,7 @@ export default function Dashboard() {
     }
 
     load();
-  }, [activeAccount?.id, accountLoading]);
+  }, [activeAccount?._id, accountLoading]);
 
   // ==========================
   // FILTERS

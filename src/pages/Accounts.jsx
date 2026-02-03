@@ -22,7 +22,7 @@ export default function Accounts() {
   const [saving, setSaving] = useState(false);
 
   const startEdit = (acc) => {
-    setEditingId(acc.id);
+    setEditingId(acc._id);
     setForm({
       name: acc.name,
       provider: acc.provider,
@@ -44,12 +44,12 @@ export default function Accounts() {
       if (editingId) {
         const updated = await updateAccount(editingId, form);
         setAccounts((prev) =>
-          prev.map((a) => (a.id === updated.id ? updated : a)),
+          prev.map((a) => (a._id === updated._id ? updated : a)),
         );
       } else {
         const created = await createAccount(form);
         setAccounts((prev) => [...prev, created]);
-        changeAccount(created.id); // hacerla activa
+        changeAccount(created._id); // hacerla activa
       }
       reset();
     } catch (e) {
@@ -64,7 +64,7 @@ export default function Accounts() {
     try {
       const updated = await archiveAccount(id);
       setAccounts((prev) =>
-        prev.map((a) => (a.id === updated.id ? updated : a)),
+        prev.map((a) => (a._id === updated._id ? updated : a)),
       );
     } catch {
       alert("Error archivando cuenta");
@@ -156,13 +156,13 @@ export default function Accounts() {
       <div className="space-y-3">
         {accounts.map((a) => (
           <div
-            key={a.id}
+            key={a._id}
             className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex items-center justify-between"
           >
             <div>
               <div className="font-medium">
                 {a.name}{" "}
-                {activeAccount?.id === a.id && (
+                {activeAccount?._id === a._id && (
                   <span className="text-xs text-green-400">(activa)</span>
                 )}
               </div>
@@ -173,7 +173,7 @@ export default function Accounts() {
 
             <div className="flex gap-2">
               <button
-                onClick={() => changeAccount(a.id)}
+                onClick={() => changeAccount(a._id)}
                 className="px-3 py-1 text-xs bg-zinc-700 rounded"
               >
                 Activar
@@ -186,7 +186,7 @@ export default function Accounts() {
               </button>
               {a.status === "active" && (
                 <button
-                  onClick={() => archive(a.id)}
+                  onClick={() => archive(a._id)}
                   className="px-3 py-1 text-xs bg-red-700 rounded"
                 >
                   Archivar

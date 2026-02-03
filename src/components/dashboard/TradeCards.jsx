@@ -3,7 +3,7 @@ export default function TradeCards({ trades, onSelect }) {
     <div className="space-y-3">
       {trades.map((t) => (
         <div
-          key={t.id}
+          key={t._id}
           onClick={() => onSelect(t)}
           className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-2 cursor-pointer hover:bg-zinc-800/40"
         >
