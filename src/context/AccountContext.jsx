@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getAccounts, activateAccount } from "../services/account";
+import { getAccounts, activateAccount } from "../services/accounts";
 import { useAuth } from "./AuthContext";
 
 const AccountContext = createContext();
@@ -11,16 +11,36 @@ export const AccountProvider = ({ children }) => {
   const [activeAccount, setActiveAccount] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔄 Cargar cuentas desde backend
-  const refreshAccounts = async () => {
-    const list = await getAccounts();
-    setAccounts(list);
-
-    const active = list.find((a) => a.status === "active") || null;
-    setActiveAccount(active);
+  // ✅ Soporta api() devolviendo: []  |  {data:[]}  | {accounts:[]}  | etc
+  const normalizeList = (res) => {
+    if (Array.isArray(res)) return res;
+    if (Array.isArray(res?.data)) return res.data;
+    if (Array.isArray(res?.accounts)) return res.accounts;
+    if (Array.isArray(res?.result)) return res.result;
+    return [];
   };
 
-  // 🔥 Solo se ejecuta cuando hay sesión
+  const refreshAccounts = async () => {
+    const res = await getAccounts();
+    const list = normalizeList(res);
+
+    setAccounts(list);
+
+    const activeFromDb = list.find((a) => a?.status === "active") || null;
+
+    const savedId = localStorage.getItem("activeAccountId");
+    const savedMatch = savedId
+      ? list.find((a) => a?._id === savedId) || null
+      : null;
+
+    const chosen = activeFromDb || savedMatch || null;
+
+    setActiveAccount(chosen);
+
+    if (chosen?._id) localStorage.setItem("activeAccountId", chosen._id);
+    else localStorage.removeItem("activeAccountId");
+  };
+
   useEffect(() => {
     if (authLoading) return;
 
@@ -31,15 +51,21 @@ export const AccountProvider = ({ children }) => {
       return;
     }
 
-    refreshAccounts().finally(() => setLoading(false));
+    setLoading(true);
+    refreshAccounts()
+    console.log("ACCOUNTS RAW:", res);
+console.log("ACCOUNTS LIST:", list);
+console.log("ACTIVE PICK:", activeFromDb);
+
+      .catch((err) => console.error("REFRESH ACCOUNTS ERROR:", err))
+      .finally(() => setLoading(false));
   }, [token, authLoading]);
 
-  // 🔥 Activar cuenta REAL (backend)
   const changeAccount = async (id) => {
     try {
       setLoading(true);
-      await activateAccount(id); // backend decide
-      await refreshAccounts(); // frontend sincroniza
+      await activateAccount(id); // 🔥 backend decide la activa real
+      await refreshAccounts(); // 🔄 sincroniza UI con DB
     } catch (err) {
       console.error("ACTIVATE ACCOUNT ERROR:", err);
     } finally {

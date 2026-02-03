@@ -33,11 +33,15 @@ export default function Dashboard() {
   useEffect(() => {
     if (accountLoading) return;
 
+    // 🔥 Sin cuenta activa real: no cargues trades, no quedes "loading"
     if (!activeAccount?._id) {
       setTrades([]);
+      setSelectedDay(null);
       setLoading(false);
       return;
     }
+
+    let cancelled = false;
 
     async function load() {
       setLoading(true);
@@ -45,17 +49,23 @@ export default function Dashboard() {
       setSelectedDay(null);
 
       try {
-        const data = await getTrades();
+        const data = await getTrades(); // backend decide active account
+        if (cancelled) return;
         setTrades(withSession(Array.isArray(data) ? data : []));
       } catch (e) {
         console.error("Error loading trades", e);
+        if (cancelled) return;
         setTrades([]);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     load();
+
+    return () => {
+      cancelled = true;
+    };
   }, [activeAccount?._id, accountLoading]);
 
   // ==========================
@@ -76,8 +86,34 @@ export default function Dashboard() {
     });
   }, [filtered, selectedDay]);
 
-  if (loading || accountLoading) {
+  // ==========================
+  // STATES
+  // ==========================
+  if (accountLoading || loading) {
     return <div className="p-6 text-zinc-400">Loading dashboard…</div>;
+  }
+
+  // 🔥 Estado vacío: no hay cuenta activa real (en DB)
+  if (!activeAccount?._id) {
+    return (
+      <div className="p-6 max-w-2xl mx-auto">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <h2 className="text-xl font-bold text-white mb-2">
+            No hay una cuenta activa
+          </h2>
+          <p className="text-sm text-zinc-400 mb-4">
+            Activá una cuenta desde <b>Cuentas</b> para poder ver el dashboard y
+            cargar trades.
+          </p>
+          <a
+            href="/accounts"
+            className="inline-block px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
+          >
+            Ir a Cuentas
+          </a>
+        </div>
+      </div>
+    );
   }
 
   const handleExport = () => {
