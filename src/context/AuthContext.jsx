@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
 
 const AuthContext = createContext(null);
 
@@ -7,18 +8,28 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 🔥 Auto-login
   useEffect(() => {
-    // Auto-login desde localStorage
     const savedToken = localStorage.getItem("token");
     const savedUser = localStorage.getItem("user");
 
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
+      axios.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
     }
 
     setLoading(false);
   }, []);
+
+  // 🔥 Conectar token con requests SIEMPRE
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+    }
+  }, [token]);
 
   const login = (userData, tokenData) => {
     setUser(userData);
@@ -32,6 +43,11 @@ export function AuthProvider({ children }) {
     setToken(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("activeAccountId"); // 💥 FIX CRÍTICO
+    delete axios.defaults.headers.common["Authorization"];
+
+    // 🔥 Reset total de contextos
+    window.location.href = "/login";
   };
 
   return (

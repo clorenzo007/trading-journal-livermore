@@ -11,10 +11,12 @@ export const AccountProvider = ({ children }) => {
   const [activeAccount, setActiveAccount] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 SOLO CARGA CUENTAS CUANDO YA EXISTE TOKEN
   useEffect(() => {
     if (authLoading) return;
+
     if (!token) {
+      setAccounts([]);
+      setActiveAccount(null);
       setLoading(false);
       return;
     }
@@ -22,7 +24,6 @@ export const AccountProvider = ({ children }) => {
     async function init() {
       try {
         setLoading(true);
-
         const list = await getAccounts();
         setAccounts(list);
 
@@ -33,10 +34,14 @@ export const AccountProvider = ({ children }) => {
           list.find((a) => a.status === "active") ||
           null;
 
-        if (selected) {
-          setActiveAccount(selected);
-          localStorage.setItem("activeAccountId", selected._id);
+        if (!selected) {
+          setActiveAccount(null);
+          localStorage.removeItem("activeAccountId"); // 💥 limpia basura vieja
+          return;
         }
+
+        setActiveAccount(selected);
+        localStorage.setItem("activeAccountId", selected._id);
       } catch (err) {
         console.error("INIT ACCOUNTS ERROR:", err);
       } finally {
