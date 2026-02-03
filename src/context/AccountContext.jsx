@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getAccounts } from "../services/accounts";
+import { getAccounts, activateAccount } from "../services/account";
 import { useAuth } from "./AuthContext";
 
 const AccountContext = createContext();
@@ -11,6 +11,16 @@ export const AccountProvider = ({ children }) => {
   const [activeAccount, setActiveAccount] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 🔄 Cargar cuentas desde backend
+  const refreshAccounts = async () => {
+    const list = await getAccounts();
+    setAccounts(list);
+
+    const active = list.find((a) => a.status === "active") || null;
+    setActiveAccount(active);
+  };
+
+  // 🔥 Solo se ejecuta cuando hay sesión
   useEffect(() => {
     if (authLoading) return;
 
@@ -21,42 +31,20 @@ export const AccountProvider = ({ children }) => {
       return;
     }
 
-    async function init() {
-      try {
-        setLoading(true);
-        const list = await getAccounts();
-        setAccounts(list);
-
-        const saved = localStorage.getItem("activeAccountId");
-
-        const selected =
-          list.find((a) => a._id === saved && a.status === "active") ||
-          list.find((a) => a.status === "active") ||
-          null;
-
-        if (!selected) {
-          setActiveAccount(null);
-          localStorage.removeItem("activeAccountId"); // 💥 limpia basura vieja
-          return;
-        }
-
-        setActiveAccount(selected);
-        localStorage.setItem("activeAccountId", selected._id);
-      } catch (err) {
-        console.error("INIT ACCOUNTS ERROR:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    init();
+    refreshAccounts().finally(() => setLoading(false));
   }, [token, authLoading]);
 
-  const changeAccount = (id) => {
-    const acc = accounts.find((a) => a._id === id);
-    if (!acc) return;
-    setActiveAccount(acc);
-    localStorage.setItem("activeAccountId", acc._id);
+  // 🔥 Activar cuenta REAL (backend)
+  const changeAccount = async (id) => {
+    try {
+      setLoading(true);
+      await activateAccount(id); // backend decide
+      await refreshAccounts(); // frontend sincroniza
+    } catch (err) {
+      console.error("ACTIVATE ACCOUNT ERROR:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,7 +52,6 @@ export const AccountProvider = ({ children }) => {
       value={{
         accounts,
         activeAccount,
-        setAccounts,
         changeAccount,
         loading,
       }}
