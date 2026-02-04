@@ -7,42 +7,56 @@ export default function StepRisk({
   onBack,
   onCancel,
 }) {
-  const isValid =
-    trade.stop_loss !== "" &&
-    trade.stop_loss !== null &&
-    trade.risk_percent !== "" &&
-    trade.risk_percent !== null;
+  const stopLoss = Number(trade.stop_loss);
+  const risk = Number(trade.risk_percent);
+
+  const errors = [];
+
+  if (!stopLoss || stopLoss <= 0) {
+    errors.push("Stop loss must be a number greater than 0.");
+  }
+
+  if (!risk || risk <= 0 || risk > 100) {
+    errors.push("Risk % must be between 0 and 100.");
+  }
+
+  const isValid = errors.length === 0;
 
   return (
     <WizardCard title="Risk management" onCancel={onCancel}>
       <div className="space-y-4">
+        {/* STOP LOSS */}
         <div>
           <label className="block text-sm text-zinc-400 mb-1">Stop loss</label>
           <input
             type="number"
             step="any"
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
-            value={trade.stop_loss || ""}
+            value={trade.stop_loss ?? ""}
             onChange={(e) => setTrade({ stop_loss: e.target.value })}
-            placeholder="0.00"
+            placeholder="Price level"
           />
         </div>
 
+        {/* RISK % */}
         <div>
           <label className="block text-sm text-zinc-400 mb-1">Risk %</label>
           <input
             type="number"
             step="any"
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
-            value={trade.risk_percent || ""}
+            value={trade.risk_percent ?? ""}
             onChange={(e) => setTrade({ risk_percent: e.target.value })}
-            placeholder="1.00"
+            placeholder="1.0"
           />
         </div>
 
+        {/* ERRORS */}
         {!isValid && (
-          <div className="text-sm text-red-400">
-            Stop loss and risk percentage are required.
+          <div className="bg-red-900/20 border border-red-800 text-red-300 text-sm rounded p-3 space-y-1">
+            {errors.map((e, i) => (
+              <div key={i}>• {e}</div>
+            ))}
           </div>
         )}
       </div>

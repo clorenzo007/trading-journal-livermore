@@ -9,39 +9,34 @@ export default function StepConfirm({ trade, onNext, onBack }) {
   }
 
   // ======================
-  // DERIVED METRICS
+  // VALIDATIONS
   // ======================
-  const entry = Number(trade.entry_price);
-  const exit = Number(trade.exit_price);
-  const stop = Number(trade.stop_loss);
-  const size = Number(trade.position_size);
-  const pl = Number(trade.profit_loss);
-
-  let risk = null;
-  let rr = null;
-
-  if (!Number.isNaN(entry) && !Number.isNaN(stop) && !Number.isNaN(size)) {
-    risk = Math.abs(entry - stop) * size;
-  }
-
-  if (risk && !Number.isNaN(pl)) {
-    rr = (Math.abs(pl) / risk).toFixed(2);
-  }
-
-  // ======================
-  // SANITY CHECKS
-  // ======================
+  const errors = [];
   const warnings = [];
-  let blockingError = null;
 
+  // 🔴 REQUIRED FIELDS
+  if (!trade.symbol) errors.push("Symbol is required.");
+  if (!trade.strategy_type) errors.push("Strategy is required.");
+  if (!trade.pattern) errors.push("Pattern is required.");
+  if (!trade.entry_date) errors.push("Entry date is required.");
+  if (!trade.entry_price) errors.push("Entry price is required.");
+  if (!trade.position_size) errors.push("Position size is required.");
+  if (!trade.stop_loss) errors.push("Stop loss is required.");
+  if (!trade.risk_percent) errors.push("Risk % is required.");
+  if (!trade.emotional_state_pre)
+    errors.push("Emotional state (before) is required.");
+  if (!trade.reason_for_entry) errors.push("Reason for entry is required.");
+
+  // 🔴 LOGIC VALIDATION
   if (trade.exit_date && !trade.exit_price) {
-    blockingError = "Exit price is required when exit date is set.";
+    errors.push("Exit price is required when exit date is set.");
   }
 
   if (trade.exit_price && !trade.outcome) {
-    blockingError = "Outcome is required when exit price is set.";
+    errors.push("Outcome is required when exit price is set.");
   }
 
+  // 🟡 WARNINGS (NON BLOCKING)
   if (trade.exit_price && !trade.profit_loss) {
     warnings.push("Profit / Loss is empty for a closed trade.");
   }
@@ -54,24 +49,7 @@ export default function StepConfirm({ trade, onNext, onBack }) {
     warnings.push("No review image attached.");
   }
 
-  const canConfirm = !blockingError;
-
-  // ======================
-  // OUTCOME BADGE
-  // ======================
-  const outcomeBadge = trade.outcome && (
-    <span
-      className={`px-2 py-0.5 rounded text-xs font-medium ${
-        trade.outcome === "Win"
-          ? "bg-emerald-600/20 text-emerald-400"
-          : trade.outcome === "Loss"
-            ? "bg-red-600/20 text-red-400"
-            : "bg-zinc-600/20 text-zinc-300"
-      }`}
-    >
-      {trade.outcome}
-    </span>
-  );
+  const canConfirm = errors.length === 0;
 
   return (
     <div className="space-y-6">
@@ -83,18 +61,23 @@ export default function StepConfirm({ trade, onNext, onBack }) {
         <Row label="Pattern" value={trade.pattern} />
         <Row label="Entry date" value={trade.entry_date} />
         <Row label="Entry price" value={trade.entry_price} />
-        <Row label="Stop loss" value={trade.stop_loss} />
         <Row label="Position size" value={trade.position_size} />
+        <Row label="Stop loss" value={trade.stop_loss} />
+        <Row label="Risk %" value={trade.risk_percent} />
         <Row label="Exit date" value={trade.exit_date} />
         <Row label="Exit price" value={trade.exit_price} />
-        <Row label="Profit / Loss" value={trade.profit_loss} />
-        <Row label="Risk (R)" value={risk ? risk.toFixed(2) : "—"} />
-        <Row label="RR" value={rr ? rr : "—"} />
-        <div className="flex justify-between border-b border-zinc-800 py-1">
-          <span className="text-zinc-400">Outcome</span>
-          {outcomeBadge || <span className="text-zinc-500">—</span>}
-        </div>
+        <Row label="P/L" value={trade.profit_loss} />
+        <Row label="Outcome" value={trade.outcome} />
       </div>
+
+      {/* ERRORS */}
+      {errors.length > 0 && (
+        <div className="bg-red-900/30 border border-red-800 text-red-300 text-sm rounded p-3 space-y-1">
+          {errors.map((e, i) => (
+            <div key={i}>❌ {e}</div>
+          ))}
+        </div>
+      )}
 
       {/* WARNINGS */}
       {warnings.length > 0 && (
@@ -102,13 +85,6 @@ export default function StepConfirm({ trade, onNext, onBack }) {
           {warnings.map((w, i) => (
             <div key={i}>⚠ {w}</div>
           ))}
-        </div>
-      )}
-
-      {/* BLOCKING ERROR */}
-      {blockingError && (
-        <div className="bg-red-900/30 border border-red-800 text-red-300 text-sm rounded p-3">
-          {blockingError}
         </div>
       )}
 
@@ -153,3 +129,4 @@ export default function StepConfirm({ trade, onNext, onBack }) {
     </div>
   );
 }
+j;
