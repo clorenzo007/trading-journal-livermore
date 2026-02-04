@@ -99,7 +99,7 @@ export default function TradeWizard() {
       } else {
         await createTrade(payload);
       }
-      console.log("TRADE PAYLOAD:", tradeData);
+      console.log("TRADE PAYLOAD:", payload);
 
       navigate("/dashboard");
     } catch {

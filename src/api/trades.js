@@ -20,12 +20,15 @@ export function getTrades() {
 }
 
 export function getTradeById(id) {
+
   return api(`/trades/${id}`);
 }
 
 export function createTrade(data) {
   return api("/trades", {
     method: "POST",
+    console.log("TRADE PAYLOAD:", data);
+
     body: JSON.stringify(withAccount(data)), // 🔥 FIX
   });
 }
