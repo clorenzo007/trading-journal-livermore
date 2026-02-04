@@ -14,30 +14,45 @@ export default function StepConfirm({ trade, onNext, onBack }) {
   const errors = [];
   const warnings = [];
 
-  // 🔴 REQUIRED FIELDS
-  if (!trade.symbol) errors.push("Symbol is required.");
-  if (!trade.strategy_type) errors.push("Strategy is required.");
-  if (!trade.pattern) errors.push("Pattern is required.");
-  if (!trade.entry_date) errors.push("Entry date is required.");
-  if (!trade.entry_price) errors.push("Entry price is required.");
-  if (!trade.position_size) errors.push("Position size is required.");
-  if (!trade.stop_loss) errors.push("Stop loss is required.");
-  if (!trade.risk_percent) errors.push("Risk % is required.");
-  if (!trade.emotional_state_pre)
-    errors.push("Emotional state (before) is required.");
-  if (!trade.reason_for_entry) errors.push("Reason for entry is required.");
+  const num = (v) => (v === "" || v === null ? null : Number(v));
 
-  // 🔴 LOGIC VALIDATION
-  if (trade.exit_date && !trade.exit_price) {
+  // 🔴 REQUIRED TEXT FIELDS
+  if (!trade.symbol?.trim()) errors.push("Symbol is required.");
+  if (!trade.strategy_type?.trim()) errors.push("Strategy is required.");
+  if (!trade.pattern?.trim()) errors.push("Pattern is required.");
+  if (!trade.emotional_state_pre?.trim())
+    errors.push("Emotional state (before) is required.");
+  if (!trade.reason_for_entry?.trim())
+    errors.push("Reason for entry is required.");
+
+  // 🔴 REQUIRED NUMERIC FIELDS
+  if (!trade.entry_date) errors.push("Entry date is required.");
+  if (num(trade.entry_price) === null || num(trade.entry_price) <= 0)
+    errors.push("Entry price must be greater than 0.");
+  if (num(trade.position_size) === null || num(trade.position_size) <= 0)
+    errors.push("Position size must be greater than 0.");
+  if (num(trade.stop_loss) === null) errors.push("Stop loss is required.");
+  if (num(trade.risk_percent) === null) errors.push("Risk % is required.");
+
+  // 🔴 EXIT LOGIC
+  if (trade.exit_date && num(trade.exit_price) === null) {
     errors.push("Exit price is required when exit date is set.");
   }
 
-  if (trade.exit_price && !trade.outcome) {
+  if (num(trade.exit_price) !== null && !trade.outcome) {
     errors.push("Outcome is required when exit price is set.");
   }
 
+  if (
+    trade.exit_date &&
+    trade.entry_date &&
+    new Date(trade.exit_date) < new Date(trade.entry_date)
+  ) {
+    errors.push("Exit date cannot be before entry date.");
+  }
+
   // 🟡 WARNINGS (NON BLOCKING)
-  if (trade.exit_price && !trade.profit_loss) {
+  if (num(trade.exit_price) !== null && num(trade.profit_loss) === null) {
     warnings.push("Profit / Loss is empty for a closed trade.");
   }
 
@@ -129,4 +144,3 @@ export default function StepConfirm({ trade, onNext, onBack }) {
     </div>
   );
 }
-j;
