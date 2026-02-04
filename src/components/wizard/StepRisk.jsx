@@ -7,6 +7,12 @@ export default function StepRisk({
   onBack,
   onCancel,
 }) {
+  const isValid =
+    trade.stop_loss !== "" &&
+    trade.stop_loss !== null &&
+    trade.risk_percent !== "" &&
+    trade.risk_percent !== null;
+
   return (
     <WizardCard title="Risk management" onCancel={onCancel}>
       <div className="space-y-4">
@@ -33,6 +39,12 @@ export default function StepRisk({
             placeholder="1.00"
           />
         </div>
+
+        {!isValid && (
+          <div className="text-sm text-red-400">
+            Stop loss and risk percentage are required.
+          </div>
+        )}
       </div>
 
       <div className="flex justify-between pt-6">
@@ -45,7 +57,12 @@ export default function StepRisk({
 
         <button
           onClick={onNext}
-          className="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-medium"
+          disabled={!isValid}
+          className={`px-5 py-2 rounded-lg font-medium transition ${
+            isValid
+              ? "bg-indigo-600 hover:bg-indigo-500"
+              : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
+          }`}
         >
           Next
         </button>

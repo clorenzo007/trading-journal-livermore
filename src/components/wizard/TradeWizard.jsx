@@ -68,6 +68,40 @@ export default function TradeWizard() {
   }, [id]);
 
   // ======================
+  // VALIDATION
+  // ======================
+  const validateTrade = () => {
+    const required = [
+      ["symbol", "Symbol"],
+      ["strategy_type", "Strategy"],
+      ["pattern", "Pattern"],
+      ["entry_date", "Entry date"],
+      ["entry_price", "Entry price"],
+      ["position_size", "Position size"],
+      ["stop_loss", "Stop loss"],
+      ["risk_percent", "Risk percent"],
+      ["emotional_state_pre", "Emotional state (pre)"],
+      ["reason_for_entry", "Reason for entry"],
+    ];
+
+    for (const [key, label] of required) {
+      if (!trade[key] && trade[key] !== 0) {
+        return `Missing required field: ${label}`;
+      }
+    }
+
+    if (trade.exit_date && !trade.exit_price) {
+      return "Exit price is required when exit date is set";
+    }
+
+    if (trade.exit_price && !trade.outcome) {
+      return "Outcome is required when exit price is set";
+    }
+
+    return null;
+  };
+
+  // ======================
   // NAV
   // ======================
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
@@ -80,6 +114,12 @@ export default function TradeWizard() {
   // SAVE (ONLY HERE)
   // ======================
   async function saveTrade() {
+    const validationError = validateTrade();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     try {
       setSaving(true);
       setError(null);
@@ -99,10 +139,9 @@ export default function TradeWizard() {
       } else {
         await createTrade(payload);
       }
-      console.log("TRADE PAYLOAD:", payload);
 
       navigate("/dashboard");
-    } catch {
+    } catch (err) {
       setError("Failed to save trade");
     } finally {
       setSaving(false);

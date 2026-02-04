@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import WizardCard from "./WizardCard";
 
 export default function StepEntry({
@@ -7,6 +8,22 @@ export default function StepEntry({
   onBack,
   onCancel,
 }) {
+  // 🔥 Default: fecha y hora actual (solo si está vacío)
+  useEffect(() => {
+    if (!trade.entry_date) {
+      setTrade({
+        entry_date: new Date().toISOString().slice(0, 16),
+      });
+    }
+  }, [trade.entry_date, setTrade]);
+
+  const isValid =
+    trade.entry_date &&
+    trade.entry_price !== "" &&
+    trade.entry_price !== null &&
+    trade.position_size !== "" &&
+    trade.position_size !== null;
+
   return (
     <WizardCard title="Entry" onCancel={onCancel}>
       <div className="space-y-4">
@@ -47,6 +64,12 @@ export default function StepEntry({
             placeholder="0.01"
           />
         </div>
+
+        {!isValid && (
+          <div className="text-sm text-red-400">
+            Entry date, price and position size are required.
+          </div>
+        )}
       </div>
 
       <div className="flex justify-between pt-6">
@@ -59,7 +82,12 @@ export default function StepEntry({
 
         <button
           onClick={onNext}
-          className="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-medium"
+          disabled={!isValid}
+          className={`px-5 py-2 rounded-lg font-medium transition ${
+            isValid
+              ? "bg-indigo-600 hover:bg-indigo-500"
+              : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
+          }`}
         >
           Next
         </button>

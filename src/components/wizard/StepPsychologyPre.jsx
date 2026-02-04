@@ -17,6 +17,9 @@ export default function StepPsychologyPre({
     "Revenge mode",
   ];
 
+  const isValid =
+    trade.emotional_state_pre?.trim() && trade.reason_for_entry?.trim();
+
   return (
     <WizardCard title="Psychology (Before)" onCancel={onCancel}>
       <div className="space-y-4">
@@ -50,6 +53,12 @@ export default function StepPsychologyPre({
             placeholder="Why did you take this trade?"
           />
         </div>
+
+        {!isValid && (
+          <div className="text-sm text-red-400">
+            Emotional state and reason for entry are required.
+          </div>
+        )}
       </div>
 
       <div className="flex justify-between pt-6">
@@ -62,7 +71,12 @@ export default function StepPsychologyPre({
 
         <button
           onClick={onNext}
-          className="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-medium"
+          disabled={!isValid}
+          className={`px-5 py-2 rounded-lg font-medium transition ${
+            isValid
+              ? "bg-indigo-600 hover:bg-indigo-500"
+              : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
+          }`}
         >
           Next
         </button>
