@@ -7,7 +7,7 @@ export default function StepIdentity({ trade, setTrade, onNext, onCancel }) {
     trade.pattern?.trim();
 
   return (
-    <WizardCard title="Trade identity" onCancel={onCancel}>
+    <WizardCard title="Trade identity (v2)" onCancel={onCancel}>
       <div className="space-y-4">
         <div>
           <label className="block text-sm text-zinc-400 mb-1">Symbol</label>
