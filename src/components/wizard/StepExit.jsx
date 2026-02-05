@@ -18,13 +18,13 @@ export default function StepExit({
   const exitPrice = Number(trade.exit_price);
   const profit = trade.profit_loss !== "" ? Number(trade.profit_loss) : null;
 
-  // 🔥 Si hay exit price y no hay fecha → setear AHORA local
+  // 🔥 Default exit date on mount if empty
   useEffect(() => {
-    if (exitPrice > 0 && !trade.exit_date) {
+    if (!trade.exit_date) {
       setTrade({ exit_date: nowLocalDatetime() });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exitPrice]);
+  }, []);
 
   const errors = [];
 
