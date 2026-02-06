@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { createTrade, getTradeById, updateTrade } from "../../api/trades";
+import {
+  createTrade,
+  getTradeById,
+  updateTrade,
+  uploadEntryImage,
+  uploadReviewImage,
+} from "../../api/trades";
 
 import StepIdentity from "./StepIdentity";
 import StepEntry from "./StepEntry";
@@ -141,18 +147,33 @@ export default function TradeWizard() {
         position_size: Number(trade.position_size),
         stop_loss: Number(trade.stop_loss),
         risk_percent: Number(trade.risk_percent),
+        exit_date: trade.exit_date || undefined, // ✅ FIX: Avoid empty string for Date
         exit_price: trade.exit_price ? Number(trade.exit_price) : undefined,
         profit_loss: trade.profit_loss ? Number(trade.profit_loss) : undefined,
+        outcome: trade.outcome || undefined, // ✅ FIX: Avoid empty string for Enum
       };
 
+      let savedTrade;
       if (isEdit) {
-        await updateTrade(trade._id, payload);
+        savedTrade = await updateTrade(trade._id, payload);
       } else {
-        await createTrade(payload);
+        savedTrade = await createTrade(payload);
+      }
+
+      // ==========================
+      // HANDLE DEFERRED UPLOADS
+      // ==========================
+      if (trade._entryImageFile) {
+        await uploadEntryImage(savedTrade._id, trade._entryImageFile);
+      }
+
+      if (trade._reviewImageFile) {
+        await uploadReviewImage(savedTrade._id, trade._reviewImageFile);
       }
 
       navigate("/dashboard");
     } catch (err) {
+      console.error(err);
       setError("Failed to save trade");
     } finally {
       setSaving(false);

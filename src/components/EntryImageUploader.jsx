@@ -1,12 +1,22 @@
-import { uploadEntryImage } from "../api/trades";
-
 export default function EntryImageUploader({ trade, setTrade }) {
   async function onUpload(e) {
     const file = e.target.files?.[0];
-    if (!file || !trade._id) return;
+    if (!file) return;
 
-    const updated = await uploadEntryImage(trade._id, file);
-    setTrade(updated);
+    // 1. IF TRADE EXISTS (EDIT MODE), UPLOAD IMMEDIATELY
+    if (trade._id) {
+      const updated = await uploadEntryImage(trade._id, file);
+      setTrade(updated);
+      return;
+    }
+
+    // 2. IF NEW TRADE, DEFER UPLOAD
+    const url = URL.createObjectURL(file);
+    // FIX: 'setTrade' is actually the 'update' function from TradeWizard which expects an object, not a function
+    setTrade({
+      entryImage: { url }, // For preview
+      _entryImageFile: file, // For deferred upload
+    });
   }
 
   return (

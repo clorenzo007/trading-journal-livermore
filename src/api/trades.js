@@ -1,4 +1,4 @@
-iimport { api } from "./api";
+import { api } from "./api";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -25,10 +25,9 @@ export function getTradeById(id) {
 }
 
 export function createTrade(data) {
+  console.log("TRADE PAYLOAD:", data);
   return api("/trades", {
     method: "POST",
-    console.log("TRADE PAYLOAD:", data);
-
     body: JSON.stringify(withAccount(data)), // 🔥 FIX
   });
 }

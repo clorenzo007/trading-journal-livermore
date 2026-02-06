@@ -18,9 +18,7 @@ export default function StepEntry({
   // 🔥 Setear fecha/hora actual SOLO al montar
   useEffect(() => {
     if (!trade.entry_date) {
-      const now = nowLocalDatetime();
-      console.log("StepEntry: Setting default date", now);
-      setTrade({ entry_date: now });
+      setTrade({ entry_date: nowLocalDatetime() });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

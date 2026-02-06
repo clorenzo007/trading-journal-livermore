@@ -42,7 +42,7 @@ export default function FullscreenViewer({ src, onClose }) {
           transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
           cursor: dragging ? "grabbing" : "grab",
         }}
-        className="max-w-none max-h-none select-none"
+        className="max-w-[90vw] max-h-[90vh] select-none object-contain transition-transform"
         draggable={false}
       />
     </div>

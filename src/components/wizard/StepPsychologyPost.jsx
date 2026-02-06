@@ -65,3 +65,27 @@ export default function StepPsychologyPost({
             value={trade.review_notes || ""}
             onChange={(e) =>
               setTrade({ review_notes: e.target.value })
+            }
+            placeholder="Any other thoughts?"
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-between pt-6">
+        <button
+          onClick={onBack}
+          className="px-5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700"
+        >
+          Back
+        </button>
+
+        <button
+          onClick={onNext}
+          className="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-medium transition"
+        >
+          Next
+        </button>
+      </div>
+    </WizardCard>
+  );
+}

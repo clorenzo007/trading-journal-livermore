@@ -64,7 +64,7 @@ export default function Review() {
             <div className="text-sm text-zinc-400 mb-2">Entry Image</div>
             <img
               src={trade.entryImage.url}
-              className="rounded-lg border border-zinc-800 cursor-pointer hover:opacity-80"
+              className="rounded-lg border border-zinc-800 cursor-zoom-in hover:opacity-80 transition-opacity"
               onClick={() => setViewer(trade.entryImage.url)}
             />
           </div>
