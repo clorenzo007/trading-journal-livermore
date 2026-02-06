@@ -5,9 +5,17 @@ export const getSetups = async () => {
 };
 
 export const createSetup = async (data) => {
+  const isFormData = data instanceof FormData;
   return await api("/setups", {
     method: "POST",
-    body: JSON.stringify(data),
+    body: isFormData ? data : JSON.stringify(data),
+  });
+};
+
+export const updateSetupsOrder = async (orders) => {
+  return await api("/setups/order", {
+    method: "PUT",
+    body: JSON.stringify({ orders }),
   });
 };
 

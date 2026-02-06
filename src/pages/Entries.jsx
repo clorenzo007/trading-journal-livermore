@@ -5,6 +5,7 @@ import {
   updateSetup,
   deleteSetup,
   uploadSetupImage,
+  updateSetupsOrder,
 } from "../api/setups";
 import FullscreenViewer from "../components/FullscreenViewer";
 
@@ -51,6 +52,23 @@ export default function Entries() {
     }
   };
 
+  const moveSetup = async (idx, direction) => {
+    const newSetups = [...setups];
+    const targetIdx = idx + direction;
+    if (targetIdx < 0 || targetIdx >= newSetups.length) return;
+
+    [newSetups[idx], newSetups[targetIdx]] = [newSetups[targetIdx], newSetups[idx]];
+    setSetups(newSetups);
+
+    try {
+      const orders = newSetups.map((s, i) => ({ id: s._id, order: i }));
+      await updateSetupsOrder(orders);
+    } catch (err) {
+      console.error(err);
+      load();
+    }
+  };
+
   const bullishSetups = setups.filter((s) => s.type === "Bullish");
   const bearishSetups = setups.filter((s) => s.type === "Bearish");
 
@@ -88,6 +106,7 @@ export default function Entries() {
                   <SetupCard
                     key={s._id}
                     setup={s}
+                    onMove={(dir) => moveSetup(setups.indexOf(s), dir)}
                     onEdit={() => openEdit(s)}
                     onDelete={() => handleDelete(s._id)}
                     onView={(url) => setViewer(url)}
@@ -107,6 +126,7 @@ export default function Entries() {
                   <SetupCard
                     key={s._id}
                     setup={s}
+                    onMove={(dir) => moveSetup(setups.indexOf(s), dir)}
                     onEdit={() => openEdit(s)}
                     onDelete={() => handleDelete(s._id)}
                     onView={(url) => setViewer(url)}
@@ -154,7 +174,11 @@ function SetupCard({ setup, onEdit, onDelete, onView }) {
           <h3 className="text-xl font-bold text-zinc-100">{setup.title}</h3>
           <p className="text-sm text-zinc-400">{setup.description}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-1 mr-2">
+            <button onClick={() => onMove(-1)} className="text-zinc-600 hover:text-zinc-300 transition-colors">▲</button>
+            <button onClick={() => onMove(1)} className="text-zinc-600 hover:text-zinc-300 transition-colors">▼</button>
+          </div>
           <button
             onClick={onEdit}
             className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
@@ -207,11 +231,24 @@ function SetupModal({ initial, onClose, onSaved }) {
     e.preventDefault();
     try {
       setLoading(true);
+      
+      let payload = form;
+      if (form.localTheory || form.localExample) {
+        const formData = new FormData();
+        Object.keys(form).forEach(key => {
+          if (key.startsWith('local')) return;
+          formData.append(key, form[key]);
+        });
+        if (form.localTheory) formData.append('theoryImage', form.localTheory);
+        if (form.localExample) formData.append('exampleImage', form.localExample);
+        payload = formData;
+      }
+
       let saved;
       if (isEdit) {
-        saved = await updateSetup(initial._id, form);
+        saved = await updateSetup(initial._id, payload);
       } else {
-        saved = await createSetup(form);
+        saved = await createSetup(payload);
       }
       onSaved(saved);
     } catch (err) {
@@ -221,20 +258,15 @@ function SetupModal({ initial, onClose, onSaved }) {
     }
   };
 
-  async function handleImageUpload(field, file) {
-    if (!initial._id) {
-       alert("Primero guarda el setup antes de subir imágenes");
-       return;
-    }
-    try {
-      setLoading(true);
-      const updated = await uploadSetupImage(initial._id, field, file);
-      setForm(updated);
-    } catch (err) {
-      alert("Error subiendo imagen");
-    } finally {
-      setLoading(false);
-    }
+  async function handleImageSelect(field, file) {
+    if (!file) return;
+    const key = field === 'theory' ? 'localTheory' : 'localExample';
+    const previewKey = field === 'theory' ? 'localTheoryPreview' : 'localExamplePreview';
+    setForm({ 
+      ...form, 
+      [key]: file, 
+      [previewKey]: URL.createObjectURL(file) 
+    });
   }
 
   return (
@@ -286,24 +318,26 @@ function SetupModal({ initial, onClose, onSaved }) {
           />
         </div>
 
-        {isEdit && (
-          <div className="grid grid-cols-2 gap-4 pt-2">
-             <div className="space-y-2 text-center">
-                <div className="text-[10px] text-zinc-500 font-bold uppercase">Img Teoría</div>
-                <input type="file" onChange={(e) => handleImageUpload("theory", e.target.files[0])} className="text-xs w-full"/>
-             </div>
-             <div className="space-y-2 text-center">
-                <div className="text-[10px] text-zinc-500 font-bold uppercase">Img Ejemplo</div>
-                <input type="file" onChange={(e) => handleImageUpload("example", e.target.files[0])} className="text-xs w-full"/>
-             </div>
-          </div>
-        )}
-
-        {!isEdit && (
-          <div className="text-xs text-zinc-500 italic bg-zinc-800/30 p-2 rounded">
-            Nota: Podrás subir imágenes una vez que guardes el setup básico.
-          </div>
-        )}
+        <div className="grid grid-cols-2 gap-4 pt-2">
+            <div className="space-y-2 text-center">
+              <div className="text-[10px] text-zinc-500 font-bold uppercase">Img Teoría</div>
+              <input type="file" onChange={(e) => handleImageSelect("theory", e.target.files[0])} className="text-xs w-full"/>
+              {form.localTheoryPreview && (
+                <div className="mt-2 aspect-video rounded overflow-hidden border border-zinc-800">
+                  <img src={form.localTheoryPreview} className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
+            <div className="space-y-2 text-center">
+              <div className="text-[10px] text-zinc-500 font-bold uppercase">Img Ejemplo</div>
+              <input type="file" onChange={(e) => handleImageSelect("example", e.target.files[0])} className="text-xs w-full"/>
+              {form.localExamplePreview && (
+                <div className="mt-2 aspect-video rounded overflow-hidden border border-zinc-800">
+                  <img src={form.localExamplePreview} className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
+        </div>
 
         <div className="flex justify-end gap-3 pt-4">
           <button

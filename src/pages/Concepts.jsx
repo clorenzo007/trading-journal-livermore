@@ -5,6 +5,7 @@ import {
   updateConcept,
   deleteConcept,
   uploadConceptImage,
+  updateConceptsOrder,
 } from "../api/concepts";
 import FullscreenViewer from "../components/FullscreenViewer";
 
@@ -48,6 +49,27 @@ export default function Concepts() {
       setConcepts((prev) => prev.filter((c) => c._id !== id));
     } catch (err) {
       alert("Error eliminando concepto");
+    }
+  };
+
+  const moveConcept = async (idx, direction) => {
+    const newConcepts = [...concepts];
+    const targetIdx = idx + direction;
+    if (targetIdx < 0 || targetIdx >= newConcepts.length) return;
+
+    // Swap
+    [newConcepts[idx], newConcepts[targetIdx]] = [newConcepts[targetIdx], newConcepts[idx]];
+    
+    // Optimistic update
+    setConcepts(newConcepts);
+
+    try {
+      const orders = newConcepts.map((c, i) => ({ id: c._id, order: i }));
+      const { updateConceptsOrder } = await import("../api/concepts"); // Ensure import or use from destructured
+      await updateConceptsOrder(orders);
+    } catch (err) {
+      console.error("Failed to update order", err);
+      load(); // Rollback
     }
   };
 
@@ -97,13 +119,17 @@ export default function Concepts() {
                   <Card>
                     <div className="flex flex-col lg:flex-row gap-8">
                       <div className="flex-1">
-                        <div className="flex justify-between items-start mb-4">
-                           <h3 className="text-xl font-bold text-zinc-100">{concept.subtitle || concept.title}</h3>
-                           <div className="flex gap-3">
-                              <button onClick={() => openEdit(concept)} className="text-xs font-bold text-zinc-500 hover:text-zinc-300 transition-colors uppercase tracking-widest">Editar</button>
-                              <button onClick={() => handleDelete(concept._id)} className="text-xs font-bold text-rose-900/60 hover:text-rose-400 transition-colors uppercase tracking-widest">Borrar</button>
-                           </div>
-                        </div>
+                         <div className="flex justify-between items-start mb-4">
+                            <h3 className="text-xl font-bold text-zinc-100">{concept.subtitle || concept.title}</h3>
+                            <div className="flex items-center gap-3">
+                               <div className="flex flex-col gap-1 mr-2">
+                                  <button onClick={() => moveConcept(concepts.indexOf(concept), -1)} className="text-zinc-600 hover:text-zinc-300 transition-colors">▲</button>
+                                  <button onClick={() => moveConcept(concepts.indexOf(concept), 1)} className="text-zinc-600 hover:text-zinc-300 transition-colors">▼</button>
+                               </div>
+                               <button onClick={() => openEdit(concept)} className="text-xs font-bold text-zinc-500 hover:text-zinc-300 transition-colors uppercase tracking-widest">Editar</button>
+                               <button onClick={() => handleDelete(concept._id)} className="text-xs font-bold text-rose-900/60 hover:text-rose-400 transition-colors uppercase tracking-widest">Borrar</button>
+                            </div>
+                         </div>
                         
                         {concept.description && (
                           <p className="text-zinc-400 text-sm leading-relaxed mb-4">{concept.description}</p>
@@ -199,10 +225,26 @@ function ConceptModal({ initial, onClose, onSaved }) {
     e.preventDefault();
     try {
       setLoading(true);
+      
+      let payload = form;
+      if (form.localFile) {
+        const formData = new FormData();
+        Object.keys(form).forEach(key => {
+          if (key === 'items') {
+            formData.append(key, JSON.stringify(form[key]));
+          } else if (key === 'localFile') {
+            formData.append('file', form[key]);
+          } else {
+            formData.append(key, form[key]);
+          }
+        });
+        payload = formData;
+      }
+
       if (isEdit) {
-        await updateConcept(initial._id, form);
+        await updateConcept(initial._id, payload);
       } else {
-        await createConcept(form);
+        await createConcept(payload);
       }
       onSaved();
     } catch (err) {
@@ -212,20 +254,13 @@ function ConceptModal({ initial, onClose, onSaved }) {
     }
   };
 
-  async function handleImageUpload(file) {
-    if (!initial._id) {
-       alert("Primero guarda el concepto antes de subir una imagen");
-       return;
-    }
-    try {
-      setLoading(true);
-      const updated = await uploadConceptImage(initial._id, file);
-      setForm(updated);
-    } catch (err) {
-      alert("Error subiendo imagen");
-    } finally {
-      setLoading(false);
-    }
+  async function handleImageSelect(file) {
+    if (!file) return;
+    setForm({ ...form, localFile: file, localPreview: URL.createObjectURL(file) });
+    
+    // If editing, we still allow immediate upload if preferred, 
+    // but now we also support saving everything together.
+    // For now, let's just stage it.
   }
 
   return (
@@ -301,13 +336,18 @@ function ConceptModal({ initial, onClose, onSaved }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <InputGroup label="Imagen / Diagrama">
             <input
               type="file"
-              onChange={(e) => handleImageUpload(e.target.files[0])}
+              onChange={(e) => handleImageSelect(e.target.files[0])}
               className="text-xs text-zinc-500 file:bg-zinc-800 file:text-zinc-200 file:border-none file:rounded-lg file:px-3 file:py-1.5 file:mr-4 file:hover:bg-zinc-700 transition-all cursor-pointer"
             />
+            {form.localPreview && (
+              <div className="mt-2 aspect-video rounded-lg overflow-hidden border border-zinc-800">
+                <img src={form.localPreview} className="w-full h-full object-cover" />
+              </div>
+            )}
           </InputGroup>
           <InputGroup label="Nota / Recomendación">
             <textarea

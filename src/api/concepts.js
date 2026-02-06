@@ -5,9 +5,17 @@ export const getConcepts = async () => {
 };
 
 export const createConcept = async (data) => {
+  const isFormData = data instanceof FormData;
   return await api("/concepts", {
     method: "POST",
-    body: JSON.stringify(data),
+    body: isFormData ? data : JSON.stringify(data),
+  });
+};
+
+export const updateConceptsOrder = async (orders) => {
+  return await api("/concepts/order", {
+    method: "PUT",
+    body: JSON.stringify({ orders }),
   });
 };
 
