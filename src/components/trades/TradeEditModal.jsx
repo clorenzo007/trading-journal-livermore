@@ -44,8 +44,8 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-3xl p-6 text-white max-h-[90vh] overflow-y-auto space-y-4">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-3xl p-4 sm:p-6 text-white max-h-[90vh] overflow-y-auto space-y-4 shadow-2xl">
         {/* Header */}
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Edit Trade — {form.symbol}</h2>
@@ -53,12 +53,12 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 border-b border-zinc-800 pb-2">
+        <div className="flex gap-2 border-b border-zinc-800 pb-2 overflow-x-auto no-scrollbar">
           {TABS.map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`px-3 py-1 rounded text-sm ${
+              className={`px-3 py-1 rounded text-sm whitespace-nowrap transition-colors ${
                 tab === t ? "bg-indigo-600" : "bg-zinc-800 hover:bg-zinc-700"
               }`}
             >
@@ -269,7 +269,7 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
 }
 
 function Grid({ children }) {
-  return <div className="grid grid-cols-2 gap-4">{children}</div>;
+  return <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>;
 }
 
 function Field({ label, children }) {

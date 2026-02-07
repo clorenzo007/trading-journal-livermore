@@ -135,8 +135,8 @@ export default function Admin() {
       </div>
 
       {/* Table */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
-        <table className="w-full text-sm text-left">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl overflow-x-auto">
+        <table className="w-full text-sm text-left min-w-[800px] md:min-w-full">
           <thead className="bg-zinc-950 text-zinc-500 uppercase text-[10px] font-bold tracking-widest border-b border-zinc-800">
             <tr>
               <th className="px-6 py-4">User Details</th>
@@ -212,9 +212,9 @@ export default function Admin() {
 
 function StatCard({ label, value, color = "text-white" }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl shadow-lg hover:border-zinc-700 transition-all group">
+    <div className="bg-zinc-900 border border-zinc-800 p-4 md:p-6 rounded-2xl shadow-lg hover:border-zinc-700 transition-all group">
       <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-2 group-hover:text-zinc-400 transition-colors">{label}</div>
-      <div className={`text-4xl font-bold ${color}`}>{value}</div>
+      <div className={`text-2xl md:text-4xl font-bold ${color}`}>{value}</div>
     </div>
   );
 }

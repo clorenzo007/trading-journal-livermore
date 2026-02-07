@@ -65,17 +65,17 @@ export default function TradePreviewModal({ trade, onClose, onEdit }) {
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 pt-6 border-t border-zinc-800">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-zinc-800">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-colors font-medium"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-colors font-medium order-2 sm:order-1"
           >
             Salir
           </button>
 
           <button
             onClick={onEdit}
-            className="px-8 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition-all font-bold shadow-lg shadow-indigo-500/20"
+            className="w-full sm:w-auto px-8 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition-all font-bold shadow-lg shadow-indigo-500/20 order-1 sm:order-2"
           >
             Editar Trade
           </button>
