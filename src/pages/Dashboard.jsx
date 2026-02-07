@@ -177,7 +177,7 @@ export default function Dashboard() {
       )}
 
       {/* Table */}
-      <TradesTable trades={dayFiltered} />
+      <TradesTable trades={dayFiltered} onRefresh={load} />
 
       {/* Drawer */}
       {selectedDay && (
@@ -185,6 +185,7 @@ export default function Dashboard() {
           day={selectedDay}
           trades={dayFiltered}
           onClose={() => setSelectedDay(null)}
+          onRefresh={load}
         />
       )}
     </div>

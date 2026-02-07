@@ -18,6 +18,7 @@ export default function DayDrawer({
   onClose,
   onPrevDay,
   onNextDay,
+  onRefresh,
 }) {
   const [selectedTrade, setSelectedTrade] = useState(null);
   const stats = useDailyStats(trades);
@@ -134,6 +135,7 @@ export default function DayDrawer({
         <TradeDetailModal
           trade={selectedTrade}
           onClose={() => setSelectedTrade(null)}
+          onRefresh={onRefresh}
         />
       )}
     </>

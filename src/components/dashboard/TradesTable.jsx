@@ -12,7 +12,7 @@ const EMPTY_FILTERS = {
   maxPL: "",
 };
 
-export default function TradesTable({ trades = [] }) {
+export default function TradesTable({ trades = [], onRefresh }) {
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [showFilters, setShowFilters] = useState(true);
   const [selected, setSelected] = useState(null);
@@ -156,7 +156,11 @@ export default function TradesTable({ trades = [] }) {
       </div>
 
       {selected && (
-        <TradeDetailModal trade={selected} onClose={() => setSelected(null)} />
+        <TradeDetailModal
+          trade={selected}
+          onClose={() => setSelected(null)}
+          onRefresh={onRefresh}
+        />
       )}
     </div>
   );
