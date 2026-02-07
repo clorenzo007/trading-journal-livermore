@@ -55,6 +55,22 @@ export default function Admin() {
     }
   }
 
+  async function resetPassword(id) {
+    const newPass = prompt("Enter new password (min 6 characters):");
+    if (!newPass) return;
+    if (newPass.length < 6) return alert("Password too short");
+
+    try {
+      await api(`/admin/users/${id}/password`, {
+        method: "PATCH",
+        body: JSON.stringify({ password: newPass }),
+      });
+      alert("Password reset successfully!");
+    } catch (err) {
+      alert(err.message || "Error resetting password");
+    }
+  }
+
   const filtered = useMemo(() => {
     return users.filter((u) => {
       const matchesSearch = u.email.toLowerCase().includes(search.toLowerCase());
@@ -170,7 +186,13 @@ export default function Admin() {
                       <option value="admin">ADMIN</option>
                     </select>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-6 py-4 text-right space-x-2">
+                    <button
+                      onClick={() => resetPassword(u._id)}
+                      className="text-indigo-400 hover:text-indigo-300 px-3 py-1.5 rounded-lg hover:bg-indigo-500/10 transition-all font-medium"
+                    >
+                      Reset PWD
+                    </button>
                     <button
                       onClick={() => deleteUser(u._id)}
                       className="text-zinc-600 hover:text-rose-500 px-3 py-1.5 rounded-lg hover:bg-rose-500/10 transition-all"
