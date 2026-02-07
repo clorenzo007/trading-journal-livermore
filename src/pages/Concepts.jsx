@@ -65,7 +65,6 @@ export default function Concepts() {
 
     try {
       const orders = newConcepts.map((c, i) => ({ id: c._id, order: i }));
-      const { updateConceptsOrder } = await import("../api/concepts"); // Ensure import or use from destructured
       await updateConceptsOrder(orders);
     } catch (err) {
       console.error("Failed to update order", err);

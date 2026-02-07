@@ -30,10 +30,27 @@ export default function Dashboard() {
   // ==========================
   // LOAD TRADES
   // ==========================
+  async function load() {
+    if (!activeAccount?._id) return;
+    
+    setLoading(true);
+    setTrades([]);
+    setSelectedDay(null);
+
+    try {
+      const data = await getTrades(); 
+      setTrades(withSession(Array.isArray(data) ? data : []));
+    } catch (e) {
+      console.error("Error loading trades", e);
+      setTrades([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (accountLoading) return;
 
-    // 🔥 Sin cuenta activa real: no cargues trades, no quedes "loading"
     if (!activeAccount?._id) {
       setTrades([]);
       setSelectedDay(null);
@@ -41,31 +58,7 @@ export default function Dashboard() {
       return;
     }
 
-    let cancelled = false;
-
-    async function load() {
-      setLoading(true);
-      setTrades([]);
-      setSelectedDay(null);
-
-      try {
-        const data = await getTrades(); // backend decide active account
-        if (cancelled) return;
-        setTrades(withSession(Array.isArray(data) ? data : []));
-      } catch (e) {
-        console.error("Error loading trades", e);
-        if (cancelled) return;
-        setTrades([]);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
     load();
-
-    return () => {
-      cancelled = true;
-    };
   }, [activeAccount?._id, accountLoading]);
 
   // ==========================
