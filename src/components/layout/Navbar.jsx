@@ -79,13 +79,13 @@ export default function Navbar() {
             </li>
             <li className="nav-item">
               <NavLink to="/accounts" className={linkClass} onClick={() => setIsNavCollapsed(true)}>
-                Cuentas
+                Accounts
               </NavLink>
             </li>
             {user?.role === "admin" && (
               <li className="nav-item">
-                <NavLink to="/admin" className={linkClass} onClick={() => setIsNavCollapsed(true)}>
-                  Admin
+                <NavLink to="/setup" className={linkClass} onClick={() => setIsNavCollapsed(true)}>
+                  Setup
                 </NavLink>
               </li>
             )}

@@ -11,8 +11,7 @@ import Review from "./pages/Review";
 import ImportTrades from "./pages/ImportTrades";
 import Accounts from "./pages/Accounts";
 import Trades from "./pages/Trades";
-import Admin from "./pages/Admin";
-import Maintenance from "./pages/Maintenance";
+import Setup from "./pages/Setup";
 
 /**
  * Application Entry Point.
@@ -45,8 +44,7 @@ export default function App() {
           <Route path="concepts" element={<Concepts />} />
           <Route path="import" element={<ImportTrades />} />
           <Route path="accounts" element={<Accounts />} />
-          <Route path="admin" element={<Admin />} />
-          <Route path="maintenance" element={<Maintenance />} />
+          <Route path="setup" element={<Setup />} />
         </Route>
       </Route>
 

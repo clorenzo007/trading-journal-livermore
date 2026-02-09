@@ -39,3 +39,25 @@ export function deletePattern(id) {
     method: "DELETE",
   });
 }
+
+// ==========================
+// LIST ITEMS (Generic)
+// ==========================
+export function getListItems(type) {
+  // type: 'emotional_pre', 'emotional_post', 'reason_entry', 'reason_exit'
+  return api(`/admin/list-items/${type}`);
+}
+
+export function createListItem(data) {
+  // data: { type, value }
+  return api("/admin/list-items", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function deleteListItem(id) {
+  return api(`/admin/list-items/${id}`, {
+    method: "DELETE",
+  });
+}
