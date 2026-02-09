@@ -25,7 +25,7 @@ export default function Navbar() {
     `nav-link ${isActive ? "text-white active" : "text-zinc-400"}`;
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-zinc-900 border-b border-zinc-800 py-2">
+    <nav className="navbar navbar-expand-md navbar-dark bg-zinc-900 border-b border-zinc-800 py-2">
       <div className="container-fluid px-4">
         <span className="navbar-brand font-semibold text-white">
           Trading Journal
@@ -46,7 +46,7 @@ export default function Navbar() {
           className={`${isNavCollapsed ? "collapse" : "show"} navbar-collapse justify-between`}
           id="navbarNav"
         >
-          <ul className="navbar-nav gap-lg-2">
+          <ul className="navbar-nav gap-md-2">
             <li className="nav-item">
               <NavLink to="/dashboard" className={linkClass} onClick={() => setIsNavCollapsed(true)}>
                 Dashboard
@@ -91,7 +91,7 @@ export default function Navbar() {
             )}
           </ul>
 
-          <div className="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+          <div className="d-flex align-items-center gap-3 mt-3 mt-md-0">
             {/* ACCOUNT SELECTOR */}
             {!loading && accounts.length > 0 && (
               <select
