@@ -53,6 +53,13 @@ export function deleteTrade(id) {
   });
 }
 
+export function deleteTrades(ids) {
+  return api("/trades/batch", {
+    method: "DELETE",
+    body: JSON.stringify({ ids }),
+  });
+}
+
 // =======================
 // REVIEW
 // =======================

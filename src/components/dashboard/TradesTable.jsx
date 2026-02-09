@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import TradesFilters from "./TradesFilters";
+import { deleteTrades } from "../../api/trades";
 import TradeDetailModal from "./TradeDetailModal";
 
 const EMPTY_FILTERS = {
@@ -23,76 +23,93 @@ const EMPTY_FILTERS = {
  * - Opens TradeDetailModal on row click.
  */
 export default function TradesTable({ trades = [], onRefresh }) {
-  const [filters, setFilters] = useState(EMPTY_FILTERS);
-  const [showFilters, setShowFilters] = useState(true);
+  // Column filters state
+  const [colFilters, setColFilters] = useState({
+    symbol: "",
+    strategy: "",
+    pattern: "",
+    outcome: "",
+    minPL: "",
+    maxPL: "",
+  });
+
+  const [selectedIds, setSelectedIds] = useState(new Set());
   const [selected, setSelected] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+
+  // Toggle selection for a single row
+  const toggleSelect = (id) => {
+    const newSet = new Set(selectedIds);
+    if (newSet.has(id)) newSet.delete(id);
+    else newSet.add(id);
+    setSelectedIds(newSet);
+  };
+
+  // Toggle select all visible
+  const toggleSelectAll = (visibleTrades) => {
+    if (selectedIds.size === visibleTrades.length && visibleTrades.length > 0) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(visibleTrades.map((t) => t._id)));
+    }
+  };
+
+  // Bulk Delete
+  const handleBulkDelete = async () => {
+    if (!confirm(`Delete ${selectedIds.size} trades?`)) return;
+    setDeleting(true);
+    try {
+      await deleteTrades(Array.from(selectedIds));
+      setSelectedIds(new Set());
+      onRefresh();
+    } catch (err) {
+      alert("Error deleting trades");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const filtered = useMemo(() => {
+    return trades.filter((t) => {
+      // Symbol
+      if (colFilters.symbol && !t.symbol.toLowerCase().includes(colFilters.symbol.toLowerCase())) return false;
+      // Strategy
+      if (colFilters.strategy && !t.strategy_type?.toLowerCase().includes(colFilters.strategy.toLowerCase())) return false;
+      // Pattern
+      if (colFilters.pattern && !t.pattern?.toLowerCase().includes(colFilters.pattern.toLowerCase())) return false;
+      // Outcome
+      if (colFilters.outcome && t.outcome !== colFilters.outcome) return false;
+       // P/L
+      if (colFilters.minPL && Number(t.profit_loss) < Number(colFilters.minPL)) return false;
+      if (colFilters.maxPL && Number(t.profit_loss) > Number(colFilters.maxPL)) return false;
+
+      return true;
+    });
+  }, [trades, colFilters]);
 
   // ===========================================================================
   // FILTER LOGIC
   // Based on the user's selection in TradesFilters
   // ===========================================================================
-  const filtered = useMemo(() => {
-    return trades.filter((t) => {
-      // 1. Search by text (Symbol, Strategy, Pattern, Reason)
-      if (filters.search) {
-        const s = filters.search.toLowerCase();
-        const hay = [t.symbol, t.strategy_type, t.pattern, t.reason_for_entry]
-          .join(" ")
-          .toLowerCase();
-        if (!hay.includes(s)) return false;
-      }
-
-      // 2. Exact match filters
-      if (filters.outcome && t.outcome !== filters.outcome) return false;
-      if (filters.session && t._session !== filters.session) return false;
-
-      // 3. Date range filters
-      if (filters.from) {
-        const d = new Date(t.entry_date);
-        const f = new Date(filters.from);
-        if (d < f) return false;
-      }
-
-      if (filters.to) {
-        const d = new Date(t.entry_date);
-        const to = new Date(filters.to);
-        to.setHours(23, 59, 59, 999);
-        if (d > to) return false;
-      }
-
-      // 4. P/L Range filters
-      if (filters.minPL !== "") {
-        if (Number(t.profit_loss) < Number(filters.minPL)) return false;
-      }
-
-      if (filters.maxPL !== "") {
-        if (Number(t.profit_loss) > Number(filters.maxPL)) return false;
-      }
-
-      return true;
-    });
-  }, [trades, filters]);
+  // OLD LOGIC REMOVED
 
   return (
     <div className="space-y-4">
       {/* HEADER & TOGGLE FILTERS */}
-      <div className="flex justify-between items-center">
-        <div className="text-lg font-semibold">Trades</div>
-        <button
-          onClick={() => setShowFilters((v) => !v)}
-          className="px-3 py-1 rounded bg-zinc-800 hover:bg-zinc-700"
-        >
-          {showFilters ? "Ocultar filtros" : "Mostrar filtros"}
-        </button>
-      </div>
-
-      {/* FILTER COMPONENT */}
-      {showFilters && (
-        <TradesFilters
-          value={filters}
-          onChange={setFilters}
-          onReset={() => setFilters(EMPTY_FILTERS)}
-        />
+      {/* FILTER COMPONENT REMOVED - Using Column Filters */}
+      
+      {/* BULK ACTIONS */}
+      {selectedIds.size > 0 && (
+        <div className="bg-zinc-800 p-2 rounded flex items-center justify-between mb-2">
+            <span className="text-zinc-300 text-sm ml-2">{selectedIds.size} selected</span>
+            <button 
+                onClick={handleBulkDelete}
+                disabled={deleting}
+                className="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1 rounded text-sm"
+            >
+                {deleting ? "Deleting..." : "Delete Selected"}
+            </button>
+        </div>
       )}
 
       {/* RESULTS COUNT */}
@@ -108,14 +125,77 @@ export default function TradesTable({ trades = [], onRefresh }) {
         <table className="table table-dark table-hover mb-0 align-middle">
           <thead>
             <tr className="text-zinc-400">
+              <th className="border-zinc-800" style={{ width: '40px' }}>
+                <input 
+                    type="checkbox" 
+                    className="form-check-input bg-zinc-800 border-zinc-600"
+                    checked={filtered.length > 0 && selectedIds.size === filtered.length}
+                    onChange={() => toggleSelectAll(filtered)}
+                />
+              </th>
               <th className="border-zinc-800">Img</th>
-              <th className="border-zinc-800">Symbol</th>
-              <th className="border-zinc-800">Strategy</th>
-              <th className="border-zinc-800">Pattern</th>
+              <th className="border-zinc-800">
+                <div>Symbol</div>
+                <input 
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-white mt-1 focus:outline-none focus:border-indigo-500"
+                    placeholder="Filter..."
+                    value={colFilters.symbol}
+                    onChange={e => setColFilters(prev => ({...prev, symbol: e.target.value}))}
+                />
+              </th>
+              <th className="border-zinc-800">
+                <div>Strategy</div>
+                <input 
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-white mt-1 focus:outline-none focus:border-indigo-500"
+                    placeholder="Filter..."
+                    value={colFilters.strategy}
+                    onChange={e => setColFilters(prev => ({...prev, strategy: e.target.value}))}
+                />
+              </th>
+              <th className="border-zinc-800">
+                <div>Pattern</div>
+                 <input 
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-white mt-1 focus:outline-none focus:border-indigo-500"
+                    placeholder="Filter..."
+                    value={colFilters.pattern}
+                    onChange={e => setColFilters(prev => ({...prev, pattern: e.target.value}))}
+                />
+              </th>
               <th className="border-zinc-800">Entry</th>
               <th className="border-zinc-800 d-none d-lg-table-cell">Exit</th>
-              <th className="border-zinc-800">Outcome</th>
-              <th className="border-zinc-800 text-end">P/L</th>
+              <th className="border-zinc-800">
+                <div>Outcome</div>
+                <select 
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded px-1 py-1 text-xs text-white mt-1 focus:outline-none focus:border-indigo-500"
+                    value={colFilters.outcome}
+                    onChange={e => setColFilters(prev => ({...prev, outcome: e.target.value}))}
+                >
+                    <option value="">All</option>
+                    <option value="Win">Win</option>
+                    <option value="Loss">Loss</option>
+                    <option value="BreakEven">BreakEven</option>
+                    <option value="Open">Open</option>
+                </select>
+              </th>
+              <th className="border-zinc-800 text-end">
+                <div>P/L</div>
+                 <div className="flex gap-1 mt-1">
+                    <input 
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded px-1 py-1 text-xs text-white focus:outline-none focus:border-indigo-500"
+                        placeholder="Min"
+                        type="number"
+                        value={colFilters.minPL}
+                        onChange={e => setColFilters(prev => ({...prev, minPL: e.target.value}))}
+                    />
+                     <input 
+                        className="w-full bg-zinc-800 border border-zinc-700 rounded px-1 py-1 text-xs text-white focus:outline-none focus:border-indigo-500"
+                        placeholder="Max"
+                        type="number"
+                        value={colFilters.maxPL}
+                        onChange={e => setColFilters(prev => ({...prev, maxPL: e.target.value}))}
+                    />
+                 </div>
+              </th>
             </tr>
           </thead>
 
@@ -126,7 +206,15 @@ export default function TradesTable({ trades = [], onRefresh }) {
                 onClick={() => setSelected(t)}
                 className="cursor-pointer"
               >
-                {/* Entry Image Thumbnail */}
+                <td className="border-zinc-800" onClick={(e) => e.stopPropagation()}>
+                    <input 
+                        type="checkbox" 
+                        className="form-check-input bg-zinc-800 border-zinc-600"
+                        checked={selectedIds.has(t._id)}
+                        onChange={() => toggleSelect(t._id)}
+                    />
+                </td>
+
                 <td className="border-zinc-800">
                   {t.entryImage?.url ? (
                     <img
