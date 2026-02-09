@@ -25,6 +25,8 @@ export default function Entries() {
   const [editingSetup, setEditingSetup] = useState(null);
   const [viewer, setViewer] = useState(null);
 
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     load();
   }, []);
@@ -32,10 +34,12 @@ export default function Entries() {
   async function load() {
     try {
       setLoading(true);
+      setError(null);
       const data = await getSetups();
       setSetups(data);
     } catch (err) {
       console.error(err);
+      setError("Error cargando setups. Por favor revisa tu conexión.");
     } finally {
       setLoading(false);
     }
@@ -104,10 +108,16 @@ export default function Entries() {
           <div className="py-20 text-center text-zinc-500">Cargando setups...</div>
         ) : (
           <>
+            {error && (
+              <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-center mb-8">
+                {error}
+              </div>
+            )}
+          
             {/* ===== ALCISTAS ===== */}
             <section className="space-y-8">
               <SectionTitle>Tendencias Alcistas</SectionTitle>
-              {bullishSetups.length === 0 && (
+              {!error && bullishSetups.length === 0 && (
                 <div className="text-zinc-600 text-sm italic">Sin setups alcistas</div>
               )}
               <div className="grid grid-cols-1 gap-8">
@@ -127,7 +137,7 @@ export default function Entries() {
             {/* ===== BAJISTAS ===== */}
             <section className="space-y-8">
               <SectionTitle>Tendencias Bajistas</SectionTitle>
-              {bearishSetups.length === 0 && (
+              {!error && bearishSetups.length === 0 && (
                 <div className="text-zinc-600 text-sm italic">Sin setups bajistas</div>
               )}
               <div className="grid grid-cols-1 gap-8">

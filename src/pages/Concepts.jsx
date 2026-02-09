@@ -25,6 +25,8 @@ export default function Concepts() {
   const [editingConcept, setEditingConcept] = useState(null);
   const [viewer, setViewer] = useState(null);
 
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     load();
   }, []);
@@ -32,10 +34,12 @@ export default function Concepts() {
   async function load() {
     try {
       setLoading(true);
+      setError(null);
       const data = await getConcepts();
       setConcepts(data);
     } catch (err) {
       console.error(err);
+      setError("Error cargando conceptos. Por favor revisa tu conexión.");
     } finally {
       setLoading(false);
     }
@@ -122,7 +126,13 @@ export default function Concepts() {
             <div className="py-20 text-center text-zinc-500 font-medium animate-pulse">Sincronizando biblioteca...</div>
           ) : (
             <div className="space-y-16">
-              {concepts.map((concept) => (
+              {error && (
+                <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-center">
+                  {error}
+                </div>
+              )}
+
+              {!error && concepts.map((concept) => (
                 <Section key={concept._id} id={concept._id} title={concept.title}>
                   <Card>
                     <div className="flex flex-col lg:flex-row gap-8">
@@ -179,7 +189,7 @@ export default function Concepts() {
                 </Section>
               ))}
 
-              {concepts.length === 0 && (
+              {!error && concepts.length === 0 && (
                 <div className="py-20 text-center border-2 border-dashed border-zinc-800 rounded-3xl">
                    <p className="text-zinc-600 text-sm font-medium">Comienza por añadir tu primer concepto de trading</p>
                 </div>
