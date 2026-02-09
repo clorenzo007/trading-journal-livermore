@@ -43,7 +43,7 @@ export default function Navbar() {
         </button>
 
         <div
-          className={`${isNavCollapsed ? "collapse" : "show"} navbar-collapse justify-between`}
+          className={`${isNavCollapsed ? "collapse" : "show"} navbar-collapse justify-between md:visible`}
           id="navbarNav"
         >
           <ul className="navbar-nav gap-md-2">
