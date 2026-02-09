@@ -1,37 +1,41 @@
-import api from "./axios";
+import { api } from "./api";
 
 // ==========================
 // STRATEGIES
 // ==========================
-export const getStrategies = async () => {
-  const res = await api.get("/admin/strategies");
-  return res.data;
-};
+export function getStrategies() {
+  return api("/admin/strategies");
+}
 
-export const createStrategy = async (data) => {
-  const res = await api.post("/admin/strategies", data);
-  return res.data;
-};
+export function createStrategy(data) {
+  return api("/admin/strategies", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
 
-export const deleteStrategy = async (id) => {
-  const res = await api.delete(`/admin/strategies/${id}`);
-  return res.data;
-};
+export function deleteStrategy(id) {
+  return api(`/admin/strategies/${id}`, {
+    method: "DELETE",
+  });
+}
 
 // ==========================
 // PATTERNS
 // ==========================
-export const getPatterns = async () => {
-  const res = await api.get("/admin/patterns");
-  return res.data;
-};
+export function getPatterns() {
+  return api("/admin/patterns");
+}
 
-export const createPattern = async (data) => {
-  const res = await api.post("/admin/patterns", data);
-  return res.data;
-};
+export function createPattern(data) {
+  return api("/admin/patterns", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
 
-export const deletePattern = async (id) => {
-  const res = await api.delete(`/admin/patterns/${id}`);
-  return res.data;
-};
+export function deletePattern(id) {
+  return api(`/admin/patterns/${id}`, {
+    method: "DELETE",
+  });
+}
