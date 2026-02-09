@@ -237,7 +237,7 @@ export default function Accounts() {
           .map((a) => (
           <div key={a._id} className="col-12 col-lg-6">
             <div
-              className={`card h-100 bg-zinc-900 border-zinc-800 rounded-3 p-3 shadow-none transition-all ${activeAccount?._id === a._id ? 'border-primary border-opacity-50 ring-1 ring-primary ring-opacity-10' : ''}`}
+              className={`card h-100 !bg-zinc-900 !text-white border-zinc-800 rounded-3 p-3 shadow-none transition-all ${activeAccount?._id === a._id ? 'border-primary border-opacity-50 ring-1 ring-primary ring-opacity-10' : ''}`}
             >
               <div className="d-flex align-items-center justify-content-between mb-3">
                 <div className="fw-bold d-flex align-items-center gap-2 text-lg">
