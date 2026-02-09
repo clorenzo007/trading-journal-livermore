@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getTrades } from "../api/trades";
 import { useAccount } from "../context/AccountContext";
 
@@ -31,6 +32,7 @@ import { exportTradesToExcel } from "../utils/exportTrades";
  * - Exports data to Excel.
  */
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { activeAccount, loading: accountLoading } = useAccount();
 
   const [trades, setTrades] = useState([]);
@@ -135,7 +137,13 @@ export default function Dashboard() {
         ===========================================================================
       */}
       <div className="row">
-        <div className="col-12 d-flex justify-content-end mb-3">
+        <div className="col-12 d-flex justify-content-between mb-3">
+          <button
+            onClick={() => navigate("/new-trade")}
+            className="btn btn-primary"
+          >
+            New Trade
+          </button>
           <button
             onClick={handleExport}
             className="btn btn-success"
