@@ -1,4 +1,20 @@
 @import "tailwindcss";
-.input {
-  @apply w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1;
+
+/* Override Bootstrap form styles for Dark Mode compatibility */
+.form-control, .form-select {
+  @apply !bg-zinc-800 !text-white !border-zinc-700;
+}
+
+.form-control:focus, .form-select:focus {
+  @apply !bg-zinc-800 !text-white !border-indigo-500 !ring-1 !ring-indigo-500 !shadow-none;
+}
+
+/* Ensure placeholder text is visible but dimmed */
+.form-control::placeholder {
+  @apply !text-zinc-500;
+}
+
+/* Fix disabled state */
+.form-control:disabled, .form-select:disabled {
+  @apply !bg-zinc-900 !text-zinc-500;
 }
