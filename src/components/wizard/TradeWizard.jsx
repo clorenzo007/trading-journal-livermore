@@ -7,6 +7,7 @@ import {
   uploadEntryImage,
   uploadReviewImage,
 } from "../../api/trades";
+import { getStrategies, getPatterns } from "../../api/admin";
 
 import StepIdentity from "./StepIdentity";
 import StepEntry from "./StepEntry";
@@ -77,22 +78,35 @@ export default function TradeWizard() {
   // ======================
   // LOAD EXISTING TRADE
   // ======================
-  useEffect(() => {
-    if (!id) return;
+  const [strategies, setStrategies] = useState([]);
+  const [patterns, setPatterns] = useState([]);
 
-    async function load() {
+  // ======================
+  // LOAD METADATA & TRADE
+  // ======================
+  useEffect(() => {
+    async function loadData() {
       try {
         setLoading(true);
-        const data = await getTradeById(id);
-        setTrade(data);
+        const [stratData, pattData] = await Promise.all([
+          getStrategies(),
+          getPatterns(),
+        ]);
+        setStrategies(stratData);
+        setPatterns(pattData);
+
+        if (id) {
+          const data = await getTradeById(id);
+          setTrade(data);
+        }
       } catch {
-        setError("Failed to load trade");
+        setError("Failed to load data");
       } finally {
         setLoading(false);
       }
     }
 
-    load();
+    loadData();
   }, [id]);
 
   // ======================
@@ -225,7 +239,13 @@ export default function TradeWizard() {
         )}
 
         {step === 0 && (
-          <StepIdentity trade={trade} setTrade={update} onNext={next} />
+          <StepIdentity
+            trade={trade}
+            setTrade={update}
+            onNext={next}
+            strategies={strategies}
+            patterns={patterns}
+          />
         )}
         {step === 1 && (
           <StepEntry

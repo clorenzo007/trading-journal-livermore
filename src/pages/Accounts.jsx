@@ -37,11 +37,13 @@ export default function Accounts() {
     setEditingId(acc._id);
     setForm({
       name: acc.name,
-      provider: acc.provider,
-      accountType: acc.accountType,
-      accountNumber: acc.accountNumber,
-      currency: acc.currency,
+      provider: acc.provider || "",
+      accountType: acc.accountType || "real",
+      accountNumber: acc.accountNumber || "",
+      currency: acc.currency || "USD",
       initialBalance: acc.initialBalance || 0,
+      creationDate: acc.creationDate ? acc.creationDate.split("T")[0] : "",
+      meltingDate: acc.meltingDate ? acc.meltingDate.split("T")[0] : "",
     });
   };
 
@@ -164,6 +166,28 @@ export default function Accounts() {
               />
             </Field>
           </div>
+
+          <div className="col-12 col-md-4">
+            <Field label="Fecha Creación">
+              <input
+                type="date"
+                className="form-control bg-zinc-800 border-zinc-700 text-white shadow-none"
+                value={form.creationDate}
+                onChange={(e) => setForm({ ...form, creationDate: e.target.value })}
+              />
+            </Field>
+          </div>
+
+          <div className="col-12 col-md-4">
+            <Field label="Fecha Fondeo/Melting">
+              <input
+                type="date"
+                className="form-control bg-zinc-800 border-zinc-700 text-white shadow-none"
+                value={form.meltingDate}
+                onChange={(e) => setForm({ ...form, meltingDate: e.target.value })}
+              />
+            </Field>
+          </div>
         </div>
 
         <div className="d-flex gap-2 justify-content-end mt-4">
@@ -215,43 +239,47 @@ export default function Accounts() {
             <div
               className={`card h-100 bg-zinc-900 border-zinc-800 rounded-3 p-3 shadow-none transition-all ${activeAccount?._id === a._id ? 'border-primary border-opacity-50 ring-1 ring-primary ring-opacity-10' : ''}`}
             >
-              <div className="d-flex align-items-center justify-content-between">
-                <div>
-                  <div className="fw-bold d-flex align-items-center gap-2">
-                    {a.name}
-                    {activeAccount?._id === a._id && (
-                      <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 fw-medium">Activa</span>
-                    )}
-                  </div>
-                  <div className="small text-secondary mt-1">
-                    {a.provider} · {a.accountType} · {a.currency}
-                  </div>
+              <div className="d-flex align-items-center justify-content-between mb-3">
+                <div className="fw-bold d-flex align-items-center gap-2 text-lg">
+                  {a.name}
+                  {activeAccount?._id === a._id && (
+                    <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 fw-medium text-xs">Activa</span>
+                  )}
                 </div>
-
                 <div className="d-flex gap-2">
                   {activeAccount?._id !== a._id && (
                     <button
                       onClick={() => changeAccount(a._id)}
-                      className="btn btn-sm btn-outline-light border-zinc-800"
+                      className="btn btn-sm btn-outline-light border-zinc-800 py-1 px-2 text-xs"
                     >
                       Activar
                     </button>
                   )}
                   <button
                     onClick={() => startEdit(a)}
-                    className="btn btn-sm btn-outline-light border-zinc-800"
+                    className="btn btn-sm btn-outline-light border-zinc-800 py-1 px-2 text-xs"
                   >
                     Editar
                   </button>
                   {a.status === "active" && (
                     <button
                       onClick={() => archive(a._id)}
-                      className="btn btn-sm btn-outline-danger border-danger border-opacity-20"
+                      className="btn btn-sm btn-outline-danger border-danger border-opacity-20 py-1 px-2 text-xs"
                     >
                       Archivar
                     </button>
                   )}
                 </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-zinc-400">
+                <div>Provider: <span className="text-zinc-200">{a.provider || "-"}</span></div>
+                <div>Type: <span className="text-zinc-200 capitalize">{a.accountType}</span></div>
+                <div>Number: <span className="text-zinc-200">{a.accountNumber || "-"}</span></div>
+                <div>Currency: <span className="text-zinc-200">{a.currency}</span></div>
+                <div>Balance: <span className="text-zinc-200">{a.initialBalance?.toLocaleString()}</span></div>
+                <div>Created: <span className="text-zinc-200">{a.creationDate ? new Date(a.creationDate).toLocaleDateString() : "-"}</span></div>
+                <div>Melting: <span className="text-zinc-200">{a.meltingDate ? new Date(a.meltingDate).toLocaleDateString() : "-"}</span></div>
               </div>
             </div>
           </div>

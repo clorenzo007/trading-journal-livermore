@@ -36,6 +36,26 @@ export default function StepEntry({
   return (
     <WizardCard title="Entry" onCancel={onCancel}>
       <div className="space-y-4">
+        {/* DIRECTION */}
+        <div>
+          <label className="block text-sm text-zinc-400 mb-1">Direction</label>
+          <div className="flex gap-2">
+            {["Long", "Short"].map((dir) => (
+              <button
+                key={dir}
+                onClick={() => setTrade({ direction: dir })}
+                className={`flex-1 py-2 rounded-lg text-sm font-medium border ${
+                  trade.direction === dir
+                    ? "bg-indigo-600 border-indigo-500 text-white"
+                    : "bg-zinc-950 border-zinc-800 text-zinc-400 hover:bg-zinc-900"
+                }`}
+              >
+                {dir}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* ENTRY DATE */}
         <div>
           <label className="block text-sm text-zinc-400 mb-1">Entry date</label>
