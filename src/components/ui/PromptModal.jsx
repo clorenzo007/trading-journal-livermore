@@ -1,8 +1,7 @@
 import { useState } from "react";
 import Modal from "./Modal";
 
-import { useState } from "react";
-import Modal from "./Modal";
+
 
 /**
  * Modal with an Input field.
