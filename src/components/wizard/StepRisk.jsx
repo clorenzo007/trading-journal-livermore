@@ -1,4 +1,5 @@
 import WizardCard from "./WizardCard";
+import { useAccount } from "../../context/AccountContext";
 
 /**
  * Wizard Step: Risk Management.
@@ -11,6 +12,23 @@ export default function StepRisk({
   onBack,
   onCancel,
 }) {
+  const { activeAccount } = useAccount();
+
+  const handleStopLossBlur = () => {
+    if (!trade.entry_price || !trade.position_size || !trade.stop_loss || !activeAccount) return;
+
+    const entry = Number(trade.entry_price);
+    const stop = Number(trade.stop_loss);
+    const size = Number(trade.position_size);
+    const balance = activeAccount.initialBalance; // Use initialBalance as proxy for now, or fetch current if available
+
+    if (entry > 0 && size > 0 && balance > 0) {
+      const riskAmount = Math.abs(entry - stop) * size;
+      const riskPct = (riskAmount / balance) * 100;
+      setTrade({ risk_percent: riskPct.toFixed(2) });
+    }
+  };
+
   const stopLoss = Number(trade.stop_loss);
   const risk = Number(trade.risk_percent);
 
@@ -38,6 +56,7 @@ export default function StepRisk({
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
             value={trade.stop_loss ?? ""}
             onChange={(e) => setTrade({ stop_loss: e.target.value })}
+            onBlur={handleStopLossBlur}
             placeholder="Price level"
           />
         </div>

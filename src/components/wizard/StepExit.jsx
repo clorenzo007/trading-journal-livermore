@@ -23,6 +23,34 @@ export default function StepExit({
   const exitPrice = Number(trade.exit_price);
   const profit = trade.profit_loss !== "" ? Number(trade.profit_loss) : null;
 
+  const handleExitPriceBlur = () => {
+    if (!trade.entry_price || !trade.position_size || !trade.exit_price) return;
+
+    const entry = Number(trade.entry_price);
+    const exit = Number(trade.exit_price);
+    const size = Number(trade.position_size);
+    const stop = Number(trade.stop_loss);
+
+    let pl = 0;
+    
+    // Determine direction based on Entry vs Stop Loss
+    // If Entry > Stop => LONG
+    // If Entry < Stop => SHORT
+    // If no stop loss, assume LONG (default)
+    const isLong = !stop || entry > stop;
+
+    if (isLong) {
+      pl = (exit - entry) * size;
+    } else {
+      pl = (entry - exit) * size;
+    }
+
+    setTrade({ 
+      profit_loss: pl.toFixed(2),
+      outcome: pl > 0 ? "Win" : pl < 0 ? "Loss" : "Break-even" 
+    });
+  };
+
   // 🔥 Default exit date on mount if empty
   useEffect(() => {
     if (!trade.exit_date) {
@@ -70,6 +98,7 @@ export default function StepExit({
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
             value={trade.exit_price ?? ""}
             onChange={(e) => setTrade({ exit_price: e.target.value })}
+            onBlur={handleExitPriceBlur}
             placeholder="0.00"
           />
         </div>
