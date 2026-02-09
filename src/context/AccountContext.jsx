@@ -30,6 +30,7 @@ export const AccountProvider = ({ children }) => {
   const refreshAccounts = async () => {
     const res = await getAccounts();
     const list = normalizeList(res);
+    console.log("AccountContext: Fetched accounts:", list); // DEBUG LOG
 
     setAccounts(list);
 

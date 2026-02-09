@@ -31,6 +31,7 @@ export default function Accounts() {
   const [form, setForm] = useState(EMPTY);
   const [editingId, setEditingId] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [filter, setFilter] = useState("all"); // all, active, archived
 
   const startEdit = (acc) => {
     setEditingId(acc._id);
@@ -183,8 +184,33 @@ export default function Accounts() {
 
       {/* List */}
       <h2 className="h5 fw-bold mb-3">Tus Cuentas</h2>
+
+      {/* Filter Tabs */}
+      <div className="flex gap-2 mb-4">
+        {["all", "active", "archived"].map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              filter === f
+                ? "bg-zinc-800 text-white border border-zinc-700"
+                : "text-zinc-500 hover:text-zinc-300"
+            }`}
+          >
+            {f.charAt(0).toUpperCase() + f.slice(1)}
+          </button>
+        ))}
+      </div>
+
       <div className="row g-3">
-        {accounts.map((a) => (
+        {accounts
+          .filter((a) => {
+            if (filter === "all") return a.status !== "archived"; // Show active/inactive by default
+            if (filter === "active") return a.status === "active";
+            if (filter === "archived") return a.status === "archived";
+            return true;
+          })
+          .map((a) => (
           <div key={a._id} className="col-12 col-lg-6">
             <div
               className={`card h-100 bg-zinc-900 border-zinc-800 rounded-3 p-3 shadow-none transition-all ${activeAccount?._id === a._id ? 'border-primary border-opacity-50 ring-1 ring-primary ring-opacity-10' : ''}`}
