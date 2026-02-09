@@ -47,6 +47,17 @@ function nowLocalDatetime() {
   return d.toISOString().slice(0, 16);
 }
 
+/**
+ * Trade Entry/Edit Wizard.
+ * A multi-step form for creating or editing trades.
+ * 
+ * Features:
+ * - Manages global state of the trade form.
+ * - Handles navigation between steps.
+ * - Validates required fields before submission.
+ * - Handles file uploads (images) separately.
+ * - Supports both Create and Edit modes.
+ */
 export default function TradeWizard() {
   const navigate = useNavigate();
   const { id } = useParams();

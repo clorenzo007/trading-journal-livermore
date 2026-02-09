@@ -1,5 +1,10 @@
 import { useState } from "react";
 
+/**
+ * Livermore Rules Panel (Sidebar/Dropdown).
+ * A checklist that validates if the user is following the trading plan "rules".
+ * Updates essentially as the user fills out the form.
+ */
 export default function LivermorePanel({ form }) {
   const [open, setOpen] = useState(false);
 

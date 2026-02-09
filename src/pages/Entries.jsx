@@ -4,11 +4,20 @@ import {
   createSetup,
   updateSetup,
   deleteSetup,
-  uploadSetupImage,
   updateSetupsOrder,
 } from "../api/setups";
 import FullscreenViewer from "../components/FullscreenViewer";
 
+/**
+ * Entry Setups Management Page.
+ * Allows the user to define and manage their trading setups (strategies).
+ * 
+ * Features:
+ * - Lists Bullish and Bearish setups separately.
+ * - CRUD operations for Setups.
+ * - Reordering of setups.
+ * - Image attachment for Theory and Examples.
+ */
 export default function Entries() {
   const [setups, setSetups] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +56,7 @@ export default function Entries() {
     try {
       await deleteSetup(id);
       setSetups((prev) => prev.filter((s) => s._id !== id));
-    } catch (err) {
+    } catch {
       alert("Error eliminando setup");
     }
   };
@@ -166,7 +175,7 @@ function SectionTitle({ children }) {
   );
 }
 
-function SetupCard({ setup, onEdit, onDelete, onView }) {
+function SetupCard({ setup, onMove, onEdit, onDelete, onView }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-4 hover:border-zinc-700 transition-colors">
       <div className="flex justify-between items-start">

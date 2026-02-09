@@ -1,5 +1,9 @@
 import WizardCard from "./WizardCard";
 
+/**
+ * Wizard Step: Pre-Trade Psychology.
+ * Captures emotional state before entry and the reason for taking the trade.
+ */
 export default function StepPsychologyPre({
   trade,
   setTrade,

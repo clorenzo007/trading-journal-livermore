@@ -1,5 +1,17 @@
 import Modal from "./Modal";
 
+import Modal from "./Modal";
+
+/**
+ * Reusable Confirmation Modal.
+ * 
+ * Props:
+ * - open: Boolean to control visibility.
+ * - onClose: Function called when cancelled/closed.
+ * - onConfirm: Function called when confirmed.
+ * - title: Modal title.
+ * - message: Description or warning message.
+ */
 export default function ConfirmModal({
   open,
   onClose,

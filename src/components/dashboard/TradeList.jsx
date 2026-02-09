@@ -1,6 +1,10 @@
-import TradeTable from "./TradeTable";
+import TradesTable from "./TradesTable";
 import TradeCards from "./TradeCards";
 
+/**
+ * Trade List Container.
+ * Responsive wrapper that switches between Table view (Desktop) and Card view (Mobile).
+ */
 export default function TradeList({ trades, onSelect, onEdit }) {
   return (
     <>

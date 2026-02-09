@@ -1,6 +1,13 @@
 import { useState } from "react";
 import Modal from "./Modal";
 
+import { useState } from "react";
+import Modal from "./Modal";
+
+/**
+ * Modal with an Input field.
+ * Useful for capturing a single value from the user (e.g., reason for exit, new name).
+ */
 export default function PromptModal({
   open,
   onClose,

@@ -23,6 +23,16 @@ function getMonthDays(year, month) {
   return days;
 }
 
+/**
+ * Trading Calendar Component.
+ * Displays a monthly view of trading activity.
+ * 
+ * Features:
+ * - Navigate months (prev/next).
+ * - Highlights days with trades using color coding (Profit/Loss).
+ * - Shows trade count per day.
+ * - Interactive tooltip with daily stats (Profit, Win Rate).
+ */
 export default function Calendar({ trades, onSelectDay }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
@@ -91,7 +101,8 @@ export default function Calendar({ trades, onSelectDay }) {
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 relative">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 relative overflow-x-auto">
+      <div className="min-w-[600px]"> {/* Ensure minimum width for the grid */}
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <button onClick={prevMonth} className="px-2 py-1 bg-zinc-800 rounded">
@@ -172,6 +183,7 @@ export default function Calendar({ trades, onSelectDay }) {
           <DayTooltip day={hoveredDay} stats={dayStats[hoveredDay]} />
         </div>
       )}
+      </div>
     </div>
   );
 }

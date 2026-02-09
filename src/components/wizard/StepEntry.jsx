@@ -8,6 +8,10 @@ function nowLocalDatetime() {
   return d.toISOString().slice(0, 16);
 }
 
+/**
+ * Wizard Step: Entry Details.
+ * Captures Entry Date, Price, and Position Size.
+ */
 export default function StepEntry({
   trade,
   setTrade,

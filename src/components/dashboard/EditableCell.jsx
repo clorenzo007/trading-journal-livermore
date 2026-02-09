@@ -1,5 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 
+/**
+ * Inline Editable Table Cell.
+ * Allows editing value directly within a table.
+ * 
+ * Modes:
+ * - Text input
+ * - Number input
+ * - Select dropdown
+ * - Textarea
+ * 
+ * Features:
+ * - Double click to edit.
+ * - Esc to cancel, Enter/Blur to save.
+ */
 export default function EditableCell({
   value,
   type = "text",
@@ -45,7 +59,7 @@ export default function EditableCell({
       setLoading(true);
       await onSave(draft);
       setEditing(false);
-    } catch (e) {
+    } catch {
       setError("Error");
     } finally {
       setLoading(false);

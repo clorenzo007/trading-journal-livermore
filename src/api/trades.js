@@ -6,6 +6,14 @@ const API_URL = import.meta.env.VITE_API_URL;
 // HELPERS
 // =======================
 
+// =======================
+// HELPERS
+// =======================
+
+/**
+ * Attaches the active account ID to the payload.
+ * Useful for create/update operations that need explicit account linkage.
+ */
 function withAccount(data = {}) {
   const accountId = localStorage.getItem("activeAccountId");
   return { ...data, account: accountId };

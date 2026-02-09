@@ -1,3 +1,7 @@
+/**
+ * Base Modal Component.
+ * Provides a centered, backdrop-blurred overlay with animation.
+ */
 export default function Modal({ open, onClose, children }) {
   if (!open) return null;
 

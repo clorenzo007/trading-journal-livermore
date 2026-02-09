@@ -13,6 +13,15 @@ import Accounts from "./pages/Accounts";
 import Trades from "./pages/Trades";
 import Admin from "./pages/Admin";
 
+/**
+ * Application Entry Point.
+ * Defines the main routing structure using React Router.
+ * 
+ * Routes:
+ * - Public: Login, Register.
+ * - Protected: Dashboard, Trades, Wizard, Concepts, Admin, etc.
+ * - Catch-all: 404.
+ */
 export default function App() {
   return (
     <Routes>

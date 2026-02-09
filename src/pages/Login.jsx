@@ -3,6 +3,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { login as loginApi } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
 
+/**
+ * Login Page.
+ * Entry point for authentication.
+ * Handles email/password submission and token storage via AuthContext.
+ */
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

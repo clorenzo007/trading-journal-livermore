@@ -1,5 +1,9 @@
 import WizardCard from "./WizardCard";
 
+/**
+ * Wizard Step: Identity.
+ * Captures basic trade info: Symbol, Strategy, and Pattern.
+ */
 export default function StepIdentity({ trade, setTrade, onNext, onCancel }) {
   const isValid =
     trade.symbol?.trim() &&

@@ -3,6 +3,16 @@ import { api } from "../api/api";
 import ConfirmModal from "../components/ui/ConfirmModal";
 import PromptModal from "../components/ui/PromptModal";
 
+/**
+ * Admin Panel Page.
+ * Restricted area for user management and system oversight.
+ * 
+ * Features:
+ * - List all registered users (paginated/filtered).
+ * - Toggle user activation status.
+ * - Promote/Demote roles (User <-> Admin).
+ * - Security actions: Reset Password, Delete User.
+ */
 export default function Admin() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);

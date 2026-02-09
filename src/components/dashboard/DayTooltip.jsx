@@ -1,3 +1,7 @@
+/**
+ * Tooltip for Calendar/Heatmap.
+ * Shows quick stats for a hovered day.
+ */
 export default function DayTooltip({ day, stats }) {
   if (!day || !stats) return null;
 

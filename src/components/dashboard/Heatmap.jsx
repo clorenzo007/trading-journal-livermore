@@ -23,6 +23,15 @@ const RED_LIGHT = [248, 113, 113]; // #f87171
 const RED_DARK = [220, 38, 38]; // #dc2626
 const NEUTRAL = "#27272a";
 
+/**
+ * Activity Heatmap (GitHub style).
+ * Shows trading intensity and performance for the selected month.
+ * 
+ * Logic:
+ * - Aggregates daily P&L.
+ * - Interpolates color from Red (Loss) to Green (Win) based on relative performance.
+ * - Darker colors indicate higher magnitude of P&L.
+ */
 export default function Heatmap({ trades }) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
@@ -104,7 +113,8 @@ export default function Heatmap({ trades }) {
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 relative">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 relative overflow-x-auto">
+      <div className="min-w-[350px]">
       <div className="flex justify-between items-center mb-3">
         <button onClick={prevMonth} className="px-2 py-1 bg-zinc-800 rounded">
           ←
@@ -173,6 +183,7 @@ export default function Heatmap({ trades }) {
           <DayTooltip day={hoveredDay} stats={statsMap[hoveredDay]} />
         </div>
       )}
+      </div>
     </div>
   );
 }

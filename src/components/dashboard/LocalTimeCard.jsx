@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 
+/**
+ * Simple Digital Clock.
+ * Displays current local time, updating every second.
+ */
 export default function LocalTimeCard() {
   const [now, setNow] = useState(new Date());
 

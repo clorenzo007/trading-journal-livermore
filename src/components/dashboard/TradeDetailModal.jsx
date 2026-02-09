@@ -2,6 +2,10 @@ import { useState } from "react";
 import TradePreviewModal from "../trades/TradePreviewModal";
 import TradeEditModal from "../trades/TradeEditModal";
 
+/**
+ * Trade Details Modal Wrapper.
+ * Orchestrates the transition between Preview mode and Edit mode for a trade.
+ */
 export default function TradeDetailModal({ trade, onClose, onRefresh }) {
   const [mode, setMode] = useState("preview"); // "preview" | "edit"
 

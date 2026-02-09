@@ -1,3 +1,7 @@
+/**
+ * Key Performance Indicators.
+ * Displays top-level metrics: Total Trades, Winrate, Total PnL, Win/Loss Count.
+ */
 export default function KPIs({ trades }) {
   const total = trades.length;
   const wins = trades.filter((t) => t.outcome === "Win").length;

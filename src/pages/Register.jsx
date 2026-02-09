@@ -3,6 +3,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { register as registerApi } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
 
+/**
+ * Registration Page.
+ * Allows new users to create an account.
+ * Automatically logs the user in upon successful registration.
+ */
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

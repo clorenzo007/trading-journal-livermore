@@ -15,6 +15,10 @@ function getOutcome(trade) {
   return "BE";
 }
 
+/**
+ * Win / Loss / BE Ratio Chart (Pie).
+ * Shows the percentage distribution of trade outcomes.
+ */
 export default function WinLossPie({ trades }) {
   const data = useMemo(() => {
     const counts = { Win: 0, Loss: 0, BE: 0 };

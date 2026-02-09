@@ -1,13 +1,23 @@
-export default function StepConfirm({ trade, onNext, onBack }) {
-  function Row({ label, value }) {
-    return (
-      <div className="flex justify-between border-b border-zinc-800 py-1">
-        <span className="text-zinc-400">{label}</span>
-        <span className="font-medium">{value || "—"}</span>
-      </div>
-    );
-  }
+function Row({ label, value }) {
+  return (
+    <div className="flex justify-between border-b border-zinc-800 py-1">
+      <span className="text-zinc-400">{label}</span>
+      <span className="font-medium">{value || "—"}</span>
+    </div>
+  );
+}
 
+/**
+ * Wizard Step: Confirmation.
+ * Displays a summary of the trade details for final review.
+ * 
+ * Features:
+ * - Shows all entered fields.
+ * - Validates data and displays blocking Errors.
+ * - Checks for best practices and displays Warnings.
+ * - Shows image previews.
+ */
+export default function StepConfirm({ trade, onNext, onBack }) {
   // ======================
   // VALIDATIONS
   // ======================

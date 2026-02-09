@@ -1,5 +1,9 @@
 import WizardCard from "./WizardCard";
 
+/**
+ * Wizard Step: Final Action.
+ * The final screen before saving the trade to the database.
+ */
 export default function StepFinish({ trade, onBack, onFinish, onCancel }) {
   return (
     <WizardCard title="Trade ready" onCancel={onCancel}>

@@ -2,20 +2,38 @@ import { useEffect, useMemo, useState } from "react";
 
 const STORAGE_KEY = "trades_table_state_v1";
 
+/**
+ * Custom Hook: useAdvancedTable
+ * 
+ * Manages complex table state:
+ * - Column Filtering: Filters rows based on column-specific comparison (text, range).
+ * - Multi-Column Sorting: Sorts rows by multiple keys (priority based on order).
+ * - Persistence: Saves table state to localStorage.
+ */
 export function useAdvancedTable(rows, columns) {
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const [columnFilters, setColumnFilters] = useState({});
-  const [sorting, setSorting] = useState([]);
-
-  // Load persisted state
-  useEffect(() => {
+  const [columnFilters, setColumnFilters] = useState(() => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw);
-      setColumnFilters(parsed.columnFilters || {});
-      setSorting(parsed.sorting || []);
+      try {
+        return JSON.parse(raw).columnFilters || {};
+      } catch {
+        return {};
+      }
     }
-  }, []);
+    return {};
+  });
+  const [sorting, setSorting] = useState(() => {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      try {
+        return JSON.parse(raw).sorting || [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  });
 
   // Persist state
   useEffect(() => {

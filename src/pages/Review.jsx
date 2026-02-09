@@ -3,6 +3,20 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getTradeById } from "../api/trades";
 import FullscreenViewer from "../components/FullscreenViewer";
 
+function Row({ label, value }) {
+  return (
+    <div className="flex justify-between border-b border-zinc-800 py-2 text-sm">
+      <span className="text-zinc-400">{label}</span>
+      <span>{value || "—"}</span>
+    </div>
+  );
+}
+
+/**
+ * Trade Review Page.
+ * Detailed view of a single trade, including all fields and attached images.
+ * Accessed by clicking a trade in the list.
+ */
 export default function Review() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,15 +36,6 @@ export default function Review() {
   }, [id]);
 
   if (!trade) return <div className="p-6 text-zinc-400">Loading trade...</div>;
-
-  function Row({ label, value }) {
-    return (
-      <div className="flex justify-between border-b border-zinc-800 py-2 text-sm">
-        <span className="text-zinc-400">{label}</span>
-        <span>{value || "—"}</span>
-      </div>
-    );
-  }
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">

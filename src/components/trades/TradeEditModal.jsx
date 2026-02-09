@@ -5,6 +5,15 @@ import ReviewImageUploader from "../ReviewImageUploader";
 
 const TABS = ["General", "Risk", "Psychology", "Review", "Images"];
 
+/**
+ * Trade Edit Modal.
+ * A comprehensive form for modifying existing trade details.
+ * 
+ * Features:
+ * - Tabbed interface (General, Risk, Psychology, Review, Images).
+ * - CRUD operations (Update, Delete).
+ * - Image management integration.
+ */
 export default function TradeEditModal({ trade, onClose, onSaved }) {
   const [form, setForm] = useState({ ...trade });
   const [tab, setTab] = useState("General");

@@ -1,3 +1,7 @@
+/**
+ * Mobile/Card View for Trades.
+ * Renders a list of trade cards instead of a table.
+ */
 export default function TradeCards({ trades, onSelect }) {
   return (
     <div className="space-y-3">

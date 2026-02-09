@@ -1,3 +1,5 @@
+import { uploadEntryImage } from "../api/trades";
+
 export default function EntryImageUploader({ trade, setTrade }) {
   async function onUpload(e) {
     const file = e.target.files?.[0];

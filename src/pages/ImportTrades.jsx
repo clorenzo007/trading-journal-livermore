@@ -3,6 +3,15 @@ import { useAccount } from "../context/AccountContext";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+/**
+ * Import Trades Page.
+ * Provides functionality to import trades from MT5 Excel/CSV exports.
+ * 
+ * Features:
+ * - Select target account.
+ * - Upload file.
+ * - Shows progress bar and result summary (imported vs skipped).
+ */
 export default function ImportTrades() {
   const {
     accounts,
@@ -59,7 +68,7 @@ export default function ImportTrades() {
       try {
         const data = JSON.parse(xhr.responseText);
         setResult(data);
-      } catch (e) {
+      } catch {
         console.error("Respuesta no JSON:", xhr.responseText);
         alert("Error en la respuesta del servidor");
       } finally {

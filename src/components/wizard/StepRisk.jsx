@@ -1,5 +1,9 @@
 import WizardCard from "./WizardCard";
 
+/**
+ * Wizard Step: Risk Management.
+ * Captures Stop Loss and Risk Percentage.
+ */
 export default function StepRisk({
   trade,
   setTrade,

@@ -12,6 +12,16 @@ function formatDateHuman(dateStr) {
   });
 }
 
+/**
+ * Day Detail Drawer.
+ * Slides in from the right to show all trades for a specific day.
+ * 
+ * Features:
+ * - Daily stats summary (P/L, Winrate, etc.).
+ * - List of trades for that day.
+ * - Navigation to prev/next day.
+ * - Opens TradeDetailModal for specific trade inspection.
+ */
 export default function DayDrawer({
   day,
   trades,

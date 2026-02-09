@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAccount } from "../context/AccountContext";
 import {
   createAccount,
@@ -15,6 +15,17 @@ const EMPTY = {
   initialBalance: 0,
 };
 
+/**
+ * Trading Accounts Management Page.
+ * Allows users to create and manage multiple trading portfolios (Real, Demo, Funded).
+ * 
+ * Features:
+ * - List active accounts.
+ * - Create new accounts.
+ * - Edit existing account details.
+ * - Archive/Delete accounts.
+ * - Switch the "Active" account context for the entire app.
+ */
 export default function Accounts() {
   const { accounts, setAccounts, activeAccount, changeAccount } = useAccount();
   const [form, setForm] = useState(EMPTY);
@@ -52,7 +63,7 @@ export default function Accounts() {
         changeAccount(created._id); // hacerla activa
       }
       reset();
-    } catch (e) {
+    } catch {
       alert("Error guardando cuenta");
     } finally {
       setSaving(false);
@@ -72,80 +83,98 @@ export default function Accounts() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Cuentas</h1>
+    <div className="container py-4">
+      <h1 className="h3 fw-bold mb-4">Cuentas</h1>
 
       {/* Form */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-4">
-        <div className="text-sm text-zinc-400">
+      <div className="card bg-zinc-900 border-zinc-800 rounded-3 p-4 mb-5 shadow-sm">
+        <div className="text-secondary small mb-3 uppercase tracking-wider font-semibold">
           {editingId ? "Editar cuenta" : "Nueva cuenta"}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="Nombre">
-            <input
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-          </Field>
+        <div className="row g-3">
+          <div className="col-12 col-md-6">
+            <Field label="Nombre">
+              <input
+                className="form-control bg-zinc-800 border-zinc-700 text-white shadow-none"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+            </Field>
+          </div>
 
-          <Field label="Proveedor">
-            <input
-              value={form.provider}
-              onChange={(e) => setForm({ ...form, provider: e.target.value })}
-            />
-          </Field>
+          <div className="col-12 col-md-6">
+            <Field label="Proveedor">
+              <input
+                className="form-control bg-zinc-800 border-zinc-700 text-white shadow-none"
+                value={form.provider}
+                onChange={(e) => setForm({ ...form, provider: e.target.value })}
+              />
+            </Field>
+          </div>
 
-          <Field label="Tipo">
-            <select
-              value={form.accountType}
-              onChange={(e) =>
-                setForm({ ...form, accountType: e.target.value })
-              }
-            >
-              <option value="real">Real</option>
-              <option value="fondeo">Fondeo</option>
-              <option value="demo">Demo</option>
-            </select>
-          </Field>
+          <div className="col-12 col-md-4">
+            <Field label="Tipo">
+              <select
+                className="form-select bg-zinc-800 border-zinc-700 text-white shadow-none"
+                value={form.accountType}
+                onChange={(e) =>
+                  setForm({ ...form, accountType: e.target.value })
+                }
+              >
+                <option value="real">Real</option>
+                <option value="fondeo">Fondeo</option>
+                <option value="demo">Demo</option>
+              </select>
+            </Field>
+          </div>
 
-          <Field label="Número de cuenta">
-            <input
-              value={form.accountNumber}
-              onChange={(e) =>
-                setForm({ ...form, accountNumber: e.target.value })
-              }
-            />
-          </Field>
+          <div className="col-12 col-md-4">
+            <Field label="Número de cuenta">
+              <input
+                className="form-control bg-zinc-800 border-zinc-700 text-white shadow-none"
+                value={form.accountNumber}
+                onChange={(e) =>
+                  setForm({ ...form, accountNumber: e.target.value })
+                }
+              />
+            </Field>
+          </div>
 
-          <Field label="Moneda">
-            <input
-              value={form.currency}
-              onChange={(e) => setForm({ ...form, currency: e.target.value })}
-            />
-          </Field>
+          <div className="col-12 col-md-4">
+            <Field label="Moneda">
+              <input
+                className="form-control bg-zinc-800 border-zinc-700 text-white shadow-none"
+                value={form.currency}
+                onChange={(e) => setForm({ ...form, currency: e.target.value })}
+              />
+            </Field>
+          </div>
 
-          <Field label="Balance inicial">
-            <input
-              type="number"
-              value={form.initialBalance}
-              onChange={(e) =>
-                setForm({ ...form, initialBalance: Number(e.target.value) })
-              }
-            />
-          </Field>
+          <div className="col-12 col-md-4">
+            <Field label="Balance inicial">
+              <input
+                type="number"
+                className="form-control bg-zinc-800 border-zinc-700 text-white shadow-none"
+                value={form.initialBalance}
+                onChange={(e) =>
+                  setForm({ ...form, initialBalance: Number(e.target.value) })
+                }
+              />
+            </Field>
+          </div>
         </div>
 
-        <div className="flex gap-3 justify-end">
+        <div className="d-flex gap-2 justify-content-end mt-4">
           {editingId && (
-            <button onClick={reset} className="px-4 py-2 bg-zinc-700 rounded">
+            <button onClick={reset} className="btn btn-secondary px-4">
               Cancelar
             </button>
           )}
           <button
             onClick={save}
             disabled={saving}
-            className="px-4 py-2 bg-indigo-600 rounded"
+            className="btn btn-primary px-4 shadow-sm"
           >
             {saving ? "Guardando…" : "Guardar"}
           </button>
@@ -153,45 +182,51 @@ export default function Accounts() {
       </div>
 
       {/* List */}
-      <div className="space-y-3">
+      <h2 className="h5 fw-bold mb-3">Tus Cuentas</h2>
+      <div className="row g-3">
         {accounts.map((a) => (
-          <div
-            key={a._id}
-            className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex items-center justify-between"
-          >
-            <div>
-              <div className="font-medium">
-                {a.name}{" "}
-                {activeAccount?._id === a._id && (
-                  <span className="text-xs text-green-400">(activa)</span>
-                )}
-              </div>
-              <div className="text-xs text-zinc-400">
-                {a.provider} · {a.accountType} · {a.currency}
-              </div>
-            </div>
+          <div key={a._id} className="col-12 col-lg-6">
+            <div
+              className={`card h-100 bg-zinc-900 border-zinc-800 rounded-3 p-3 shadow-none transition-all ${activeAccount?._id === a._id ? 'border-primary border-opacity-50 ring-1 ring-primary ring-opacity-10' : ''}`}
+            >
+              <div className="d-flex align-items-center justify-content-between">
+                <div>
+                  <div className="fw-bold d-flex align-items-center gap-2">
+                    {a.name}
+                    {activeAccount?._id === a._id && (
+                      <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 fw-medium">Activa</span>
+                    )}
+                  </div>
+                  <div className="small text-secondary mt-1">
+                    {a.provider} · {a.accountType} · {a.currency}
+                  </div>
+                </div>
 
-            <div className="flex gap-2">
-              <button
-                onClick={() => changeAccount(a._id)}
-                className="px-3 py-1 text-xs bg-zinc-700 rounded"
-              >
-                Activar
-              </button>
-              <button
-                onClick={() => startEdit(a)}
-                className="px-3 py-1 text-xs bg-zinc-700 rounded"
-              >
-                Editar
-              </button>
-              {a.status === "active" && (
-                <button
-                  onClick={() => archive(a._id)}
-                  className="px-3 py-1 text-xs bg-red-700 rounded"
-                >
-                  Archivar
-                </button>
-              )}
+                <div className="d-flex gap-2">
+                  {activeAccount?._id !== a._id && (
+                    <button
+                      onClick={() => changeAccount(a._id)}
+                      className="btn btn-sm btn-outline-light border-zinc-800"
+                    >
+                      Activar
+                    </button>
+                  )}
+                  <button
+                    onClick={() => startEdit(a)}
+                    className="btn btn-sm btn-outline-light border-zinc-800"
+                  >
+                    Editar
+                  </button>
+                  {a.status === "active" && (
+                    <button
+                      onClick={() => archive(a._id)}
+                      className="btn btn-sm btn-outline-danger border-danger border-opacity-20"
+                    >
+                      Archivar
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         ))}
@@ -202,8 +237,8 @@ export default function Accounts() {
 
 function Field({ label, children }) {
   return (
-    <div className="space-y-1">
-      <div className="text-sm text-zinc-400">{label}</div>
+    <div className="mb-2">
+      <label className="form-label small text-secondary fw-semibold mb-1">{label}</label>
       {children}
     </div>
   );

@@ -1,6 +1,16 @@
 import { useState } from "react";
 import FullscreenViewer from "../FullscreenViewer";
 
+/**
+ * Trade Preview Modal.
+ * Read-only view of a trade's details.
+ * 
+ * Features:
+ * - Displays key metrics (Price, P/L, Volume).
+ * - Shows text details (Reasons, Psychology).
+ * - Image gallery preview.
+ * - Button to switch to Edit mode.
+ */
 export default function TradePreviewModal({ trade, onClose, onEdit }) {
   const [viewer, setViewer] = useState(null);
   

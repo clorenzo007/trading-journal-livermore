@@ -1,3 +1,7 @@
+/**
+ * Table Filter Row.
+ * Renders inputs/selects directly under the table header for column-specific filtering.
+ */
 export default function TradesFiltersRow({ filters, setFilters }) {
   const set = (k, v) => {
     setFilters((prev) => ({ ...prev, [k]: v }));

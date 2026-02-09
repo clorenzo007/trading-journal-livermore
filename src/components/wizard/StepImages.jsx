@@ -4,9 +4,14 @@ import ReviewImageUploader from "../ReviewImageUploader";
 import FullscreenViewer from "../FullscreenViewer";
 import { deleteReviewImage, deleteEntryImage } from "../../api/trades";
 
+/**
+ * Wizard Step: Images.
+ * Interfaces for uploading Entry and Review screenshots.
+ * Handles both local file selection (for new trades) and API deletion (for existing trades).
+ */
 export default function StepImages({ trade, setTrade, onNext, onBack }) {
   const [view, setView] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const handleDelete = async (type) => {
     if (!trade._id) {
@@ -20,7 +25,7 @@ export default function StepImages({ trade, setTrade, onNext, onBack }) {
       if (type === 'entry') await deleteEntryImage(trade._id);
       else await deleteReviewImage(trade._id);
       setTrade({ [type === 'entry' ? 'entryImage' : 'reviewImage']: null });
-    } catch (err) {
+    } catch {
       alert("Error eliminando imagen");
     } finally {
       setLoading(false);
@@ -35,62 +40,80 @@ export default function StepImages({ trade, setTrade, onNext, onBack }) {
         You can upload or change images here. Changes are saved immediately for existing trades.
       </div>
 
-      {/* ENTRY IMAGE */}
-      <div className="space-y-3">
-        <div className="text-xs font-bold uppercase tracking-widest text-zinc-500">Entry Image</div>
+      <div className="row g-4">
+        {/* 
+          ==========================================================
+          ENTRY IMAGE SECTION
+          - Mobile: Full width (col-12)
+          - Desktop: Half width (col-md-6)
+          ==========================================================
+        */}
+        <div className="col-12 col-md-6">
+          <div className="space-y-3">
+            <div className="text-xs font-bold uppercase tracking-widest text-zinc-500">Entry Image</div>
 
-        {trade.entryImage?.url ? (
-          <div className="relative group">
-            <img
-              src={trade.entryImage.url}
-              alt="Entry"
-              className="w-full h-64 object-cover rounded-xl cursor-zoom-in border border-zinc-800"
-              onClick={() => setView(trade.entryImage.url)}
-            />
-            <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-               <button
-                 onClick={() => handleDelete('entry')}
-                 className="p-2 bg-rose-600 rounded-lg text-white text-xs shadow-lg"
-                 disabled={loading}
-               >
-                 Eliminar
-               </button>
-            </div>
+            {trade.entryImage?.url ? (
+              <div className="relative group">
+                <img
+                  src={trade.entryImage.url}
+                  alt="Entry"
+                  className="w-full h-64 object-cover rounded-xl cursor-zoom-in border border-zinc-800"
+                  onClick={() => setView(trade.entryImage.url)}
+                />
+                <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                   <button
+                     onClick={() => handleDelete('entry')}
+                     className="p-2 bg-rose-600 rounded-lg text-white text-xs shadow-lg"
+                     disabled={loading}
+                   >
+                     Eliminar
+                   </button>
+                </div>
+              </div>
+            ) : (
+              <div className="p-8 border-2 border-dashed border-zinc-800 rounded-xl hover:border-zinc-700 transition-colors h-100 d-flex flex-column justify-content-center">
+                <EntryImageUploader trade={trade} setTrade={setTrade} />
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="p-8 border-2 border-dashed border-zinc-800 rounded-xl hover:border-zinc-700 transition-colors">
-            <EntryImageUploader trade={trade} setTrade={setTrade} />
-          </div>
-        )}
-      </div>
+        </div>
 
-      {/* REVIEW IMAGE */}
-      <div className="space-y-3">
-        <div className="text-xs font-bold uppercase tracking-widest text-zinc-500">Review Image</div>
+        {/* 
+          ==========================================================
+          REVIEW IMAGE SECTION
+          - Mobile: Full width (col-12)
+          - Desktop: Half width (col-md-6)
+          ==========================================================
+        */}
+        <div className="col-12 col-md-6">
+          <div className="space-y-3">
+            <div className="text-xs font-bold uppercase tracking-widest text-zinc-500">Review Image</div>
 
-        {trade.reviewImage?.url ? (
-          <div className="relative group">
-            <img
-              src={trade.reviewImage.url}
-              alt="Review"
-              className="w-full h-64 object-cover rounded-xl cursor-zoom-in border border-zinc-800"
-              onClick={() => setView(trade.reviewImage.url)}
-            />
-            <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-               <button
-                 onClick={() => handleDelete('review')}
-                 className="p-2 bg-rose-600 rounded-lg text-white text-xs shadow-lg"
-                 disabled={loading}
-               >
-                 Eliminar
-               </button>
-            </div>
+            {trade.reviewImage?.url ? (
+              <div className="relative group">
+                <img
+                  src={trade.reviewImage.url}
+                  alt="Review"
+                  className="w-full h-64 object-cover rounded-xl cursor-zoom-in border border-zinc-800"
+                  onClick={() => setView(trade.reviewImage.url)}
+                />
+                <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                   <button
+                     onClick={() => handleDelete('review')}
+                     className="p-2 bg-rose-600 rounded-lg text-white text-xs shadow-lg"
+                     disabled={loading}
+                   >
+                     Eliminar
+                   </button>
+                </div>
+              </div>
+            ) : (
+              <div className="p-8 border-2 border-dashed border-zinc-800 rounded-xl hover:border-zinc-700 transition-colors h-100 d-flex flex-column justify-content-center">
+                <ReviewImageUploader trade={trade} setTrade={setTrade} />
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="p-8 border-2 border-dashed border-zinc-800 rounded-xl hover:border-zinc-700 transition-colors">
-            <ReviewImageUploader trade={trade} setTrade={setTrade} />
-          </div>
-        )}
+        </div>
       </div>
 
       {view && <FullscreenViewer src={view} onClose={() => setView(null)} />}

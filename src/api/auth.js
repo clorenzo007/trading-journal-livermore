@@ -4,6 +4,11 @@ console.log("API_URL:", API_URL);
 // =======================
 // LOGIN
 // =======================
+// =======================
+// LOGIN USER
+// Posts email/password to /auth/login.
+// Returns token and user profile.
+// =======================
 export async function login(email, password) {
   const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",

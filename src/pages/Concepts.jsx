@@ -4,11 +4,20 @@ import {
   createConcept,
   updateConcept,
   deleteConcept,
-  uploadConceptImage,
   updateConceptsOrder,
 } from "../api/concepts";
 import FullscreenViewer from "../components/FullscreenViewer";
 
+/**
+ * Concepts / Playbook Page.
+ * A knowledge base for the user's trading concepts and strategies (e.g., ICT concepts).
+ * 
+ * Features:
+ * - Sidebar navigation for quick access to concepts.
+ * - Rich content display with text, lists, and images.
+ * - CRUD operations for concepts.
+ * - Reorder capability.
+ */
 export default function Concepts() {
   const [concepts, setConcepts] = useState([]);
   const [loading, setLoading] = useState(true);

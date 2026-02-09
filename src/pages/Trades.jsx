@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { getTrades } from "../api/trades";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Trades List Page.
+ * Displays a simple, full-page list of all trades.
+ * (Note: Simple alternative to the Dashboard's featured table).
+ */
 export default function Trades() {
   const [trades, setTrades] = useState([]);
   const navigate = useNavigate();

@@ -1,3 +1,10 @@
+/**
+ * Column Filter Component.
+ * Used in tables to filter data by specific columns.
+ * Supports:
+ * - Text search (contains).
+ * - Number range (min/max).
+ */
 export default function ColumnFilter({ value, onChange, type = "text" }) {
   if (type === "number") {
     return (

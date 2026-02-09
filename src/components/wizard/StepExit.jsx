@@ -8,6 +8,11 @@ function nowLocalDatetime() {
   return d.toISOString().slice(0, 16);
 }
 
+/**
+ * Wizard Step: Exit Details.
+ * Captures Exit Date, Price, P/L, and Outcome.
+ * (Optional for open trades).
+ */
 export default function StepExit({
   trade,
   setTrade,

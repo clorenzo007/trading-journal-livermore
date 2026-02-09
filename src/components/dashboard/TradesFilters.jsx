@@ -1,3 +1,7 @@
+/**
+ * Advanced Filters Panel.
+ * Provides global filters for the dashboard (Search, Outcome, Session, Date Range, P/L Range).
+ */
 export default function TradesFilters({ value, onChange, onReset }) {
   const update = (k, v) => {
     onChange((prev) => ({ ...prev, [k]: v }));

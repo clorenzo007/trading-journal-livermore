@@ -117,6 +117,15 @@ function MarketRow({ name, tz, open, close }) {
   );
 }
 
+/**
+ * Market Sessions Card.
+ * Displays the status of major global markets (Open/Closed) and time remaining.
+ * 
+ * Logic:
+ * - Calculates market open/close times in their respective timezones.
+ * - Converts to local time for display.
+ * - Shows progress bar for open sessions.
+ */
 export default function MarketTimesCard() {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3">

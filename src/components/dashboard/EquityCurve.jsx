@@ -8,6 +8,15 @@ import {
 } from "recharts";
 import { useMemo } from "react";
 
+/**
+ * Equity Curve Chart.
+ * Visualizes the cumulative portfolio growth over time based on trade results.
+ * 
+ * Logic:
+ * - Sorts trades by entry date.
+ * - Calculates cumulative % return starting from base 100.
+ * - Renders a line chart using Recharts.
+ */
 export default function EquityCurve({ trades }) {
   const data = useMemo(() => {
     if (!Array.isArray(trades) || trades.length === 0) return [];

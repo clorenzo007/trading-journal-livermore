@@ -1,3 +1,7 @@
+/**
+ * Wizard Progress Bar.
+ * Visual indicator of the current step in the wizard.
+ */
 export default function ProgressBar({ step, totalSteps }) {
   const safeTotal = Number(totalSteps) || 1;
   const safeStep = Number(step) || 1;

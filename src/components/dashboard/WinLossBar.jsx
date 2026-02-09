@@ -16,6 +16,10 @@ function getOutcome(trade) {
   return "BE";
 }
 
+/**
+ * Win / Loss / BE Distribution Chart (Bar).
+ * Shows the absolute count of trades for each outcome.
+ */
 export default function WinLossBar({ trades }) {
   const data = useMemo(() => {
     const counts = { Win: 0, Loss: 0, BE: 0 };

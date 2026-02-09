@@ -1,5 +1,16 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
+/**
+ * Generic API wrapper for making HTTP requests.
+ * 
+ * Automatically attaches:
+ * - JWT Token (Authorization header)
+ * - Active Account ID (x-account-id header)
+ * 
+ * Handles:
+ * - JSON stringification for non-FormData bodies.
+ * - Error parsing from response.
+ */
 export async function api(path, options = {}) {
   const token = localStorage.getItem("token");
   const accountId = localStorage.getItem("activeAccountId");
@@ -10,7 +21,7 @@ export async function api(path, options = {}) {
     ...options.headers,
   };
 
-  // 🔥 CLAVE: no forzar JSON si es FormData
+  // Auto-detect JSON content type if not sending files
   if (!(options.body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
   }

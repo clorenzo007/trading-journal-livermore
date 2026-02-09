@@ -1,5 +1,9 @@
 import WizardCard from "./WizardCard";
 
+/**
+ * Wizard Step: Post-Trade Psychology.
+ * Captures emotional state after the trade, reason for exit, and review notes.
+ */
 export default function StepPsychologyPost({
   trade,
   setTrade,
