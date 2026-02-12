@@ -161,15 +161,15 @@ export default function Dashboard() {
       */}
       <div className="row g-4 mb-4">
         {/* Local Time Card */}
-        <div className="col-12 col-md-4">
+        <div className="col-12 col-md-4 flex flex-col">
           <LocalTimeCard />
         </div>
         {/* Market Sessions Card */}
-        <div className="col-12 col-md-4">
+        <div className="col-12 col-md-4 flex flex-col">
           <MarketTimesCard />
         </div>
         {/* Economic Calendar Card */}
-        <div className="col-12 col-md-4">
+        <div className="col-12 col-md-4 flex flex-col">
           <EconomicCalendarCard />
         </div>
       </div>
@@ -211,10 +211,10 @@ export default function Dashboard() {
         ===========================================================================
       */}
       <div className="row g-4 mb-4">
-        <div className="col-12 col-lg-6">
+        <div className="col-12 col-lg-6 flex flex-col">
           <WinLossBar trades={filtered} />
         </div>
-        <div className="col-12 col-lg-6">
+        <div className="col-12 col-lg-6 flex flex-col">
           <WinLossPie trades={filtered} />
         </div>
         <div className="col-12">
@@ -228,10 +228,10 @@ export default function Dashboard() {
         ===========================================================================
       */}
       <div className="row g-4 mb-4">
-        <div className="col-12 col-xl-8">
+        <div className="col-12 col-xl-8 flex flex-col">
           <Calendar trades={filtered} onSelectDay={setSelectedDay} />
         </div>
-        <div className="col-12 col-xl-4">
+        <div className="col-12 col-xl-4 flex flex-col">
           <Heatmap trades={filtered} />
         </div>
       </div>
