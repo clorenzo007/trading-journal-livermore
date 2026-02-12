@@ -31,7 +31,14 @@ export async function api(path, options = {}) {
     headers,
   });
 
-  const data = await res.json();
+  const text = await res.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (err) {
+    console.error(`API JSON Parse Error [${res.status}]:`, text);
+    throw new Error(`Server returned non-JSON response (${res.status} ${res.statusText})`);
+  }
 
   if (!res.ok) throw new Error(data.error || "API error");
 
