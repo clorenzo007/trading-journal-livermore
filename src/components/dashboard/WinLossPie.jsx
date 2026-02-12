@@ -39,7 +39,7 @@ export default function WinLossPie({ trades }) {
   }, [trades]);
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 h-full">
       <div className="text-sm text-zinc-400 mb-2">Win / Loss Ratio</div>
 
       {data.length === 0 ? (

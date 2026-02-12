@@ -113,7 +113,7 @@ export default function Heatmap({ trades }) {
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 relative overflow-x-auto">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 relative overflow-x-auto h-full">
       <div className="min-w-[350px]">
       <div className="flex justify-between items-center mb-3">
         <button onClick={prevMonth} className="px-2 py-1 bg-zinc-800 rounded">

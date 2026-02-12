@@ -128,7 +128,7 @@ function MarketRow({ name, tz, open, close }) {
  */
 export default function MarketTimesCard() {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3 h-full">
       <div className="text-sm text-zinc-400">Market sessions (local time)</div>
 
       <MarketRow

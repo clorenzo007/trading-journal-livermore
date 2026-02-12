@@ -101,7 +101,7 @@ export default function Calendar({ trades, onSelectDay }) {
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 relative overflow-x-auto">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 relative overflow-x-auto h-full">
       <div className="min-w-[600px]"> {/* Ensure minimum width for the grid */}
       {/* Header */}
       <div className="flex justify-between items-center mb-4">

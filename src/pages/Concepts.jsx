@@ -45,8 +45,8 @@ export default function Concepts() {
 
               <SubTitle>Impulso alcista</SubTitle>
               <ol className="list-decimal list-inside space-y-2 text-zinc-300">
-                <li>Neutralización del mínimo previo</li>
-                <li>Generación de nuevo máximo</li>
+                <li>Neutralización del mínimo previo<. El mercado toma el minimo de la vela que hizo el ultimo maximo/li>
+                <li>Generación de nuevo máximo. El mercado genera un nuevo maximo</li>
               </ol>
 
               <Note>
