@@ -32,17 +32,20 @@ export default function Concepts() {
   };
 
   const handeSave = async (formData) => {
+    console.log("Saving concept...", { editingConcept, formData });
     try {
       if (editingConcept) {
+        console.log("Updating existing concept:", editingConcept._id);
         await updateConcept(editingConcept._id, formData);
       } else {
+        console.log("Creating new concept");
         await createConcept(formData);
       }
       loadConcepts();
       setEditingConcept(null);
     } catch (err) {
       console.error("Error saving concept", err);
-      alert("Failed to save concept");
+      alert("Failed to save concept: " + (err.message || "Unknown error"));
     }
   };
 
@@ -169,6 +172,16 @@ export default function Concepts() {
                 </div>
 
                 <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-sm hover:border-zinc-700 transition-colors">
+                  {concept.image?.url && (
+                    <div className="mb-6 rounded-lg overflow-hidden border border-zinc-700 shadow-md">
+                      <img 
+                        src={concept.image.url} 
+                        alt={concept.title} 
+                        className="w-full max-h-[500px] object-contain bg-black/50" 
+                      />
+                    </div>
+                  )}
+
                   {concept.subtitle && (
                     <h3 className="text-xl font-bold text-white mb-2">
                       {concept.subtitle}

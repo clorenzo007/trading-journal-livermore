@@ -12,6 +12,10 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
 
   const [newItem, setNewItem] = useState("");
 
+  /* New State for Image */
+  const [file, setFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -21,6 +25,7 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
         items: initialData.items || [],
         note: initialData.note || "",
       });
+      setImagePreview(initialData.image?.url || "");
     } else {
       setFormData({
         title: "",
@@ -29,15 +34,37 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
         items: [],
         note: "",
       });
+      setImagePreview("");
     }
+    setFile(null);
   }, [initialData, isOpen]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    if (file) {
+      const data = new FormData();
+      data.append("title", formData.title);
+      data.append("subtitle", formData.subtitle);
+      data.append("description", formData.description);
+      data.append("note", formData.note);
+      data.append("items", JSON.stringify(formData.items)); 
+      data.append("file", file); 
+      onSubmit(data);
+    } else {
+      onSubmit(formData);
+    }
     onClose();
   };
-
+  
   const addItem = () => {
     if (!newItem.trim()) return;
     setFormData({ ...formData, items: [...formData.items, newItem] });
@@ -67,6 +94,24 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
         
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           
+          {/* Image Upload */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-zinc-400 mb-2">Image (Optional)</label>
+            <div className="flex items-center gap-4">
+              {imagePreview && (
+                <div className="w-20 h-20 rounded-lg overflow-hidden border border-zinc-700 bg-zinc-800 shrink-0">
+                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer w-full"
+              />
+            </div>
+          </div>
+
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-zinc-400 mb-2">Title</label>
@@ -123,12 +168,21 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
             
             <ul className="space-y-2">
               {formData.items.map((item, i) => (
-                <li key={i} className="flex justify-between items-center bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-300">
-                  <span>{item}</span>
+                <li key={i} className="flex gap-2 items-center bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-300">
+                  <input
+                    value={item}
+                    onChange={(e) => {
+                      const newItems = [...formData.items];
+                      newItems[i] = e.target.value;
+                      setFormData({ ...formData, items: newItems });
+                    }}
+                    className="flex-1 bg-transparent border-none outline-none text-zinc-300 placeholder-zinc-600 focus:text-white transition-colors"
+                  />
                   <button
                     type="button"
                     onClick={() => removeItem(i)}
-                    className="text-zinc-500 hover:text-rose-400 transition-colors"
+                    className="text-zinc-500 hover:text-rose-400 transition-colors p-1"
+                    tabIndex="-1"
                   >
                     <Trash2 size={16} />
                   </button>
