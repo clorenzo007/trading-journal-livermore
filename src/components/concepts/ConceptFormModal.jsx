@@ -12,9 +12,9 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
 
   const [newItem, setNewItem] = useState("");
 
-  /* New State for Image */
-  const [file, setFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState("");
+  /* New State for Images */
+  const [files, setFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
 
   useEffect(() => {
     if (initialData) {
@@ -25,7 +25,13 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
         items: initialData.items || [],
         note: initialData.note || "",
       });
-      setImagePreview(initialData.image?.url || "");
+      
+      // Combine legacy image and new images array for preview
+      const existingImages = initialData.images?.map(img => img.url) || [];
+      if (existingImages.length === 0 && initialData.image?.url) {
+        existingImages.push(initialData.image.url);
+      }
+      setImagePreviews(existingImages);
     } else {
       setFormData({
         title: "",
@@ -34,41 +40,46 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
         items: [],
         note: "",
       });
-      setImagePreview("");
+      setImagePreviews([]);
     }
-    setFile(null);
+    setFiles([]);
   }, [initialData, isOpen]);
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFile(file);
-      setImagePreview(URL.createObjectURL(file));
+    const selectedFiles = Array.from(e.target.files);
+    if (selectedFiles.length > 0) {
+      setFiles(prevFiles => [...prevFiles, ...selectedFiles]);
+      const newPreviews = selectedFiles.map(file => URL.createObjectURL(file));
+      setImagePreviews(prevPreviews => [...prevPreviews, ...newPreviews]);
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        alert("File size exceeds 10MB limit.");
-        return;
-      }
-
-      const data = new FormData();
-      data.append("title", formData.title);
-      data.append("subtitle", formData.subtitle || ""); // Ensure string
-      data.append("description", formData.description || "");
-      data.append("note", formData.note || "");
-      data.append("items", JSON.stringify(formData.items)); 
-      data.append("file", file); 
-      console.log("Submitting FormData with file:", file.name, "Size:", file.size);
-      onSubmit(data);
-    } else {
-      console.log("Submitting plain JSON data");
-      onSubmit(formData);
+    if (files.length > 0 || !initialData) { // If creating new or has files
+       // Note: logic is slightly modified. 
+       // For edit: we only send NEW files. Old files are preserved by backend logic (append).
+       // If we wanted to delete old files, we'd need a delete tracking mechanism.
+       // For now, simple append.
     }
+
+    const data = new FormData();
+    data.append("title", formData.title);
+    data.append("subtitle", formData.subtitle || ""); // Ensure string
+    data.append("description", formData.description || "");
+    data.append("note", formData.note || "");
+    data.append("items", JSON.stringify(formData.items)); 
+    
+    if (files.length > 0) {
+       files.forEach(file => {
+         data.append("files", file);
+       });
+    }
+
+    // Pass data even if no files (for text updates)
+    onSubmit(data);
+    
     onClose();
   };
   
@@ -103,19 +114,30 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
           
           {/* Image Upload */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Image (Optional)</label>
-            <div className="flex items-center gap-4">
-              {imagePreview && (
-                <div className="w-20 h-20 rounded-lg overflow-hidden border border-zinc-700 bg-zinc-800 shrink-0">
-                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+            <label className="block text-sm font-medium text-zinc-400 mb-2">Images (Optional)</label>
+            <div className="space-y-4">
+              {/* Previews Grid */}
+              {imagePreviews.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {imagePreviews.map((src, idx) => (
+                    <div key={idx} className="w-20 h-20 rounded-lg overflow-hidden border border-zinc-700 bg-zinc-800 shrink-0 relative group">
+                      <img src={src} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+                      {/* TODO: Add delete button for specific images if we implement delete logic */}
+                    </div>
+                  ))}
                 </div>
               )}
+              
               <input
                 type="file"
                 accept="image/*"
+                multiple
                 onChange={handleImageChange}
                 className="text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer w-full"
               />
+              <p className="text-xs text-zinc-500">
+                select one or more files. New files will be appended to existing ones.
+              </p>
             </div>
           </div>
 

@@ -199,31 +199,44 @@ export default function Concepts() {
 
                 <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-sm hover:border-zinc-700 transition-colors">
                   
-                  {/* Image Thumbnail */}
-                  {concept.image?.url && (
-                    <div className="mb-6">
-                      <button 
-                        onClick={() => setSelectedImage(concept.image.url)}
-                        className="group flex items-center gap-4 bg-zinc-950/50 hover:bg-zinc-950 border border-zinc-800 hover:border-indigo-500/50 p-2 rounded-lg transition-all w-full md:w-auto"
-                      >
-                        <div className="w-16 h-16 rounded overflow-hidden bg-black border border-zinc-800 shrink-0">
-                          <img 
-                            src={concept.image.url} 
-                            alt={concept.title} 
-                            className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" 
-                          />
+                  {/* Image Thumbnails */}
+                  {(() => {
+                     // Normalize images to array
+                     let images = concept.images || [];
+                     if (images.length === 0 && concept.image?.url) {
+                        images = [concept.image];
+                     }
+                     
+                     if (images.length === 0) return null;
+
+                     return (
+                        <div className="mb-6 flex flex-wrap gap-4">
+                          {images.map((img, idx) => (
+                             <button 
+                                key={idx}
+                                onClick={() => setSelectedImage(img.url)}
+                                className="group flex items-center gap-4 bg-zinc-950/50 hover:bg-zinc-950 border border-zinc-800 hover:border-indigo-500/50 p-2 rounded-lg transition-all w-full md:w-auto"
+                              >
+                                <div className="w-16 h-16 rounded overflow-hidden bg-black border border-zinc-800 shrink-0">
+                                  <img 
+                                    src={img.url} 
+                                    alt={`${concept.title} ${idx + 1}`} 
+                                    className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" 
+                                  />
+                                </div>
+                                <div className="text-left pr-4">
+                                  <p className="text-sm font-medium text-zinc-300 group-hover:text-indigo-300 transition-colors">
+                                    {images.length > 1 ? `Image ${idx + 1}` : "Ver imagen"}
+                                  </p>
+                                  <p className="text-xs text-zinc-500 group-hover:text-zinc-400">
+                                    Click para ampliar
+                                  </p>
+                                </div>
+                              </button>
+                          ))}
                         </div>
-                        <div className="text-left pr-4">
-                          <p className="text-sm font-medium text-zinc-300 group-hover:text-indigo-300 transition-colors">
-                            Ver imagen adjunta
-                          </p>
-                          <p className="text-xs text-zinc-500 group-hover:text-zinc-400">
-                            Click para ampliar
-                          </p>
-                        </div>
-                      </button>
-                    </div>
-                  )}
+                     );
+                  })()}
 
                   {concept.subtitle && (
                     <h3 className="text-xl font-bold text-white mb-2">
