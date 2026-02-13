@@ -20,9 +20,10 @@ export const updateConceptsOrder = async (orders) => {
 };
 
 export const updateConcept = async (id, data) => {
+  const isFormData = data instanceof FormData;
   return await api(`/concepts/${id}`, {
     method: "PUT",
-    body: JSON.stringify(data),
+    body: isFormData ? data : JSON.stringify(data),
   });
 };
 

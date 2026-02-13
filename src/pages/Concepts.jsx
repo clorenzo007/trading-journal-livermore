@@ -7,7 +7,7 @@ import {
   deleteConcept, 
   updateConceptsOrder 
 } from "../api/concepts";
-import { Plus, Edit2, Trash2, Save, MoveVertical } from "lucide-react";
+import { Plus, Edit2, Trash2, Save, MoveVertical, Image as ImageIcon } from "lucide-react";
 import ConceptFormModal from "../components/concepts/ConceptFormModal";
 
 export default function Concepts() {
@@ -150,8 +150,9 @@ export default function Concepts() {
                 className="scroll-mt-24 group relative"
               >
                 <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-                  <h2 className="text-2xl font-semibold text-zinc-100">
+                  <h2 className="text-2xl font-semibold text-zinc-100 flex items-center gap-2">
                     {concept.title}
+                    {concept.image?.url && <ImageIcon size={20} className="text-zinc-500" title="Image attached" />}
                   </h2>
                   <div className="flex gap-2 opacity-100 transition-opacity">
                     <button 

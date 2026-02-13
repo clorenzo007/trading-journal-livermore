@@ -51,15 +51,22 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
     e.preventDefault();
     
     if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        alert("File size exceeds 10MB limit.");
+        return;
+      }
+
       const data = new FormData();
       data.append("title", formData.title);
-      data.append("subtitle", formData.subtitle);
-      data.append("description", formData.description);
-      data.append("note", formData.note);
+      data.append("subtitle", formData.subtitle || ""); // Ensure string
+      data.append("description", formData.description || "");
+      data.append("note", formData.note || "");
       data.append("items", JSON.stringify(formData.items)); 
       data.append("file", file); 
+      console.log("Submitting FormData with file:", file.name, "Size:", file.size);
       onSubmit(data);
     } else {
+      console.log("Submitting plain JSON data");
       onSubmit(formData);
     }
     onClose();
