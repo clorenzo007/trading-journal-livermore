@@ -7,7 +7,7 @@ import {
   deleteConcept, 
   updateConceptsOrder 
 } from "../api/concepts";
-import { Plus, Edit2, Trash2, Save, MoveVertical, Image as ImageIcon } from "lucide-react";
+import { Plus, Edit2, Trash2, Save, MoveVertical, Image as ImageIcon, X } from "lucide-react";
 import ConceptFormModal from "../components/concepts/ConceptFormModal";
 
 export default function Concepts() {
@@ -15,6 +15,8 @@ export default function Concepts() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingConcept, setEditingConcept] = useState(null);
+
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     loadConcepts();
@@ -82,6 +84,28 @@ export default function Concepts() {
         initialData={editingConcept}
       />
 
+      {/* Lightbox Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-w-7xl w-full max-h-screen flex items-center justify-center">
+            <img 
+              src={selectedImage} 
+              alt="Fullscreen" 
+              className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" 
+            />
+            <button 
+              onClick={() => setSelectedImage(null)}
+              className="absolute -top-12 right-0 text-zinc-400 hover:text-white p-2 transition-colors"
+            >
+              <X size={32} />
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto flex gap-8">
 
         {/* ===== SIDEBAR ===== */}
@@ -96,7 +120,8 @@ export default function Concepts() {
                 <a
                   key={c._id}
                   href={`#${toSlug(c.title)}`}
-                  className="block text-zinc-400 hover:text-white hover:bg-zinc-800/50 px-3 py-2 rounded-md transition-colors"
+                  className="block text-zinc-400 hover:text-white hover:bg-zinc-800/50 px-3 py-2 rounded-md transition-colors truncate"
+                  title={c.title}
                 >
                   {c.title}
                 </a>
@@ -173,13 +198,30 @@ export default function Concepts() {
                 </div>
 
                 <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-sm hover:border-zinc-700 transition-colors">
+                  
+                  {/* Image Thumbnail */}
                   {concept.image?.url && (
-                    <div className="mb-6 rounded-lg overflow-hidden border border-zinc-700 shadow-md">
-                      <img 
-                        src={concept.image.url} 
-                        alt={concept.title} 
-                        className="w-full max-h-[500px] object-contain bg-black/50" 
-                      />
+                    <div className="mb-6">
+                      <button 
+                        onClick={() => setSelectedImage(concept.image.url)}
+                        className="group flex items-center gap-4 bg-zinc-950/50 hover:bg-zinc-950 border border-zinc-800 hover:border-indigo-500/50 p-2 rounded-lg transition-all w-full md:w-auto"
+                      >
+                        <div className="w-16 h-16 rounded overflow-hidden bg-black border border-zinc-800 shrink-0">
+                          <img 
+                            src={concept.image.url} 
+                            alt={concept.title} 
+                            className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" 
+                          />
+                        </div>
+                        <div className="text-left pr-4">
+                          <p className="text-sm font-medium text-zinc-300 group-hover:text-indigo-300 transition-colors">
+                            Ver imagen adjunta
+                          </p>
+                          <p className="text-xs text-zinc-500 group-hover:text-zinc-400">
+                            Click para ampliar
+                          </p>
+                        </div>
+                      </button>
                     </div>
                   )}
 
