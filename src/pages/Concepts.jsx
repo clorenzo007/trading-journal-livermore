@@ -153,7 +153,7 @@ export default function Concepts() {
                   <h2 className="text-2xl font-semibold text-zinc-100">
                     {concept.title}
                   </h2>
-                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex gap-2 opacity-100 transition-opacity">
                     <button 
                       onClick={() => openEditModal(concept)}
                       className="p-1.5 text-zinc-400 hover:text-indigo-400 transition-colors"
