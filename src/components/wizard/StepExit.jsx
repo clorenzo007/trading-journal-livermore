@@ -103,6 +103,72 @@ export default function StepExit({
           />
         </div>
 
+        {/* HIGHEST / LOWEST PRICE REACHED */}
+        <div>
+          <label className="block text-sm text-zinc-400 mb-1">
+            Highest / Lowest Price Reached (Max Excursion)
+          </label>
+          <input
+            type="number"
+            step="any"
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
+            value={trade.highest_lowest_price ?? ""}
+            onChange={(e) => setTrade({ highest_lowest_price: e.target.value })}
+            placeholder="Furthest price reached"
+          />
+          {/* Metrics Display */}
+          {trade.entry_price && trade.stop_loss && trade.highest_lowest_price && (
+             <div className="mt-2 p-3 bg-zinc-900 border border-zinc-800 rounded text-sm space-y-1">
+                {(() => {
+                   const entry = Number(trade.entry_price);
+                   const sl = Number(trade.stop_loss);
+                   const reached = Number(trade.highest_lowest_price);
+                   const tp = trade.take_profit ? Number(trade.take_profit) : null;
+                   
+                   const riskPerShare = Math.abs(entry - sl);
+                   const isLong = entry > sl; // Assuming Stop is below entry for Long
+
+                   // Calculate Max Potential Profit (Distance from Entry to Best Price)
+                   const maxPotentialProfit = isLong ? (reached - entry) : (entry - reached);
+                   
+                   // Calculate Max R:R
+                   const maxRR = riskPerShare > 0 ? (maxPotentialProfit / riskPerShare).toFixed(2) : "0";
+                   
+                   // Calculate Missed Pips (Distance from TP to Best Price, if TP defined)
+                   let missedPips = "N/A";
+                   if (tp) {
+                      // If Long: TP - Reached (if Reached < TP)
+                      // If Short: Reached - TP (if Reached > TP) ??
+                      // User example: Short @ 2046, TP @ 2044, Reached @ 2036. 
+                      // Diff: |2044 - 2036| = 8.
+                      // Logic: Just distance between TP and Reached?
+                      missedPips = Math.abs(tp - reached).toFixed(2);
+                   }
+
+                   return (
+                      <>
+                        <div className="flex justify-between">
+                            <span className="text-zinc-400">Max Potential R:R:</span>
+                            <span className="text-white font-mono">{maxRR}R</span>
+                        </div>
+                        {tp && (
+                            <div className="flex justify-between">
+                                <span className="text-zinc-400">Distance from TP:</span>
+                                <span className="text-amber-400 font-mono">{missedPips} pts</span>
+                            </div>
+                        )}
+                        <div className="text-xs text-zinc-500 pt-1 border-t border-zinc-800 mt-1">
+                           {maxPotentialProfit > 0 
+                             ? "Trade went in your favor at some point." 
+                             : "Trade went immediately against you."}
+                        </div>
+                      </>
+                   );
+                })()}
+             </div>
+          )}
+        </div>
+
         {/* PROFIT / LOSS */}
         <div>
           <label className="block text-sm text-zinc-400 mb-1">

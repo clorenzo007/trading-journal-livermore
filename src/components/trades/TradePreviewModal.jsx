@@ -38,8 +38,11 @@ export default function TradePreviewModal({ trade, onClose, onEdit }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Data Section */}
           <div className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
               <DataBlock label="Entry Price" value={trade.entry_price} />
+              <DataBlock label="Take Profit" value={trade.take_profit} />
+              <DataBlock label="Stop Loss" value={trade.stop_loss} />
+              <DataBlock label="Max Price" value={trade.highest_lowest_price} />
               <DataBlock label="Exit Price" value={trade.exit_price} />
               <DataBlock label="P/L" value={trade.profit_loss} isMoney />
               <DataBlock label="Volume" value={trade.position_size} />

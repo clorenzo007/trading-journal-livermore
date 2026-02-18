@@ -61,6 +61,19 @@ export default function StepRisk({
           />
         </div>
 
+        {/* TAKE PROFIT */}
+        <div>
+          <label className="block text-sm text-zinc-400 mb-1">Take Profit (Optional)</label>
+          <input
+            type="number"
+            step="any"
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
+            value={trade.take_profit ?? ""}
+            onChange={(e) => setTrade({ take_profit: e.target.value })}
+            placeholder="Target Price"
+          />
+        </div>
+
         {/* RISK % */}
         <div>
           <label className="block text-sm text-zinc-400 mb-1">Risk %</label>

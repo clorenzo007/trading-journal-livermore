@@ -156,6 +156,25 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
               />
             </Field>
 
+            <Field label="Take Profit">
+              <input
+                type="number"
+                value={form.take_profit ?? ""}
+                onChange={(e) => update("take_profit", Number(e.target.value))}
+                className="input"
+              />
+            </Field>
+
+            <Field label="Max Price Reached">
+              <input
+                type="number"
+                value={form.highest_lowest_price ?? ""}
+                onChange={(e) => update("highest_lowest_price", Number(e.target.value))}
+                className="input"
+                placeholder="Highest/Lowest"
+              />
+            </Field>
+
             <Field label="Position size">
               <input
                 type="number"

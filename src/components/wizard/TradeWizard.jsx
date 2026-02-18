@@ -28,7 +28,9 @@ const EMPTY_TRADE = {
   entry_price: "",
   position_size: "",
   stop_loss: "",
+  take_profit: "", // ✅ NEW
   risk_percent: "",
+  highest_lowest_price: "", // ✅ NEW
   exit_date: "",
   exit_price: "",
   profit_loss: "",
@@ -171,7 +173,9 @@ export default function TradeWizard() {
         entry_price: Number(trade.entry_price),
         position_size: Number(trade.position_size),
         stop_loss: Number(trade.stop_loss),
+        take_profit: trade.take_profit ? Number(trade.take_profit) : undefined, // ✅ NEW
         risk_percent: Number(trade.risk_percent),
+        highest_lowest_price: trade.highest_lowest_price ? Number(trade.highest_lowest_price) : undefined, // ✅ NEW
         exit_date: trade.exit_date || undefined, // ✅ FIX: Avoid empty string for Date
         exit_price: trade.exit_price ? Number(trade.exit_price) : undefined,
         profit_loss: trade.profit_loss ? Number(trade.profit_loss) : undefined,
