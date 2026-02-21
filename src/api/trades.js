@@ -83,6 +83,9 @@ function uploadWithProgress(url, file, onProgress) {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", url);
 
+    // Start Global Loading Bar
+    window.dispatchEvent(new CustomEvent("loading-start"));
+
     const token = localStorage.getItem("token");
     const accountId = localStorage.getItem("activeAccountId");
 
@@ -96,6 +99,8 @@ function uploadWithProgress(url, file, onProgress) {
     };
 
     xhr.onload = () => {
+      // Stop Global Loading Bar
+      window.dispatchEvent(new CustomEvent("loading-end"));
       try {
         resolve(JSON.parse(xhr.responseText));
       } catch {
@@ -103,7 +108,11 @@ function uploadWithProgress(url, file, onProgress) {
       }
     };
 
-    xhr.onerror = () => reject(new Error("Upload failed"));
+    xhr.onerror = () => {
+      // Stop Global Loading Bar
+      window.dispatchEvent(new CustomEvent("loading-end"));
+      reject(new Error("Upload failed"));
+    };
 
     xhr.send(formData);
   });

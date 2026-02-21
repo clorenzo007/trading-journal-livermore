@@ -26,21 +26,29 @@ export async function api(path, options = {}) {
     headers["Content-Type"] = "application/json";
   }
 
-  const res = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  // Start Global Loading Bar
+  window.dispatchEvent(new CustomEvent("loading-start"));
 
-  const text = await res.text();
-  let data;
   try {
-    data = JSON.parse(text);
-  } catch (err) {
-    console.error(`API JSON Parse Error [${res.status}]:`, text);
-    throw new Error(`Server returned non-JSON response (${res.status} ${res.statusText})`);
+    const res = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers,
+    });
+
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
+      console.error(`API JSON Parse Error [${res.status}]:`, text);
+      throw new Error(`Server returned non-JSON response (${res.status} ${res.statusText})`);
+    }
+
+    if (!res.ok) throw new Error(data.error || "API error");
+
+    return data;
+  } finally {
+    // Stop Global Loading Bar
+    window.dispatchEvent(new CustomEvent("loading-end"));
   }
-
-  if (!res.ok) throw new Error(data.error || "API error");
-
-  return data;
 }

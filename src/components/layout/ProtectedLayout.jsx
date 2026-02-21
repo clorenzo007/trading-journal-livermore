@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
+import LoadingBar from "./LoadingBar";
 
 /**
  * Layout for authenticated routes.
@@ -9,6 +10,7 @@ import Navbar from "./Navbar";
 export default function ProtectedLayout() {
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
+      <LoadingBar />
       <Navbar />
       <main className="container-fluid px-0 px-md-3">
         <div className="container py-4">

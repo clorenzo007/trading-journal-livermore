@@ -48,6 +48,9 @@ export default function ImportTrades() {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", `${API_URL}/import/mt5`);
 
+    // Start Global Loading Bar
+    window.dispatchEvent(new CustomEvent("loading-start"));
+
     xhr.setRequestHeader(
       "Authorization",
       `Bearer ${localStorage.getItem("token")}`,
@@ -64,6 +67,8 @@ export default function ImportTrades() {
     };
 
     xhr.onload = () => {
+      // Stop Global Loading Bar
+      window.dispatchEvent(new CustomEvent("loading-end"));
       setProgress(100);
       try {
         const data = JSON.parse(xhr.responseText);
@@ -77,6 +82,8 @@ export default function ImportTrades() {
     };
 
     xhr.onerror = () => {
+      // Stop Global Loading Bar
+      window.dispatchEvent(new CustomEvent("loading-end"));
       alert("Import failed");
       setLoading(false);
     };

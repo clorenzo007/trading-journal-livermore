@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { deleteTrades } from "../../api/trades";
 import TradeDetailModal from "./TradeDetailModal";
+import { Trash2, X, CheckSquare } from "lucide-react";
 
 const EMPTY_FILTERS = {
   search: "",
@@ -98,17 +99,40 @@ export default function TradesTable({ trades = [], onRefresh }) {
       {/* HEADER & TOGGLE FILTERS */}
       {/* FILTER COMPONENT REMOVED - Using Column Filters */}
       
-      {/* BULK ACTIONS */}
+      {/* FLOATING BULK ACTIONS BAR */}
       {selectedIds.size > 0 && (
-        <div className="bg-zinc-800 p-2 rounded flex items-center justify-between mb-2">
-            <span className="text-zinc-300 text-sm ml-2">{selectedIds.size} selected</span>
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="bg-zinc-900 border border-zinc-800 shadow-2xl rounded-2xl px-6 py-4 flex items-center gap-6 backdrop-blur-md bg-opacity-90">
+            <div className="flex items-center gap-3 pr-6 border-r border-zinc-800">
+              <div className="bg-indigo-600/20 text-indigo-400 p-2 rounded-lg">
+                <CheckSquare size={20} />
+              </div>
+              <div>
+                <div className="text-white font-bold text-sm leading-none">
+                  {selectedIds.size} trades seleccionados
+                </div>
+                <button 
+                  onClick={() => setSelectedIds(new Set())}
+                  className="text-zinc-500 hover:text-white text-xs mt-1 transition-colors flex items-center gap-1"
+                >
+                  <X size={12} /> Cancelar selección
+                </button>
+              </div>
+            </div>
+
             <button 
-                onClick={handleBulkDelete}
-                disabled={deleting}
-                className="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1 rounded text-sm"
+              onClick={handleBulkDelete}
+              disabled={deleting}
+              className="flex items-center gap-2 bg-rose-600 hover:bg-rose-500 disabled:bg-rose-900/50 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-rose-900/20"
             >
-                {deleting ? "Deleting..." : "Delete Selected"}
+              {deleting ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <Trash2 size={18} />
+              )}
+              {deleting ? "Eliminando..." : "Eliminar Registros"}
             </button>
+          </div>
         </div>
       )}
 
