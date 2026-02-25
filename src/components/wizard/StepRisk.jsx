@@ -1,5 +1,7 @@
 import WizardCard from "./WizardCard";
 import { useAccount } from "../../context/AccountContext";
+import { calculateRR } from "../../utils/calculations";
+import { useEffect } from "react";
 
 /**
  * Wizard Step: Risk Management.
@@ -14,6 +16,14 @@ export default function StepRisk({
 }) {
   const { activeAccount } = useAccount();
 
+  // Auto-calculate RR whenever relevant fields change
+  useEffect(() => {
+    const rr = calculateRR(trade);
+    if (rr !== trade.rr_ratio) {
+      setTrade({ rr_ratio: rr });
+    }
+  }, [trade.entry_price, trade.stop_loss, trade.take_profit, trade.direction]);
+
   const handleStopLossBlur = () => {
     if (!trade.entry_price || !trade.position_size || !trade.stop_loss || !activeAccount) return;
 
@@ -25,7 +35,12 @@ export default function StepRisk({
     if (entry > 0 && size > 0 && balance > 0) {
       const riskAmount = Math.abs(entry - stop) * size;
       const riskPct = (riskAmount / balance) * 100;
-      setTrade({ risk_percent: riskPct.toFixed(2) });
+      
+      const rr = calculateRR(trade);
+      setTrade({ 
+        risk_percent: riskPct.toFixed(2),
+        rr_ratio: rr
+      });
     }
   };
 
@@ -72,6 +87,20 @@ export default function StepRisk({
             onChange={(e) => setTrade({ take_profit: e.target.value })}
             placeholder="Target Price"
           />
+        </div>
+
+        {/* RISK:REWARD (AUTO) */}
+        <div className="bg-indigo-900/10 border border-indigo-500/20 rounded-xl p-4 flex justify-between items-center">
+          <div>
+            <div className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Risk : Reward</div>
+            <div className="text-2xl font-black text-white">
+              1 : {trade.rr_ratio || "0.00"}
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Formula</div>
+            <div className="text-xs text-zinc-400 italic">Auto-calculated</div>
+          </div>
         </div>
 
         {/* RISK % */}

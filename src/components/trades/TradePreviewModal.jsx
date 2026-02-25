@@ -42,6 +42,7 @@ export default function TradePreviewModal({ trade, onClose, onEdit }) {
               <DataBlock label="Entry Price" value={trade.entry_price} />
               <DataBlock label="Take Profit" value={trade.take_profit} />
               <DataBlock label="Stop Loss" value={trade.stop_loss} />
+              <DataBlock label="R : R" value={trade.rr_ratio ? `1 : ${trade.rr_ratio}` : "—"} />
               <DataBlock label="Max Price" value={trade.highest_lowest_price} />
               <DataBlock label="Exit Price" value={trade.exit_price} />
               <DataBlock label="P/L" value={trade.profit_loss} isMoney />

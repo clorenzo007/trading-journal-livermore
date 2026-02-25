@@ -182,8 +182,7 @@ export default function Dashboard() {
       */}
       <div className="row mb-4">
         <div className="col-12">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 shadow-sm">
-            <h2 className="text-xl font-bold mb-3">Livermore Checklist</h2>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-sm">
             <LivermorePanel form={filtered[0] || {}} />
           </div>
         </div>

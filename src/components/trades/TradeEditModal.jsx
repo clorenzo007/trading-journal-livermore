@@ -2,6 +2,8 @@ import { useState } from "react";
 import { updateTrade, deleteTrade } from "../../api/trades";
 import EntryImageUploader from "../EntryImageUploader";
 import ReviewImageUploader from "../ReviewImageUploader";
+import { calculateRR } from "../../utils/calculations";
+import { useEffect } from "react";
 
 const TABS = ["General", "Risk", "Psychology", "Review", "Images"];
 
@@ -21,6 +23,14 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
   const [error, setError] = useState(null);
 
   const update = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+
+  // Auto-calculate RR
+  useEffect(() => {
+    const rr = calculateRR(form);
+    if (rr !== form.rr_ratio) {
+      update("rr_ratio", rr);
+    }
+  }, [form.entry_price, form.stop_loss, form.take_profit, form.direction]);
 
   async function save() {
     try {
@@ -163,6 +173,12 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
                 onChange={(e) => update("take_profit", Number(e.target.value))}
                 className="input"
               />
+            </Field>
+            
+            <Field label="Risk:Reward Ratio">
+              <div className="input bg-zinc-800/50 border-zinc-700/50 text-indigo-400 font-bold">
+                1 : {form.rr_ratio || "0.00"}
+              </div>
             </Field>
 
             <Field label="Max Price Reached">

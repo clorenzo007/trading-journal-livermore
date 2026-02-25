@@ -24,33 +24,35 @@ export default function LivermorePanel({ form }) {
   ];
 
   return (
-    <div className="lg:w-80 border-t lg:border-t-0 lg:border-l border-zinc-800 p-4 bg-zinc-900">
+    <div className="w-full border-t lg:border-t-0 border-zinc-800 p-6 bg-zinc-900">
       <button
         onClick={() => setOpen(!open)}
-        className="lg:hidden w-full text-left text-sm text-zinc-300 mb-2"
+        className="lg:hidden w-full text-left text-lg text-zinc-300 mb-2 font-bold"
       >
         Reglas Livermore {open ? "▲" : "▼"}
       </button>
 
       <div className={`${open ? "block" : "hidden"} lg:block`}>
-        <h2 className="font-semibold mb-4">Reglas Livermore</h2>
-        <ul className="space-y-2 text-sm">
+        <h2 className="font-black mb-8 text-4xl text-white tracking-tight uppercase">Reglas Livermore</h2>
+        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-2xl font-semibold">
           {rules.map((r, i) => (
             <li
               key={i}
-              className={`flex items-center gap-2 ${
+              className={`flex items-center gap-4 ${
                 r.ok ? "text-emerald-400" : "text-zinc-500"
               }`}
             >
-              <span>{r.ok ? "✔" : "○"}</span>
+              <span className="text-3xl">{r.ok ? "✔" : "○"}</span>
               <span>{r.label}</span>
             </li>
           ))}
         </ul>
 
-        <p className="text-xs text-zinc-400 mt-4">
-          “El dinero se gana sentándose, no operando.”
-        </p>
+        <div className="mt-12 p-8 bg-zinc-950/50 border-l-8 border-indigo-600 rounded-r-2xl shadow-inner">
+          <p className="text-3xl text-zinc-100 font-bold italic leading-snug">
+            “Mejor pocas operaciones precisas que muchas no tanto, cada operacion conlleva RIESGO de perder lo ganado... think about it”
+          </p>
+        </div>
       </div>
     </div>
   );

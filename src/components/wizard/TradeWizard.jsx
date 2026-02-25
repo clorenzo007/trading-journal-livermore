@@ -24,11 +24,13 @@ const EMPTY_TRADE = {
   symbol: "",
   strategy_type: "",
   pattern: "",
+  direction: "Long", // ✅ NEW
   entry_date: "",
   entry_price: "",
   position_size: "",
   stop_loss: "",
   take_profit: "", // ✅ NEW
+  rr_ratio: "", // ✅ NEW
   risk_percent: "",
   highest_lowest_price: "", // ✅ NEW
   exit_date: "",
@@ -174,6 +176,7 @@ export default function TradeWizard() {
         position_size: Number(trade.position_size),
         stop_loss: Number(trade.stop_loss),
         take_profit: trade.take_profit ? Number(trade.take_profit) : undefined, // ✅ NEW
+        rr_ratio: trade.rr_ratio ? Number(trade.rr_ratio) : undefined, // ✅ NEW
         risk_percent: Number(trade.risk_percent),
         highest_lowest_price: trade.highest_lowest_price ? Number(trade.highest_lowest_price) : undefined, // ✅ NEW
         exit_date: trade.exit_date || undefined, // ✅ FIX: Avoid empty string for Date

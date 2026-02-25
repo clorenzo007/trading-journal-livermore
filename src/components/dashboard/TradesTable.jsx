@@ -149,13 +149,16 @@ export default function TradesTable({ trades = [], onRefresh }) {
         <table className="table table-dark table-hover mb-0 align-middle">
           <thead>
             <tr className="text-zinc-400">
-              <th className="border-zinc-800" style={{ width: '40px' }}>
-                <input 
-                    type="checkbox" 
-                    className="form-check-input bg-zinc-800 border-zinc-600"
-                    checked={filtered.length > 0 && selectedIds.size === filtered.length}
-                    onChange={() => toggleSelectAll(filtered)}
-                />
+              <th className="border-zinc-800 text-center" style={{ width: '50px' }}>
+                <div className="flex flex-col items-center gap-1">
+                  <Trash2 size={14} className="text-zinc-600" />
+                  <input 
+                      type="checkbox" 
+                      className="form-check-input bg-zinc-800 border-zinc-600 m-0"
+                      checked={filtered.length > 0 && selectedIds.size === filtered.length}
+                      onChange={() => toggleSelectAll(filtered)}
+                  />
+                </div>
               </th>
               <th className="border-zinc-800">Img</th>
               <th className="border-zinc-800">
@@ -186,6 +189,7 @@ export default function TradesTable({ trades = [], onRefresh }) {
                 />
               </th>
               <th className="border-zinc-800">Entry</th>
+              <th className="border-zinc-800">R:R</th>
               <th className="border-zinc-800 d-none d-lg-table-cell">Exit</th>
               <th className="border-zinc-800">
                 <div>Outcome</div>
@@ -265,6 +269,9 @@ export default function TradesTable({ trades = [], onRefresh }) {
                 <td className="border-zinc-800">{t.strategy_type}</td>
                 <td className="border-zinc-800">{t.pattern}</td>
                 <td className="border-zinc-800 text-nowrap">{t.entry_date?.slice(0, 16)}</td>
+                <td className="border-zinc-800 text-indigo-400 font-medium">
+                  {t.rr_ratio ? `1:${t.rr_ratio}` : "—"}
+                </td>
                 <td className="border-zinc-800 text-nowrap d-none d-lg-table-cell">
                   {t.exit_date?.slice(0, 16) || "—"}
                 </td>
@@ -348,6 +355,10 @@ export default function TradesTable({ trades = [], onRefresh }) {
                <div className="col-6">
                  <span className="text-zinc-500 d-block text-xs">Pattern</span>
                  {t.pattern || "—"}
+               </div>
+               <div className="col-12 mt-2 pt-2 border-t border-zinc-800 flex justify-between items-center">
+                 <span className="text-zinc-500 text-xs uppercase font-bold tracking-wider">Risk : Reward</span>
+                 <span className="text-indigo-400 font-black">1 : {t.rr_ratio || "0.00"}</span>
                </div>
                {t.exit_date && (
                 <div className="col-12 border-t border-zinc-800 pt-2 mt-2">
