@@ -61,3 +61,36 @@ export function deleteListItem(id) {
     method: "DELETE",
   });
 }
+
+// ==========================
+// USERS MANAGEMENT
+// ==========================
+export function getUsers() {
+  return api("/admin/users");
+}
+
+export function toggleUserStatus(id) {
+  return api(`/admin/users/${id}/toggle`, {
+    method: "PATCH",
+  });
+}
+
+export function updateUserRole(id, role) {
+  return api(`/admin/users/${id}/role`, {
+    method: "PATCH",
+    body: JSON.stringify({ role }),
+  });
+}
+
+export function updateUserPassword(id, password) {
+  return api(`/admin/users/${id}/password`, {
+    method: "PATCH",
+    body: JSON.stringify({ password }),
+  });
+}
+
+export function deleteUser(id) {
+  return api(`/admin/users/${id}`, {
+    method: "DELETE",
+  });
+}

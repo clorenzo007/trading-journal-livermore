@@ -1,10 +1,4 @@
 import { useEffect, useState } from "react";
-
-/**
- * Simple Digital Clock.
- * Displays current local time, updating every second.
- */
-import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
 
 /**

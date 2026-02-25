@@ -1,0 +1,84 @@
+
+> trading-journal-livermore@0.0.0 build
+> vite build
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32mÔ£ô[39m 93 modules transformed.
+Ô£ù Build failed in 5.04s
+error during build:
+[vite:esbuild] Transform failed with 7 errors:
+C:/Users/t79151/trading-journal-livermore/src/components/dashboard/MarketTimesCard.jsx:129:9: ERROR: The symbol "useEffect" has already been declared
+C:/Users/t79151/trading-journal-livermore/src/components/dashboard/MarketTimesCard.jsx:129:20: ERROR: The symbol "useState" has already been declared
+C:/Users/t79151/trading-journal-livermore/src/components/dashboard/MarketTimesCard.jsx:132:9: ERROR: The symbol "getNowInTZ" has already been declared
+C:/Users/t79151/trading-journal-livermore/src/components/dashboard/MarketTimesCard.jsx:136:9: ERROR: The symbol "buildMarketDate" has already been declared
+C:/Users/t79151/trading-journal-livermore/src/components/dashboard/MarketTimesCard.jsx:143:9: ERROR: The symbol "minutesBetween" has already been declared
+...
+file: C:/Users/t79151/trading-journal-livermore/src/components/dashboard/MarketTimesCard.jsx:129:9
+
+The symbol "useEffect" has already been declared
+127 |   * - Shows progress bar for open sessions.
+128 |   */
+129 |  import { useEffect, useState } from "react";
+    |           ^
+130 |  import { Globe, Activity, Zap } from "lucide-react";
+131 |  
+
+The symbol "useState" has already been declared
+127 |   * - Shows progress bar for open sessions.
+128 |   */
+129 |  import { useEffect, useState } from "react";
+    |                      ^
+130 |  import { Globe, Activity, Zap } from "lucide-react";
+131 |  
+
+The symbol "getNowInTZ" has already been declared
+130 |  import { Globe, Activity, Zap } from "lucide-react";
+131 |  
+132 |  function getNowInTZ(tz) {
+    |           ^
+133 |    return new Date(new Date().toLocaleString("en-US", { timeZone: tz }));
+134 |  }
+
+The symbol "buildMarketDate" has already been declared
+134 |  }
+135 |  
+136 |  function buildMarketDate(base, time) {
+    |           ^
+137 |    const [h, m] = time.split(":").map(Number);
+138 |    const d = new Date(base);
+
+The symbol "minutesBetween" has already been declared
+141 |  }
+142 |  
+143 |  function minutesBetween(a, b) {
+    |           ^
+144 |    return Math.max(0, Math.round((b - a) / 60000));
+145 |  }
+
+The symbol "format" has already been declared
+145 |  }
+146 |  
+147 |  function format(mins) {
+    |           ^
+148 |    const h = Math.floor(mins / 60);
+149 |    const m = mins % 60;
+
+The symbol "MarketRow" has already been declared
+152 |  }
+153 |  
+154 |  function MarketRow({ name, tz, open, close }) {
+    |           ^
+155 |    const [, force] = useState(0);
+156 |  
+
+    at failureErrorWithLog (C:\Users\t79151\trading-journal-livermore\node_modules\esbuild\lib\main.js:1467:15)
+    at C:\Users\t79151\trading-journal-livermore\node_modules\esbuild\lib\main.js:736:50
+    at responseCallbacks.<computed> (C:\Users\t79151\trading-journal-livermore\node_modules\esbuild\lib\main.js:603:9)
+    at handleIncomingPacket (C:\Users\t79151\trading-journal-livermore\node_modules\esbuild\lib\main.js:658:12)
+    at Socket.readFromStdout (C:\Users\t79151\trading-journal-livermore\node_modules\esbuild\lib\main.js:581:7)
+    at Socket.emit (node:events:519:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)
