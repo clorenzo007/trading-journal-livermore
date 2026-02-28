@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import { 
   getConcepts, 
@@ -15,6 +16,9 @@ export default function Concepts() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingConcept, setEditingConcept] = useState(null);
+
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
 
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -126,12 +130,14 @@ export default function Concepts() {
                   {c.title}
                 </a>
               ))}
-              <button 
-                onClick={openNewModal}
-                className="flex items-center gap-2 text-indigo-400 hover:text-indigo-300 px-3 py-2 mt-4 font-medium"
-              >
-                <Plus size={16} /> New Concept
-              </button>
+              {isAdmin && (
+                <button 
+                  onClick={openNewModal}
+                  className="flex items-center gap-2 text-indigo-400 hover:text-indigo-300 px-3 py-2 mt-4 font-medium"
+                >
+                  <Plus size={16} /> New Concept
+                </button>
+              )}
             </nav>
           </div>
         </aside>
@@ -149,12 +155,14 @@ export default function Concepts() {
                 Liquidez, estructura, dirección y criterios de entrada.
               </p>
             </div>
-            <button
-              onClick={openNewModal}
-              className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
-            >
-              <Plus size={18} /> Add Concept
-            </button>
+            {isAdmin && (
+              <button
+                onClick={openNewModal}
+                className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+              >
+                <Plus size={18} /> Add Concept
+              </button>
+            )}
           </header>
 
           {/* ===== LIST ===== */}
@@ -163,9 +171,11 @@ export default function Concepts() {
           ) : concepts.length === 0 ? (
             <div className="text-center py-12 text-zinc-500 border border-zinc-800 rounded-xl bg-zinc-900/50">
               <p className="mb-4">No concepts found.</p>
-              <button onClick={openNewModal} className="text-indigo-400 hover:underline">
-                Create your first concept
-              </button>
+              {isAdmin && (
+                <button onClick={openNewModal} className="text-indigo-400 hover:underline">
+                  Create your first concept
+                </button>
+              )}
             </div>
           ) : (
             concepts.map((concept) => (
@@ -179,22 +189,24 @@ export default function Concepts() {
                     {concept.title}
                     {concept.image?.url && <ImageIcon size={20} className="text-zinc-500" title="Image attached" />}
                   </h2>
-                  <div className="flex gap-2 opacity-100 transition-opacity">
-                    <button 
-                      onClick={() => openEditModal(concept)}
-                      className="p-1.5 text-zinc-400 hover:text-indigo-400 transition-colors"
-                      title="Edit"
-                    >
-                      <Edit2 size={18} />
-                    </button>
-                    <button 
-                      onClick={() => handleDelete(concept._id)}
-                      className="p-1.5 text-zinc-400 hover:text-rose-400 transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
+                  {isAdmin && (
+                    <div className="flex gap-2 opacity-100 transition-opacity">
+                      <button 
+                        onClick={() => openEditModal(concept)}
+                        className="p-1.5 text-zinc-400 hover:text-indigo-400 transition-colors"
+                        title="Edit"
+                      >
+                        <Edit2 size={18} />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(concept._id)}
+                        className="p-1.5 text-zinc-400 hover:text-rose-400 transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-sm hover:border-zinc-700 transition-colors">

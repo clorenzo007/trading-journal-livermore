@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import {
   getSetups,
   createSetup,
@@ -24,8 +25,10 @@ export default function Entries() {
   const [showModal, setShowModal] = useState(false);
   const [editingSetup, setEditingSetup] = useState(null);
   const [viewer, setViewer] = useState(null);
-
   const [error, setError] = useState(null);
+
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     load();
@@ -96,12 +99,14 @@ export default function Entries() {
               Configuraciones operativas personalizadas
             </p>
           </div>
-          <button
-            onClick={openAdd}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-medium transition-colors"
-          >
-            + Nuevo Setup
-          </button>
+          {isAdmin && (
+            <button
+              onClick={openAdd}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-medium transition-colors"
+            >
+              + Nuevo Setup
+            </button>
+          )}
         </header>
 
         {loading ? (
@@ -125,6 +130,7 @@ export default function Entries() {
                   <SetupCard
                     key={s._id}
                     setup={s}
+                    isAdmin={isAdmin}
                     onMove={(dir) => moveSetup(setups.indexOf(s), dir)}
                     onEdit={() => openEdit(s)}
                     onDelete={() => handleDelete(s._id)}
@@ -145,6 +151,7 @@ export default function Entries() {
                   <SetupCard
                     key={s._id}
                     setup={s}
+                    isAdmin={isAdmin}
                     onMove={(dir) => moveSetup(setups.indexOf(s), dir)}
                     onEdit={() => openEdit(s)}
                     onDelete={() => handleDelete(s._id)}
@@ -185,7 +192,7 @@ function SectionTitle({ children }) {
   );
 }
 
-function SetupCard({ setup, onMove, onEdit, onDelete, onView }) {
+function SetupCard({ setup, isAdmin, onMove, onEdit, onDelete, onView }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-4 hover:border-zinc-700 transition-colors">
       <div className="flex justify-between items-start">
@@ -193,24 +200,26 @@ function SetupCard({ setup, onMove, onEdit, onDelete, onView }) {
           <h3 className="text-xl font-bold text-zinc-100">{setup.title}</h3>
           <p className="text-sm text-zinc-400">{setup.description}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex flex-col gap-1 mr-2">
-            <button onClick={() => onMove(-1)} className="text-zinc-600 hover:text-zinc-300 transition-colors">▲</button>
-            <button onClick={() => onMove(1)} className="text-zinc-600 hover:text-zinc-300 transition-colors">▼</button>
+        {isAdmin && (
+          <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-1 mr-2">
+              <button onClick={() => onMove(-1)} className="text-zinc-600 hover:text-zinc-300 transition-colors">▲</button>
+              <button onClick={() => onMove(1)} className="text-zinc-600 hover:text-zinc-300 transition-colors">▼</button>
+            </div>
+            <button
+              onClick={onEdit}
+              className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
+            >
+              Editar
+            </button>
+            <button
+              onClick={onDelete}
+              className="p-2 hover:bg-rose-900/20 rounded-lg text-zinc-400 hover:text-rose-400 transition-colors"
+            >
+              Eliminar
+            </button>
           </div>
-          <button
-            onClick={onEdit}
-            className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
-          >
-            Editar
-          </button>
-          <button
-            onClick={onDelete}
-            className="p-2 hover:bg-rose-900/20 rounded-lg text-zinc-400 hover:text-rose-400 transition-colors"
-          >
-            Eliminar
-          </button>
-        </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
