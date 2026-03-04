@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { api } from "../api/api";
 import ConfirmModal from "../components/ui/ConfirmModal";
 import PromptModal from "../components/ui/PromptModal";
+import { formatNYSEDate } from "../utils/formatDate";
 
 /**
  * Admin Panel Page.
@@ -18,7 +19,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("all");
-  
+
   // Modal States
   const [deleteId, setDeleteId] = useState(null);
   const [resetPassId, setResetPassId] = useState(null);
@@ -110,10 +111,10 @@ export default function Admin() {
             User Control Center
           </h1>
           <p className="text-zinc-500 text-sm font-medium">
-             Manage user profiles, permissions and security protocols.
+            Manage user profiles, permissions and security protocols.
           </p>
         </div>
-        <button 
+        <button
           onClick={load}
           className="w-full lg:w-auto bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/50 px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-xl active:scale-95"
         >
@@ -190,7 +191,7 @@ export default function Admin() {
                     <td className="px-6 py-6">
                       <div className="text-[10px] text-zinc-600 font-mono mb-1 tracking-tighter uppercase opacity-60 group-hover:opacity-100 transition-opacity">ID: {u._id}</div>
                       <div className="text-[10px] bg-zinc-950/50 border border-zinc-800 px-2 py-0.5 rounded inline-block text-zinc-500 font-semibold tracking-wide">
-                        JOINED: {u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "PRIOR RELEASE"}
+                        JOINED: {u.createdAt ? formatNYSEDate(u.createdAt, { month: 'short', day: 'numeric', year: 'numeric' }) : "PRIOR RELEASE"}
                       </div>
                     </td>
                     <td className="px-6 py-6">
@@ -200,13 +201,12 @@ export default function Admin() {
                       </div>
                     </td>
                     <td className="px-6 py-6 text-center">
-                      <button 
+                      <button
                         onClick={() => toggleStatus(u._id)}
-                        className={`inline-flex items-center gap-2.5 px-3 py-1.5 rounded-xl text-[10px] font-black tracking-widest transition-all ${
-                          u.active 
-                          ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20 shadow-lg shadow-emerald-500/5" 
-                          : "bg-zinc-800/50 text-zinc-600 border border-zinc-700/30 hover:bg-zinc-800 hover:text-zinc-400"
-                        }`}
+                        className={`inline-flex items-center gap-2.5 px-3 py-1.5 rounded-xl text-[10px] font-black tracking-widest transition-all ${u.active
+                            ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 hover:bg-emerald-500/20 shadow-lg shadow-emerald-500/5"
+                            : "bg-zinc-800/50 text-zinc-600 border border-zinc-700/30 hover:bg-zinc-800 hover:text-zinc-400"
+                          }`}
                       >
                         <StatusDot active={u.active} />
                         {u.active ? "AUTHORIZED" : "REVOKED"}
@@ -217,11 +217,10 @@ export default function Admin() {
                         <select
                           value={u.role}
                           onChange={(e) => changeRole(u._id, e.target.value)}
-                          className={`w-full px-3 py-1.5 rounded-xl text-[10px] font-black tracking-widest bg-zinc-950 border focus:outline-none transition-all cursor-pointer appearance-none text-center ${
-                            u.role === 'admin' 
-                            ? 'text-indigo-400 border-indigo-500/30 bg-indigo-500/5' 
-                            : 'text-zinc-500 border-zinc-800'
-                          }`}
+                          className={`w-full px-3 py-1.5 rounded-xl text-[10px] font-black tracking-widest bg-zinc-950 border focus:outline-none transition-all cursor-pointer appearance-none text-center ${u.role === 'admin'
+                              ? 'text-indigo-400 border-indigo-500/30 bg-indigo-500/5'
+                              : 'text-zinc-500 border-zinc-800'
+                            }`}
                         >
                           <option value="user">USER</option>
                           <option value="admin">ADMIN</option>
@@ -310,7 +309,7 @@ function StatusDot({ active }) {
 function UserAvatar({ email }) {
   const initial = (email || "U").charAt(0).toUpperCase();
   const colors = [
-    "bg-indigo-500", "bg-emerald-500", "bg-amber-500", 
+    "bg-indigo-500", "bg-emerald-500", "bg-amber-500",
     "bg-rose-500", "bg-cyan-500", "bg-violet-500"
   ];
   // Stable color based on email

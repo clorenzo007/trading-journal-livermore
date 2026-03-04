@@ -5,6 +5,7 @@ import {
   updateAccount,
   archiveAccount,
 } from "../services/accounts";
+import { formatNYSEDate } from "../utils/formatDate";
 
 const EMPTY = {
   name: "",
@@ -13,6 +14,8 @@ const EMPTY = {
   accountNumber: "",
   currency: "USD",
   initialBalance: 0,
+  creationDate: "",
+  meltingDate: "",
 };
 
 /**
@@ -215,11 +218,10 @@ export default function Accounts() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              filter === f
-                ? "bg-zinc-800 text-white border border-zinc-700"
-                : "text-zinc-500 hover:text-zinc-300"
-            }`}
+            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${filter === f
+              ? "bg-zinc-800 text-white border border-zinc-700"
+              : "text-zinc-500 hover:text-zinc-300"
+              }`}
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}
           </button>
@@ -235,55 +237,55 @@ export default function Accounts() {
             return true;
           })
           .map((a) => (
-          <div key={a._id} className="col-12 col-lg-6">
-            <div
-              className={`card h-100 !bg-zinc-900 !text-white border-zinc-800 rounded-3 p-3 shadow-none transition-all ${activeAccount?._id === a._id ? 'border-primary border-opacity-50 ring-1 ring-primary ring-opacity-10' : ''}`}
-            >
-              <div className="d-flex align-items-center justify-content-between mb-3">
-                <div className="fw-bold d-flex align-items-center gap-2 text-lg">
-                  {a.name}
-                  {activeAccount?._id === a._id && (
-                    <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 fw-medium text-xs">Activa</span>
-                  )}
-                </div>
-                <div className="d-flex gap-2">
-                  {activeAccount?._id !== a._id && (
+            <div key={a._id} className="col-12 col-lg-6">
+              <div
+                className={`card h-100 !bg-zinc-900 !text-white border-zinc-800 rounded-3 p-3 shadow-none transition-all ${activeAccount?._id === a._id ? 'border-primary border-opacity-50 ring-1 ring-primary ring-opacity-10' : ''}`}
+              >
+                <div className="d-flex align-items-center justify-content-between mb-3">
+                  <div className="fw-bold d-flex align-items-center gap-2 text-lg">
+                    {a.name}
+                    {activeAccount?._id === a._id && (
+                      <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 fw-medium text-xs">Activa</span>
+                    )}
+                  </div>
+                  <div className="d-flex gap-2">
+                    {activeAccount?._id !== a._id && (
+                      <button
+                        onClick={() => changeAccount(a._id)}
+                        className="btn btn-sm btn-outline-light border-zinc-800 py-1 px-2 text-xs"
+                      >
+                        Activar
+                      </button>
+                    )}
                     <button
-                      onClick={() => changeAccount(a._id)}
+                      onClick={() => startEdit(a)}
                       className="btn btn-sm btn-outline-light border-zinc-800 py-1 px-2 text-xs"
                     >
-                      Activar
+                      Editar
                     </button>
-                  )}
-                  <button
-                    onClick={() => startEdit(a)}
-                    className="btn btn-sm btn-outline-light border-zinc-800 py-1 px-2 text-xs"
-                  >
-                    Editar
-                  </button>
-                  {a.status === "active" && (
-                    <button
-                      onClick={() => archive(a._id)}
-                      className="btn btn-sm btn-outline-danger border-danger border-opacity-20 py-1 px-2 text-xs"
-                    >
-                      Archivar
-                    </button>
-                  )}
+                    {a.status === "active" && (
+                      <button
+                        onClick={() => archive(a._id)}
+                        className="btn btn-sm btn-outline-danger border-danger border-opacity-20 py-1 px-2 text-xs"
+                      >
+                        Archivar
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-zinc-400">
+                  <div>Provider: <span className="text-zinc-200">{a.provider || "-"}</span></div>
+                  <div>Type: <span className="text-zinc-200 capitalize">{a.accountType}</span></div>
+                  <div>Number: <span className="text-zinc-200">{a.accountNumber || "-"}</span></div>
+                  <div>Currency: <span className="text-zinc-200">{a.currency}</span></div>
+                  <div>Balance: <span className="text-zinc-200">{a.initialBalance?.toLocaleString()}</span></div>
+                  <div>Created: <span className="text-zinc-200">{a.creationDate ? formatNYSEDate(a.creationDate) : "-"}</span></div>
+                  <div>Melting: <span className="text-zinc-200">{a.meltingDate ? formatNYSEDate(a.meltingDate) : "-"}</span></div>
                 </div>
               </div>
-              
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-zinc-400">
-                <div>Provider: <span className="text-zinc-200">{a.provider || "-"}</span></div>
-                <div>Type: <span className="text-zinc-200 capitalize">{a.accountType}</span></div>
-                <div>Number: <span className="text-zinc-200">{a.accountNumber || "-"}</span></div>
-                <div>Currency: <span className="text-zinc-200">{a.currency}</span></div>
-                <div>Balance: <span className="text-zinc-200">{a.initialBalance?.toLocaleString()}</span></div>
-                <div>Created: <span className="text-zinc-200">{a.creationDate ? new Date(a.creationDate).toLocaleDateString() : "-"}</span></div>
-                <div>Melting: <span className="text-zinc-200">{a.meltingDate ? new Date(a.meltingDate).toLocaleDateString() : "-"}</span></div>
-              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );

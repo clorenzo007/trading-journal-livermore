@@ -1,10 +1,10 @@
 import { useState } from "react";
 import TradeDetailModal from "./TradeDetailModal";
 import useDailyStats from "../../hooks/useDailyStats";
+import { formatNYSEDate } from "../../utils/formatDate";
 
 function formatDateHuman(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString(undefined, {
+  return formatNYSEDate(dateStr, {
     weekday: "long",
     year: "numeric",
     month: "long",

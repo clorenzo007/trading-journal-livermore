@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
+import { formatNYSETime, formatNYSEDate } from "../../../utils/formatDate";
 
 /**
  * Simple Digital Clock.
@@ -21,11 +22,11 @@ export default function LocalTimeCard() {
 
       <div className="flex items-center gap-2 mb-4 relative z-10">
         <Clock size={14} className="text-zinc-500" />
-        <span className="text-xs font-black uppercase tracking-widest text-zinc-500">Local time</span>
+        <span className="text-xs font-black uppercase tracking-widest text-zinc-500">NYSE Time</span>
       </div>
 
       <div className="text-6xl font-black tracking-tighter text-white relative z-10 tabular-nums">
-        {now.toLocaleTimeString([], {
+        {formatNYSETime(now, {
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit",
@@ -34,7 +35,7 @@ export default function LocalTimeCard() {
       </div>
 
       <div className="text-sm font-bold text-indigo-400 mt-4 px-4 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20 relative z-10">
-        {now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+        {formatNYSEDate(now, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
       </div>
     </div>
   );

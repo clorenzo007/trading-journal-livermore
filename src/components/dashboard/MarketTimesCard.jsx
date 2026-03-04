@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Globe, Activity, Zap } from "lucide-react";
+import { NYSE_TIMEZONE, formatNYSETime } from "../../utils/formatDate";
 
 function getNowInTZ(tz) {
   return new Date(new Date().toLocaleString("en-US", { timeZone: tz }));
@@ -41,13 +42,13 @@ function MarketRow({ name, tz, open, close }) {
 
   const localOpen = new Date(
     openM.toLocaleString("en-US", {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timeZone: NYSE_TIMEZONE,
     })
   );
 
   const localClose = new Date(
     closeM.toLocaleString("en-US", {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timeZone: NYSE_TIMEZONE,
     })
   );
 
@@ -71,24 +72,22 @@ function MarketRow({ name, tz, open, close }) {
 
   return (
     <div
-      className={`rounded-2xl p-4 transition-all duration-300 border ${
-        isOpen
+      className={`rounded-2xl p-4 transition-all duration-300 border ${isOpen
           ? "bg-emerald-500/5 border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.05)]"
           : "bg-zinc-950/20 border-zinc-800/50 grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all"
-      }`}
+        }`}
     >
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-0.5">
           <div className="text-sm font-black text-white uppercase tracking-tight">{name}</div>
           <div className="text-[10px] font-bold text-zinc-500 tracking-wider">
-            {localOpen.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} – {localClose.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            {formatNYSETime(localOpen, { hour: "2-digit", minute: "2-digit" })} – {formatNYSETime(localClose, { hour: "2-digit", minute: "2-digit" })}
           </div>
         </div>
 
         <div className="text-right flex flex-col items-end">
-          <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-black tracking-widest ${
-            isOpen ? "bg-emerald-500 text-emerald-950 shadow-[0_0_10px_rgba(16,185,129,0.3)]" : "bg-zinc-800 text-zinc-400"
-          }`}>
+          <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-black tracking-widest ${isOpen ? "bg-emerald-500 text-emerald-950 shadow-[0_0_10px_rgba(16,185,129,0.3)]" : "bg-zinc-800 text-zinc-400"
+            }`}>
             {isOpen && <Zap size={10} fill="currentColor" />}
             {label}
           </div>
