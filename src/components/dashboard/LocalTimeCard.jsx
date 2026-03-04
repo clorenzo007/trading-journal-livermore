@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
-import { formatNYSETime, formatNYSEDate } from "../../../utils/formatDate";
+import { formatNYSETime, formatNYSEDate } from "../../utils/formatDate";
 
 /**
  * Simple Digital Clock.

@@ -2,7 +2,7 @@
  * Mobile/Card View for Trades.
  * Renders a list of trade cards instead of a table.
  */
-import { formatNYSEDate } from "../../../utils/formatDate";
+import { formatNYSEDate } from "../../utils/formatDate";
 
 export default function TradeCards({ trades, onSelect }) {
   return (
@@ -37,8 +37,8 @@ export default function TradeCards({ trades, onSelect }) {
 
             <span
               className={`px-2 py-1 rounded ${t.reviewed
-                  ? "bg-emerald-900/40 text-emerald-400"
-                  : "bg-zinc-700/40 text-zinc-300"
+                ? "bg-emerald-900/40 text-emerald-400"
+                : "bg-zinc-700/40 text-zinc-300"
                 }`}
             >
               {t.reviewed ? "Reviewed" : "Pending"}
