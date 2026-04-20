@@ -155,11 +155,21 @@ export default function Dashboard() {
 
       {/* 
         ===========================================================================
-        SECTION: KEY STATISTICS CARDS
-        Row with 3 columns (stack on mobile, side-by-side on desktop)
+        MAIN DASHBOARD LAYOUT (Sidebar + Main Content)
         ===========================================================================
       */}
       <div className="row g-4 mb-4">
+        {/* SIDEBAR: LIVERMORE PANEL */}
+        <div className="col-12 col-xl-3 order-2 order-xl-1">
+          <div className="sticky-top" style={{ top: '1rem' }}>
+            <LivermorePanel form={filtered[0] || {}} isSidebar={true} />
+          </div>
+        </div>
+
+        {/* MAIN CONTENT */}
+        <div className="col-12 col-xl-9 order-1 order-xl-2 space-y-4">
+          {/* KEY STATISTICS CARDS */}
+          <div className="row g-4 mb-4">
         {/* Local Time Card */}
         <div className="col-12 col-md-4 flex flex-col">
           <LocalTimeCard />
@@ -174,19 +184,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 
-        ===========================================================================
-        SECTION: LIVERMORE CHECKLIST
-        Takes full width (col-12)
-        ===========================================================================
-      */}
-      <div className="row mb-4">
-        <div className="col-12">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-sm">
-            <LivermorePanel form={filtered[0] || {}} />
-          </div>
-        </div>
-      </div>
+
 
       {/* 
         ===========================================================================
@@ -283,6 +281,8 @@ export default function Dashboard() {
           onRefresh={load}
         />
       )}
+        </div> {/* End of Main Content Column */}
+      </div> {/* End of Dashboard Row */}
     </div>
   );
 }

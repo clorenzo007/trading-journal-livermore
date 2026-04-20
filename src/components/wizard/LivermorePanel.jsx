@@ -6,7 +6,7 @@ import { CheckCircle2, Circle, Quote } from "lucide-react";
  * A checklist that validates if the user is following the trading plan "rules".
  * Updates essentially as the user fills out the form.
  */
-export default function LivermorePanel({ form }) {
+export default function LivermorePanel({ form, isSidebar = false }) {
   const [open, setOpen] = useState(false);
 
   const rules = [
@@ -25,19 +25,19 @@ export default function LivermorePanel({ form }) {
   ];
 
   return (
-    <div className="w-full bg-gradient-to-b from-zinc-900 to-black p-8 rounded-3xl border border-zinc-800/50 shadow-2xl overflow-hidden relative group">
+    <div className={`w-full bg-gradient-to-b from-zinc-900 to-black rounded-3xl border border-zinc-800/50 shadow-2xl relative overflow-hidden group ${isSidebar ? 'p-6' : 'p-8'}`}>
       {/* Decorative Background Glow */}
       <div className="absolute -top-24 -right-24 w-64 h-64 bg-indigo-600/10 blur-[100px] pointer-events-none rounded-full" />
       <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-600/5 blur-[100px] pointer-events-none rounded-full" />
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 border-b border-zinc-800/50 pb-6 relative z-10">
+      <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800/50 pb-6 relative z-10 ${isSidebar ? 'mb-6' : 'mb-10'}`}>
         <div className="space-y-1">
-          <h2 className="text-3xl font-black text-white tracking-tighter uppercase flex items-center gap-3">
-            <span className="w-2 h-8 bg-indigo-500 rounded-full inline-block" />
+          <h2 className={`${isSidebar ? 'text-2xl' : 'text-3xl'} font-black text-white tracking-tighter uppercase flex items-center gap-3`}>
+            <span className={`w-2 ${isSidebar ? 'h-6' : 'h-8'} bg-indigo-500 rounded-full inline-block`} />
             Reglas Livermore
           </h2>
-          <p className="text-zinc-500 text-sm font-medium ml-5">Protocolo de Operación Disciplinada</p>
+          <p className="text-zinc-500 text-xs font-medium ml-5">Protocolo de Operación Disciplinada</p>
         </div>
         
         <button
@@ -50,7 +50,7 @@ export default function LivermorePanel({ form }) {
 
       <div className={`${open ? "block" : "hidden"} lg:block relative z-10`}>
         {/* Rules Grid */}
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-6 text-xl mb-12">
+        <ul className={`grid gap-x-12 gap-y-6 ${isSidebar ? 'grid-cols-1 text-sm' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 text-xl mb-12'}`}>
           {rules.map((r, i) => (
             <li
               key={i}
@@ -62,9 +62,9 @@ export default function LivermorePanel({ form }) {
             >
               <div className={`transition-transform duration-300 ${r.ok ? "scale-110" : ""}`}>
                 {r.ok ? (
-                  <CheckCircle2 className="w-7 h-7 stroke-[2.5]" />
+                  <CheckCircle2 className={`${isSidebar ? 'w-5 h-5' : 'w-7 h-7'} stroke-[2.5]`} />
                 ) : (
-                  <Circle className="w-7 h-7 stroke-[1.5] opacity-30" />
+                  <Circle className={`${isSidebar ? 'w-5 h-5' : 'w-7 h-7'} stroke-[1.5] opacity-30`} />
                 )}
               </div>
               <span className="font-bold tracking-tight">{r.label}</span>
@@ -73,17 +73,17 @@ export default function LivermorePanel({ form }) {
         </ul>
 
         {/* Premium Quote Section */}
-        <div className="relative mt-8 pt-10 border-t border-zinc-800/50">
+        <div className={`relative pt-10 border-t border-zinc-800/50 ${isSidebar ? 'mt-6' : 'mt-8'}`}>
           <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-zinc-900 border border-zinc-800 p-2 rounded-full text-indigo-500 shadow-xl">
-            <Quote size={20} fill="currentColor" className="opacity-80" />
+            <Quote size={isSidebar ? 14 : 20} fill="currentColor" className="opacity-80" />
           </div>
           
           <div className="max-w-4xl mx-auto text-center space-y-4">
-            <p className="text-3xl text-zinc-100 font-extrabold italic leading-tight tracking-tight px-4 flex flex-col items-center">
-              <span className="text-indigo-400 opacity-50 mb-4 h-1 w-20 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-              “Mejor pocas operaciones precisas que muchas no tanto, cada operacion conlleva RIESGO de perder lo ganado... think about it”
+            <p className={`${isSidebar ? 'text-lg' : 'text-3xl'} text-zinc-100 font-extrabold italic leading-tight tracking-tight px-4 flex flex-col items-center`}>
+              <span className={`text-indigo-400 opacity-50 mb-4 h-1 ${isSidebar ? 'w-10' : 'w-20'} bg-gradient-to-r from-transparent via-indigo-500 to-transparent`} />
+              “Mejor pocas operaciones precisas que muchas no tanto...”
             </p>
-            <p className="text-zinc-500 text-xs font-black uppercase tracking-[0.2em] pt-4">— Jesse Livermore Protocol —</p>
+            <p className="text-zinc-500 text-xs font-black uppercase tracking-[0.2em] pt-4">— Jesse Livermore —</p>
           </div>
         </div>
       </div>
