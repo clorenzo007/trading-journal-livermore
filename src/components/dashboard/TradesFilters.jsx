@@ -15,14 +15,14 @@ export default function TradesFilters({ value, onChange, onReset }) {
           placeholder="Buscar…"
           value={value.search}
           onChange={(e) => update("search", e.target.value)}
-          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm"
+          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-base sm:text-sm"
         />
 
         {/* Outcome */}
         <select
           value={value.outcome}
           onChange={(e) => update("outcome", e.target.value)}
-          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm"
+          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-base sm:text-sm"
         >
           <option value="">Outcome (todos)</option>
           <option value="Win">Win</option>
@@ -34,7 +34,7 @@ export default function TradesFilters({ value, onChange, onReset }) {
         <select
           value={value.session}
           onChange={(e) => update("session", e.target.value)}
-          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm"
+          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-base sm:text-sm"
         >
           <option value="">Session (todas)</option>
           <option value="Asia">Asia</option>
@@ -49,7 +49,7 @@ export default function TradesFilters({ value, onChange, onReset }) {
           type="date"
           value={value.from}
           onChange={(e) => update("from", e.target.value)}
-          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm"
+          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-base sm:text-sm"
         />
 
         {/* To date */}
@@ -57,7 +57,7 @@ export default function TradesFilters({ value, onChange, onReset }) {
           type="date"
           value={value.to}
           onChange={(e) => update("to", e.target.value)}
-          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm"
+          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-base sm:text-sm"
         />
 
         {/* Reset */}
@@ -76,7 +76,7 @@ export default function TradesFilters({ value, onChange, onReset }) {
           placeholder="P/L min"
           value={value.minPL}
           onChange={(e) => update("minPL", e.target.value)}
-          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm"
+          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-base sm:text-sm"
         />
 
         {/* Max PL */}
@@ -85,7 +85,7 @@ export default function TradesFilters({ value, onChange, onReset }) {
           placeholder="P/L max"
           value={value.maxPL}
           onChange={(e) => update("maxPL", e.target.value)}
-          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm"
+          className="bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-base sm:text-sm"
         />
       </div>
     </div>
