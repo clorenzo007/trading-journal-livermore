@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Database, Wifi, WifiOff, Keyboard, Globe } from 'lucide-react';
-import api from '../../services/api';
+import api from '../../api/api';
 
 export default function StatusBar() {
   const [network, setNetwork] = useState(navigator.onLine);
