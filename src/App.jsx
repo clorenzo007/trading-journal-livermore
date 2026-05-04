@@ -12,6 +12,7 @@ import ImportTrades from "./pages/ImportTrades";
 import Accounts from "./pages/Accounts";
 import Trades from "./pages/Trades";
 import Setup from "./pages/Setup";
+import StatusBar from "./components/layout/StatusBar";
 
 /**
  * Application Entry Point.
@@ -24,6 +25,7 @@ import Setup from "./pages/Setup";
  */
 export default function App() {
   return (
+    <>
     <Routes>
       {/* Públicas */}
       <Route path="/login" element={<Login />} />
@@ -54,5 +56,7 @@ export default function App() {
         element={<div style={{ padding: 40 }}>404 NOT FOUND</div>}
       />
     </Routes>
+    <StatusBar />
+    </>
   );
 }
