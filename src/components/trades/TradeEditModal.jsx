@@ -63,7 +63,7 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-2 sm:p-4">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[1050] p-2 sm:p-4">
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-3xl p-4 sm:p-6 text-white max-h-[90vh] overflow-y-auto space-y-4 shadow-2xl">
         {/* Header */}
         <div className="flex justify-between items-center">

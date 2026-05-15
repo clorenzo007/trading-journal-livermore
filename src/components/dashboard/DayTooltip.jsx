@@ -8,7 +8,7 @@ export default function DayTooltip({ day, stats }) {
   const { total, count, wins, losses, be } = stats;
 
   return (
-    <div className="absolute z-50 p-2 rounded bg-zinc-900 border border-zinc-800 text-xs shadow-lg pointer-events-none">
+    <div className="absolute z-[1050] p-2 rounded bg-zinc-900 border border-zinc-800 text-xs shadow-lg pointer-events-none">
       <div className="font-semibold mb-1">{day}</div>
       <div className="flex justify-between gap-4">
         <span>Total P/L</span>

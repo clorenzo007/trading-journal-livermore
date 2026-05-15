@@ -46,7 +46,7 @@ export default function DayDrawer({
     <>
       <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
 
-      <div className="fixed top-0 right-0 h-full w-[560px] bg-zinc-950 border-l border-zinc-800 z-50 p-4 flex flex-col">
+      <div className="fixed top-0 right-0 h-full w-[560px] bg-zinc-950 border-l border-zinc-800 z-[1050] p-4 flex flex-col">
         <div className="flex justify-between items-center mb-4">
           <div>
             <div className="text-xs text-zinc-400">Trades for</div>

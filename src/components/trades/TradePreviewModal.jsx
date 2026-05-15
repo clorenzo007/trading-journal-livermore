@@ -17,7 +17,7 @@ export default function TradePreviewModal({ trade, onClose, onEdit }) {
   if (!trade) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[1050] p-4">
       <div className="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8 space-y-8 shadow-2xl">
         {/* Header */}
         <div className="flex justify-between items-start">

@@ -238,7 +238,12 @@ export default function TradeWizard() {
 
       {/* BODY */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Center/Left: Main Flow */}
+        {/* Left: Sidebar Livermore Panel */}
+        <div className="hidden lg:block w-[400px] border-r border-zinc-800 bg-zinc-950/50 p-6 overflow-y-auto shrink-0">
+          <LivermorePanel form={trade} isSidebar={true} />
+        </div>
+
+        {/* Center/Right: Main Flow */}
         <div className="flex-1 overflow-y-auto px-6 py-10 max-w-3xl mx-auto w-full">
           <ProgressBar step={step + 1} totalSteps={TOTAL_STEPS} />
 
@@ -318,10 +323,6 @@ export default function TradeWizard() {
         )}
         </div>
 
-        {/* Right: Sidebar Livermore Panel */}
-        <div className="hidden lg:block w-[400px] border-l border-zinc-800 bg-zinc-950/50 p-6 overflow-y-auto shrink-0">
-          <LivermorePanel form={trade} isSidebar={true} />
-        </div>
       </div>
     </div>
   );
