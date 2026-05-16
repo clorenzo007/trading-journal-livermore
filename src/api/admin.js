@@ -20,6 +20,13 @@ export function deleteStrategy(id) {
   });
 }
 
+export function updateStrategy(id, title) {
+  return api(`/admin/strategies/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({ title }),
+  });
+}
+
 // ==========================
 // PATTERNS
 // ==========================
@@ -37,6 +44,13 @@ export function createPattern(data) {
 export function deletePattern(id) {
   return api(`/admin/patterns/${id}`, {
     method: "DELETE",
+  });
+}
+
+export function updatePattern(id, title) {
+  return api(`/admin/patterns/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({ title }),
   });
 }
 
@@ -59,6 +73,13 @@ export function createListItem(data) {
 export function deleteListItem(id) {
   return api(`/admin/list-items/${id}`, {
     method: "DELETE",
+  });
+}
+
+export function updateListItem(id, value) {
+  return api(`/admin/list-items/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({ value }),
   });
 }
 

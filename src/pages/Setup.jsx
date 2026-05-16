@@ -3,12 +3,17 @@ import {
   getStrategies,
   createStrategy,
   deleteStrategy,
+  updateStrategy,
   getPatterns,
   createPattern,
   deletePattern,
   getListItems,
   createListItem,
+  updatePattern,
+  getListItems,
+  createListItem,
   deleteListItem,
+  updateListItem,
   getUsers,
   toggleUserStatus,
   updateUserRole,
@@ -16,7 +21,7 @@ import {
   deleteUser,
 } from "../api/admin";
 import { useAuth } from "../context/AuthContext";
-import { User, Shield, Key, Trash2, Power } from "lucide-react";
+import { User, Shield, Key, Trash2, Power, Edit2, X, Check } from "lucide-react";
 export default function Setup() {
   const [activeTab, setActiveTab] = useState("strategies");
   const { user: authUser } = useAuth();
@@ -67,9 +72,11 @@ export default function Setup() {
 }
 
 function ListManager({ type }) {
-    const [items, setItems] = useState([]);
-    const [value, setValue] = useState("");
-    const [loading, setLoading] = useState(false);
+  const [items, setItems] = useState([]);
+  const [value, setValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editValue, setEditValue] = useState("");
   
     useEffect(() => {
       load();
@@ -157,6 +164,8 @@ function StrategyManager() {
   const [items, setItems] = useState([]);
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
 
   useEffect(() => {
     load();
@@ -196,6 +205,18 @@ function StrategyManager() {
     }
   };
 
+  const edit = async (id) => {
+    if (!editTitle.trim()) return;
+    try {
+      await updateStrategy(id, editTitle);
+      setEditingId(null);
+      setEditTitle("");
+      load();
+    } catch {
+      alert("Error updating strategy");
+    }
+  };
+
   return (
     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
       <h2 className="text-lg font-bold mb-4 text-zinc-200">Manage Strategies</h2>
@@ -221,13 +242,47 @@ function StrategyManager() {
             key={item._id}
             className="flex justify-between items-center bg-zinc-950 border border-zinc-800 rounded-lg p-3 group hover:border-zinc-700 transition-colors"
           >
-            <span className="text-zinc-300">{item.title}</span>
-            <button
-              onClick={() => remove(item._id)}
-              className="text-zinc-600 hover:text-rose-400 text-sm transition-colors opacity-0 group-hover:opacity-100 px-2"
-            >
-              Delete
-            </button>
+            {editingId === item._id ? (
+              <div className="flex flex-1 items-center gap-2 mr-2">
+                <input
+                  autoFocus
+                  className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-white flex-1 outline-none focus:border-indigo-500 text-sm"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") edit(item._id);
+                    if (e.key === "Escape") setEditingId(null);
+                  }}
+                />
+                <button onClick={() => edit(item._id)} className="text-emerald-500 hover:text-emerald-400 p-1">
+                  <Check size={16} />
+                </button>
+                <button onClick={() => setEditingId(null)} className="text-zinc-500 hover:text-zinc-400 p-1">
+                  <X size={16} />
+                </button>
+              </div>
+            ) : (
+              <>
+                <span className="text-zinc-300">{item.title}</span>
+                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => {
+                      setEditingId(item._id);
+                      setEditTitle(item.title);
+                    }}
+                    className="text-zinc-500 hover:text-indigo-400 transition-colors p-1"
+                  >
+                    <Edit2 size={16} />
+                  </button>
+                  <button
+                    onClick={() => remove(item._id)}
+                    className="text-zinc-500 hover:text-rose-400 transition-colors p-1"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </>
+            )}
           </li>
         ))}
         {items.length === 0 && (
@@ -244,6 +299,8 @@ function PatternManager() {
   const [items, setItems] = useState([]);
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
 
   useEffect(() => {
     load();
@@ -283,6 +340,18 @@ function PatternManager() {
     }
   };
 
+  const edit = async (id) => {
+    if (!editTitle.trim()) return;
+    try {
+      await updatePattern(id, editTitle);
+      setEditingId(null);
+      setEditTitle("");
+      load();
+    } catch {
+      alert("Error updating pattern");
+    }
+  };
+
   return (
     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
       <h2 className="text-lg font-bold mb-4 text-zinc-200">Manage Patterns</h2>
@@ -308,13 +377,47 @@ function PatternManager() {
             key={item._id}
             className="flex justify-between items-center bg-zinc-950 border border-zinc-800 rounded-lg p-3 group hover:border-zinc-700 transition-colors"
           >
-            <span className="text-zinc-300">{item.title}</span>
-            <button
-              onClick={() => remove(item._id)}
-              className="text-zinc-600 hover:text-rose-400 text-sm transition-colors opacity-0 group-hover:opacity-100 px-2"
-            >
-              Delete
-            </button>
+            {editingId === item._id ? (
+              <div className="flex flex-1 items-center gap-2 mr-2">
+                <input
+                  autoFocus
+                  className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-white flex-1 outline-none focus:border-indigo-500 text-sm"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") edit(item._id);
+                    if (e.key === "Escape") setEditingId(null);
+                  }}
+                />
+                <button onClick={() => edit(item._id)} className="text-emerald-500 hover:text-emerald-400 p-1">
+                  <Check size={16} />
+                </button>
+                <button onClick={() => setEditingId(null)} className="text-zinc-500 hover:text-zinc-400 p-1">
+                  <X size={16} />
+                </button>
+              </div>
+            ) : (
+              <>
+                <span className="text-zinc-300">{item.title}</span>
+                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => {
+                      setEditingId(item._id);
+                      setEditTitle(item.title);
+                    }}
+                    className="text-zinc-500 hover:text-indigo-400 transition-colors p-1"
+                  >
+                    <Edit2 size={16} />
+                  </button>
+                  <button
+                    onClick={() => remove(item._id)}
+                    className="text-zinc-500 hover:text-rose-400 transition-colors p-1"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </>
+            )}
           </li>
         ))}
         {items.length === 0 && (
