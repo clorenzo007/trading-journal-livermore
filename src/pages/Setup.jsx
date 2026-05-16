@@ -7,8 +7,6 @@ import {
   getPatterns,
   createPattern,
   deletePattern,
-  getListItems,
-  createListItem,
   updatePattern,
   getListItems,
   createListItem,
