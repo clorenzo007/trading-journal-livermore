@@ -22,8 +22,8 @@ export default function StatusBar() {
   useEffect(() => {
     const checkDbStatus = async () => {
       try {
-        const res = await api.get('/status');
-        setDbState(res.data.dbState);
+        const res = await api('/status');
+        setDbState(res.dbState || res.readyState || 1); // fallback if not sure
       } catch (err) {
         setDbState(0);
       }
@@ -64,28 +64,28 @@ export default function StatusBar() {
   }
 
   return (
-    <div className="fixed-bottom bg-dark text-light border-top border-secondary d-flex justify-content-between px-3 py-1" style={{ fontSize: '0.75rem', zIndex: 1050 }}>
-      <div className="d-flex align-items-center gap-3">
-        <div className="d-flex align-items-center gap-1" title={network ? "Online" : "Offline"}>
-          {network ? <Wifi size={12} className="text-success" /> : <WifiOff size={12} className="text-danger" />}
-          <span>{network ? 'Online' : 'Offline'}</span>
+    <div className="fixed bottom-0 left-0 right-0 bg-zinc-950 text-zinc-400 border-t border-zinc-800 flex justify-between px-4 py-1.5 z-[1050] text-[0.75rem]">
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1.5" title={network ? "Online" : "Offline"}>
+          {network ? <Wifi size={12} className="text-emerald-500" /> : <WifiOff size={12} className="text-rose-500" />}
+          <span className="hidden sm:inline">{network ? 'Online' : 'Offline'}</span>
         </div>
 
-        <div className="d-flex align-items-center gap-1" title="Database Status">
-          <Database size={12} className={dbColorClass} />
-          <span>{dbText}</span>
+        <div className="flex items-center gap-1.5" title="Database Status">
+          <Database size={12} className={dbColorClass === 'text-success' ? 'text-emerald-500' : dbColorClass === 'text-danger' ? 'text-rose-500' : 'text-amber-500'} />
+          <span className="hidden sm:inline">{dbText}</span>
         </div>
       </div>
 
-      <div className="d-flex align-items-center gap-3">
-        <div className="d-flex align-items-center gap-1" title="Browser Language">
-          <Globe size={12} className="text-secondary" />
-          <span className="text-uppercase text-secondary">{lang.split('-')[0]}</span>
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1.5" title="Browser Language">
+          <Globe size={12} className="text-zinc-500" />
+          <span className="uppercase text-zinc-500">{lang.split('-')[0]}</span>
         </div>
 
-        <div className={`d-flex align-items-center gap-1 ${capsLock ? 'text-warning fw-bold' : 'text-secondary'}`} title="Caps Lock Status">
+        <div className={`flex items-center gap-1.5 ${capsLock ? 'text-amber-500 font-bold' : 'text-zinc-500'}`} title="Caps Lock Status">
           <Keyboard size={12} />
-          <span>{capsLock ? 'CAPS ON' : 'CAPS OFF'}</span>
+          <span className="hidden sm:inline">{capsLock ? 'CAPS ON' : 'CAPS OFF'}</span>
         </div>
       </div>
     </div>
