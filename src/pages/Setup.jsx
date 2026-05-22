@@ -113,6 +113,17 @@ function ListManager({ type }) {
         alert("Error deleting item");
       }
     };
+    const edit = async (id) => {
+      if (!editValue.trim()) return;
+      try {
+        await updateListItem(id, editValue);
+        setEditingId(null);
+        setEditValue("");
+        load();
+      } catch {
+        alert("Error updating item");
+      }
+    };
   
     return (
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -139,13 +150,47 @@ function ListManager({ type }) {
               key={item._id}
               className="flex justify-between items-center bg-zinc-950 border border-zinc-800 rounded-lg p-3 group hover:border-zinc-700 transition-colors"
             >
-              <span className="text-zinc-300">{item.value}</span>
-              <button
-                onClick={() => remove(item._id)}
-                className="text-zinc-600 hover:text-rose-400 text-sm transition-colors opacity-0 group-hover:opacity-100 px-2"
-              >
-                Delete
-              </button>
+              {editingId === item._id ? (
+                <div className="flex flex-1 items-center gap-2 mr-2">
+                  <input
+                    autoFocus
+                    className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-white flex-1 outline-none focus:border-indigo-500 text-sm"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") edit(item._id);
+                      if (e.key === "Escape") setEditingId(null);
+                    }}
+                  />
+                  <button onClick={() => edit(item._id)} className="text-emerald-500 hover:text-emerald-400 p-1">
+                    <Check size={16} />
+                  </button>
+                  <button onClick={() => setEditingId(null)} className="text-zinc-500 hover:text-zinc-400 p-1">
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <span className="text-zinc-300">{item.value}</span>
+                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => {
+                        setEditingId(item._id);
+                        setEditValue(item.value);
+                      }}
+                      className="text-zinc-500 hover:text-indigo-400 transition-colors p-1"
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    <button
+                      onClick={() => remove(item._id)}
+                      className="text-zinc-500 hover:text-rose-400 transition-colors p-1"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </>
+              )}
             </li>
           ))}
           {items.length === 0 && (
