@@ -172,7 +172,7 @@ function ListManager({ type }) {
               ) : (
                 <>
                   <span className="text-zinc-300">{item.value}</span>
-                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex gap-2 transition-opacity">
                     <button
                       onClick={() => {
                         setEditingId(item._id);
@@ -307,7 +307,7 @@ function StrategyManager() {
             ) : (
               <>
                 <span className="text-zinc-300">{item.title}</span>
-                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-2 transition-opacity">
                   <button
                     onClick={() => {
                       setEditingId(item._id);
@@ -442,7 +442,7 @@ function PatternManager() {
             ) : (
               <>
                 <span className="text-zinc-300">{item.title}</span>
-                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-2 transition-opacity">
                   <button
                     onClick={() => {
                       setEditingId(item._id);
@@ -574,7 +574,7 @@ function UserManager() {
                   </span>
                 </td>
                 <td className="py-4 px-4 text-right">
-                  <div className="flex justify-end gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
+                  <div className="flex justify-end gap-1 transition-opacity">
                     <button
                       onClick={() => handleToggle(u._id)}
                       title={u.active ? "Disable" : "Enable"}
