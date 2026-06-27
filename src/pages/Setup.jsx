@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   getStrategies,
   createStrategy,
@@ -76,28 +76,28 @@ function ListManager({ type }) {
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue] = useState("");
   
-    useEffect(() => {
+  const load = useCallback(async () => {
+    try {
+      const data = await getListItems(type);
+      setItems(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [type]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+  
+  const add = async (e) => {
+    e.preventDefault();
+    if (!value.trim()) return;
+    setLoading(true);
+    try {
+      await createListItem({ type, value });
+      setValue("");
       load();
-    }, [type]);
-  
-    const load = async () => {
-      try {
-        const data = await getListItems(type);
-        setItems(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-  
-    const add = async (e) => {
-      e.preventDefault();
-      if (!value.trim()) return;
-      setLoading(true);
-      try {
-        await createListItem({ type, value });
-        setValue("");
-        load();
-      } catch (err) {
+    } catch {
         alert("Error adding item");
       } finally {
         setLoading(false);
@@ -130,15 +130,22 @@ function ListManager({ type }) {
         <h2 className="text-lg font-bold mb-4 text-zinc-200">Manage Values</h2>
         
         <form onSubmit={add} className="flex gap-2 mb-6">
-          <input
-            className="bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white flex-1 outline-none focus:border-indigo-500 transition-colors"
+          <textarea
+            rows={2}
+            className="bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white flex-1 outline-none focus:border-indigo-500 transition-colors resize-none text-sm"
             placeholder="New Value"
             value={value}
             onChange={(e) => setValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                add(e);
+              }
+            }}
           />
           <button
             disabled={loading}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+            className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg font-medium transition-colors whitespace-nowrap self-stretch flex items-center justify-center"
           >
             {loading ? "Adding..." : "Add"}
           </button>
@@ -152,27 +159,31 @@ function ListManager({ type }) {
             >
               {editingId === item._id ? (
                 <div className="flex flex-1 items-center gap-2 mr-2">
-                  <input
+                  <textarea
                     autoFocus
-                    className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-white flex-1 outline-none focus:border-indigo-500 text-sm"
+                    rows={2}
+                    className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-white flex-1 outline-none focus:border-indigo-500 text-sm resize-none"
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") edit(item._id);
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        edit(item._id);
+                      }
                       if (e.key === "Escape") setEditingId(null);
                     }}
                   />
-                  <button onClick={() => edit(item._id)} className="text-emerald-500 hover:text-emerald-400 p-1">
+                  <button onClick={() => edit(item._id)} className="text-emerald-500 hover:text-emerald-400 p-1 shrink-0">
                     <Check size={16} />
                   </button>
-                  <button onClick={() => setEditingId(null)} className="text-zinc-500 hover:text-zinc-400 p-1">
+                  <button onClick={() => setEditingId(null)} className="text-zinc-500 hover:text-zinc-400 p-1 shrink-0">
                     <X size={16} />
                   </button>
                 </div>
               ) : (
                 <>
-                  <span className="text-zinc-300">{item.value}</span>
-                  <div className="flex gap-2 transition-opacity">
+                  <span className="text-zinc-300 break-words min-w-0 flex-1 mr-4">{item.value}</span>
+                  <div className="flex gap-2 shrink-0 transition-opacity">
                     <button
                       onClick={() => {
                         setEditingId(item._id);
@@ -231,7 +242,7 @@ function StrategyManager() {
       await createStrategy({ title });
       setTitle("");
       load();
-    } catch (err) {
+    } catch {
       alert("Error adding strategy");
     } finally {
       setLoading(false);
@@ -265,15 +276,22 @@ function StrategyManager() {
       <h2 className="text-lg font-bold mb-4 text-zinc-200">Manage Strategies</h2>
       
       <form onSubmit={add} className="flex gap-2 mb-6">
-        <input
-          className="bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white flex-1 outline-none focus:border-indigo-500 transition-colors"
+        <textarea
+          rows={2}
+          className="bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white flex-1 outline-none focus:border-indigo-500 transition-colors resize-none text-sm"
           placeholder="New Strategy Name"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              add(e);
+            }
+          }}
         />
         <button
           disabled={loading}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+          className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg font-medium transition-colors whitespace-nowrap self-stretch flex items-center justify-center"
         >
           {loading ? "Adding..." : "Add"}
         </button>
@@ -287,27 +305,31 @@ function StrategyManager() {
           >
             {editingId === item._id ? (
               <div className="flex flex-1 items-center gap-2 mr-2">
-                <input
+                <textarea
                   autoFocus
-                  className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-white flex-1 outline-none focus:border-indigo-500 text-sm"
+                  rows={2}
+                  className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-white flex-1 outline-none focus:border-indigo-500 text-sm resize-none"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") edit(item._id);
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      edit(item._id);
+                    }
                     if (e.key === "Escape") setEditingId(null);
                   }}
                 />
-                <button onClick={() => edit(item._id)} className="text-emerald-500 hover:text-emerald-400 p-1">
+                <button onClick={() => edit(item._id)} className="text-emerald-500 hover:text-emerald-400 p-1 shrink-0">
                   <Check size={16} />
                 </button>
-                <button onClick={() => setEditingId(null)} className="text-zinc-500 hover:text-zinc-400 p-1">
+                <button onClick={() => setEditingId(null)} className="text-zinc-500 hover:text-zinc-400 p-1 shrink-0">
                   <X size={16} />
                 </button>
               </div>
             ) : (
               <>
-                <span className="text-zinc-300">{item.title}</span>
-                <div className="flex gap-2 transition-opacity">
+                <span className="text-zinc-300 break-words min-w-0 flex-1 mr-4">{item.title}</span>
+                <div className="flex gap-2 shrink-0 transition-opacity">
                   <button
                     onClick={() => {
                       setEditingId(item._id);
@@ -366,7 +388,7 @@ function PatternManager() {
       await createPattern({ title });
       setTitle("");
       load();
-    } catch (err) {
+    } catch {
       alert("Error adding pattern");
     } finally {
       setLoading(false);
@@ -400,15 +422,22 @@ function PatternManager() {
       <h2 className="text-lg font-bold mb-4 text-zinc-200">Manage Patterns</h2>
       
       <form onSubmit={add} className="flex gap-2 mb-6">
-        <input
-          className="bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white flex-1 outline-none focus:border-indigo-500 transition-colors"
+        <textarea
+          rows={2}
+          className="bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white flex-1 outline-none focus:border-indigo-500 transition-colors resize-none text-sm"
           placeholder="New Pattern Name"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              add(e);
+            }
+          }}
         />
         <button
           disabled={loading}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+          className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg font-medium transition-colors whitespace-nowrap self-stretch flex items-center justify-center"
         >
           {loading ? "Adding..." : "Add"}
         </button>
@@ -422,27 +451,31 @@ function PatternManager() {
           >
             {editingId === item._id ? (
               <div className="flex flex-1 items-center gap-2 mr-2">
-                <input
+                <textarea
                   autoFocus
-                  className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-white flex-1 outline-none focus:border-indigo-500 text-sm"
+                  rows={2}
+                  className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-white flex-1 outline-none focus:border-indigo-500 text-sm resize-none"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") edit(item._id);
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      edit(item._id);
+                    }
                     if (e.key === "Escape") setEditingId(null);
                   }}
                 />
-                <button onClick={() => edit(item._id)} className="text-emerald-500 hover:text-emerald-400 p-1">
+                <button onClick={() => edit(item._id)} className="text-emerald-500 hover:text-emerald-400 p-1 shrink-0">
                   <Check size={16} />
                 </button>
-                <button onClick={() => setEditingId(null)} className="text-zinc-500 hover:text-zinc-400 p-1">
+                <button onClick={() => setEditingId(null)} className="text-zinc-500 hover:text-zinc-400 p-1 shrink-0">
                   <X size={16} />
                 </button>
               </div>
             ) : (
               <>
-                <span className="text-zinc-300">{item.title}</span>
-                <div className="flex gap-2 transition-opacity">
+                <span className="text-zinc-300 break-words min-w-0 flex-1 mr-4">{item.title}</span>
+                <div className="flex gap-2 shrink-0 transition-opacity">
                   <button
                     onClick={() => {
                       setEditingId(item._id);
@@ -508,7 +541,7 @@ function UserManager() {
     try {
       await updateUserRole(id, newRole);
       load();
-    } catch (err) {
+    } catch {
       alert("Error updating role");
     }
   };
@@ -520,7 +553,7 @@ function UserManager() {
     try {
       await updateUserPassword(id, pass);
       alert("Password updated");
-    } catch (err) {
+    } catch {
       alert("Error updating password");
     }
   };
