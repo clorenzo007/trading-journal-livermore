@@ -1,4 +1,5 @@
 import WizardCard from "./WizardCard";
+import SearchSelect from "../ui/SearchSelect";
 
 /**
  * Wizard Step: Post-Trade Psychology.
@@ -24,25 +25,13 @@ export default function StepPsychologyPost({
   return (
     <WizardCard title="Psychology (After)" onCancel={onCancel}>
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm text-zinc-400 mb-1">
-            Emotional state
-          </label>
-          <input
-            list="emotions-post"
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
-            value={trade.emotional_state_post || ""}
-            onChange={(e) =>
-              setTrade({ emotional_state_post: e.target.value })
-            }
-            placeholder="Select or type…"
-          />
-          <datalist id="emotions-post">
-            {presets.map((p) => (
-              <option key={p} value={p} />
-            ))}
-          </datalist>
-        </div>
+        <SearchSelect
+          label="Emotional state"
+          value={trade.emotional_state_post || ""}
+          onChange={(val) => setTrade({ emotional_state_post: val })}
+          placeholder="Select or type…"
+          options={presets}
+        />
 
         <div>
           <label className="block text-sm text-zinc-400 mb-1">

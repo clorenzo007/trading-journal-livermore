@@ -1,4 +1,5 @@
 import WizardCard from "./WizardCard";
+import SearchSelect from "../ui/SearchSelect";
 
 /**
  * Wizard Step: Identity.
@@ -23,37 +24,21 @@ export default function StepIdentity({ trade, setTrade, onNext, strategies = [],
           />
         </div>
 
-        <div>
-          <label className="block text-sm text-zinc-400 mb-1">Strategy</label>
-          <input
-            list="strategies-list"
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
-            value={trade.strategy_type || ""}
-            onChange={(e) => setTrade({ strategy_type: e.target.value })}
-            placeholder="Select or type strategy..."
-          />
-          <datalist id="strategies-list">
-            {strategies.map((s) => (
-              <option key={s._id} value={s.title} />
-            ))}
-          </datalist>
-        </div>
+        <SearchSelect
+          label="Strategy"
+          value={trade.strategy_type || ""}
+          onChange={(val) => setTrade({ strategy_type: val })}
+          placeholder="Select or type strategy..."
+          options={strategies}
+        />
 
-        <div>
-          <label className="block text-sm text-zinc-400 mb-1">Pattern</label>
-          <input
-            list="patterns-list"
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
-            value={trade.pattern || ""}
-            onChange={(e) => setTrade({ pattern: e.target.value })}
-            placeholder="Select or type pattern..."
-          />
-          <datalist id="patterns-list">
-            {patterns.map((p) => (
-              <option key={p._id} value={p.title} />
-            ))}
-          </datalist>
-        </div>
+        <SearchSelect
+          label="Pattern"
+          value={trade.pattern || ""}
+          onChange={(val) => setTrade({ pattern: val })}
+          placeholder="Select or type pattern..."
+          options={patterns}
+        />
 
         {!isValid && (
           <div className="text-sm text-red-400">

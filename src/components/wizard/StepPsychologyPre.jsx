@@ -1,4 +1,5 @@
 import WizardCard from "./WizardCard";
+import SearchSelect from "../ui/SearchSelect";
 
 /**
  * Wizard Step: Pre-Trade Psychology.
@@ -27,23 +28,13 @@ export default function StepPsychologyPre({
   return (
     <WizardCard title="Psychology (Before)" onCancel={onCancel}>
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm text-zinc-400 mb-1">
-            Emotional state
-          </label>
-          <input
-            list="emotions-pre"
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
-            value={trade.emotional_state_pre || ""}
-            onChange={(e) => setTrade({ emotional_state_pre: e.target.value })}
-            placeholder="Select or type…"
-          />
-          <datalist id="emotions-pre">
-            {presets.map((p) => (
-              <option key={p} value={p} />
-            ))}
-          </datalist>
-        </div>
+        <SearchSelect
+          label="Emotional state"
+          value={trade.emotional_state_pre || ""}
+          onChange={(val) => setTrade({ emotional_state_pre: val })}
+          placeholder="Select or type…"
+          options={presets}
+        />
 
         <div>
           <label className="block text-sm text-zinc-400 mb-1">
