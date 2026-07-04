@@ -69,8 +69,8 @@ export default function Accounts() {
         changeAccount(created._id); // hacerla activa
       }
       reset();
-    } catch {
-      alert("Error guardando cuenta");
+    } catch (err) {
+      alert(err.message || "Error guardando cuenta");
     } finally {
       setSaving(false);
     }
