@@ -21,7 +21,12 @@ export async function login(email, password) {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.error || "Login failed");
+    const err = new Error(data.error || "Login failed");
+    if (data.needsVerification) {
+      err.needsVerification = true;
+      err.email = data.email;
+    }
+    throw err;
   }
 
   return data;
@@ -43,6 +48,44 @@ export async function register(email, password) {
 
   if (!res.ok) {
     throw new Error(data.error || "Register failed");
+  }
+
+  return data;
+}
+
+// =======================
+// VERIFY EMAIL
+// =======================
+export async function verifyEmail(email, code) {
+  const res = await fetch(`${API_URL}/auth/verify-email`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, code }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Verification failed");
+  }
+
+  return data;
+}
+
+// =======================
+// RESEND VERIFICATION CODE
+// =======================
+export async function resendCode(email) {
+  const res = await fetch(`${API_URL}/auth/resend-code`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Could not resend code");
   }
 
   return data;
