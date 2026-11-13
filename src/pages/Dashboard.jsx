@@ -163,15 +163,7 @@ export default function Dashboard() {
         {/* SIDEBAR: LIVERMORE PANEL */}
         <div className="col-12 col-xl-3 order-2 order-xl-1">
           <div className="sticky-top" style={{ top: '1rem' }}>
-            <LivermorePanel
-              form={filtered[0] || {}}
-              isSidebar={true}
-              subtitle={
-                filtered[0]
-                  ? `${t("Último trade")}: ${filtered[0].symbol || "—"} · ${String(filtered[0].entry_date || "").slice(0, 16).replace("T", " ")}`
-                  : t("Todavía no hay trades")
-              }
-            />
+            <LivermorePanel form={{}} isSidebar={true} />
           </div>
         </div>
 
