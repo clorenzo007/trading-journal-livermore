@@ -465,6 +465,7 @@ export const translations = {
     "Escribí por qué salí": "I wrote why I exited",
     "Fecha Creación": "Creation date",
     "Fecha Fondeo/Melting": "Funding/Melting date",
+    "Fecha Fondeo/Melting (opcional)": "Funding/Melting date (optional)",
     "Fondeo": "Funded",
     "Guardando...": "Saving...",
     "Guardando…": "Saving…",

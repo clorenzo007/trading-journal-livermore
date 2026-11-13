@@ -68,7 +68,9 @@ export default function Accounts() {
       } else {
         const created = await createAccount(form);
         setAccounts((prev) => [...prev, created]);
-        changeAccount(created._id); // hacerla activa
+        if (created.status !== "active") {
+          await changeAccount(created._id); // hacerla activa
+        }
       }
       reset();
     } catch (err) {
@@ -184,7 +186,7 @@ export default function Accounts() {
           </div>
 
           <div className="col-12 col-md-4">
-            <Field label="Fecha Fondeo/Melting">
+            <Field label="Fecha Fondeo/Melting (opcional)">
               <input
                 type="date"
                 className="form-control bg-zinc-800 border-zinc-700 text-white shadow-none"
