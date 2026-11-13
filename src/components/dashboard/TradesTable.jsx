@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { deleteTrades } from "../../api/trades";
 import TradeDetailModal from "./TradeDetailModal";
 import { Trash2, X, CheckSquare } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
 const EMPTY_FILTERS = {
   search: "",
@@ -37,6 +38,7 @@ export default function TradesTable({ trades = [], onRefresh }) {
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [selected, setSelected] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const { t: tr } = useLanguage();
 
   // Toggle selection for a single row
   const toggleSelect = (id) => {
@@ -57,14 +59,14 @@ export default function TradesTable({ trades = [], onRefresh }) {
 
   // Bulk Delete
   const handleBulkDelete = async () => {
-    if (!confirm(`Delete ${selectedIds.size} trades?`)) return;
+    if (!confirm(tr("Delete {n} trades?", { n: selectedIds.size }))) return;
     setDeleting(true);
     try {
       await deleteTrades(Array.from(selectedIds));
       setSelectedIds(new Set());
       onRefresh();
     } catch (err) {
-      alert("Error deleting trades");
+      alert(tr("Error deleting trades"));
     } finally {
       setDeleting(false);
     }
@@ -109,13 +111,13 @@ export default function TradesTable({ trades = [], onRefresh }) {
               </div>
               <div>
                 <div className="text-white font-bold text-sm leading-none">
-                  {selectedIds.size} trades seleccionados
+                  {tr("{n} trades seleccionados", { n: selectedIds.size })}
                 </div>
                 <button 
                   onClick={() => setSelectedIds(new Set())}
                   className="text-zinc-500 hover:text-white text-xs mt-1 transition-colors flex items-center gap-1"
                 >
-                  <X size={12} /> Cancelar selección
+                  <X size={12} /> {tr("Cancelar selección")}
                 </button>
               </div>
             </div>
@@ -130,7 +132,7 @@ export default function TradesTable({ trades = [], onRefresh }) {
               ) : (
                 <Trash2 size={18} />
               )}
-              {deleting ? "Eliminando..." : "Eliminar Registros"}
+              {deleting ? tr("Eliminando...") : tr("Eliminar Registros")}
             </button>
           </div>
         </div>
@@ -138,7 +140,7 @@ export default function TradesTable({ trades = [], onRefresh }) {
 
       {/* RESULTS COUNT */}
       <div className="text-sm text-zinc-400">
-        Mostrando {filtered.length} de {trades.length}
+        {tr("Mostrando {shown} de {total}", { shown: filtered.length, total: trades.length })}
       </div>
 
       {/* =========================================================================
@@ -160,49 +162,49 @@ export default function TradesTable({ trades = [], onRefresh }) {
                   />
                 </div>
               </th>
-              <th className="border-zinc-800">Img</th>
+              <th className="border-zinc-800">{tr("Img")}</th>
               <th className="border-zinc-800">
-                <div>Symbol</div>
+                <div>{tr("Symbol")}</div>
                 <input 
                     className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-white mt-1 focus:outline-none focus:border-indigo-500"
-                    placeholder="Filter..."
+                    placeholder={tr("Filter...")}
                     value={colFilters.symbol}
                     onChange={e => setColFilters(prev => ({...prev, symbol: e.target.value}))}
                 />
               </th>
               <th className="border-zinc-800">
-                <div>Strategy</div>
+                <div>{tr("Strategy")}</div>
                 <input 
                     className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-white mt-1 focus:outline-none focus:border-indigo-500"
-                    placeholder="Filter..."
+                    placeholder={tr("Filter...")}
                     value={colFilters.strategy}
                     onChange={e => setColFilters(prev => ({...prev, strategy: e.target.value}))}
                 />
               </th>
               <th className="border-zinc-800">
-                <div>Pattern</div>
+                <div>{tr("Pattern")}</div>
                  <input 
                     className="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-white mt-1 focus:outline-none focus:border-indigo-500"
-                    placeholder="Filter..."
+                    placeholder={tr("Filter...")}
                     value={colFilters.pattern}
                     onChange={e => setColFilters(prev => ({...prev, pattern: e.target.value}))}
                 />
               </th>
-              <th className="border-zinc-800">Entry</th>
+              <th className="border-zinc-800">{tr("Entry")}</th>
               <th className="border-zinc-800">R:R</th>
-              <th className="border-zinc-800 d-none d-lg-table-cell">Exit</th>
+              <th className="border-zinc-800 d-none d-lg-table-cell">{tr("Exit")}</th>
               <th className="border-zinc-800">
-                <div>Outcome</div>
+                <div>{tr("Outcome")}</div>
                 <select 
                     className="w-full bg-zinc-800 border border-zinc-700 rounded px-1 py-1 text-xs text-white mt-1 focus:outline-none focus:border-indigo-500"
                     value={colFilters.outcome}
                     onChange={e => setColFilters(prev => ({...prev, outcome: e.target.value}))}
                 >
-                    <option value="">All</option>
-                    <option value="Win">Win</option>
-                    <option value="Loss">Loss</option>
-                    <option value="BreakEven">BreakEven</option>
-                    <option value="Open">Open</option>
+                    <option value="">{tr("All")}</option>
+                    <option value="Win">{tr("Win")}</option>
+                    <option value="Loss">{tr("Loss")}</option>
+                    <option value="BreakEven">{tr("BreakEven")}</option>
+                    <option value="Open">{tr("Open")}</option>
                 </select>
               </th>
               <th className="border-zinc-800 text-end">
@@ -210,14 +212,14 @@ export default function TradesTable({ trades = [], onRefresh }) {
                  <div className="flex gap-1 mt-1">
                     <input 
                         className="w-full bg-zinc-800 border border-zinc-700 rounded px-1 py-1 text-xs text-white focus:outline-none focus:border-indigo-500"
-                        placeholder="Min"
+                        placeholder={tr("Min")}
                         type="number"
                         value={colFilters.minPL}
                         onChange={e => setColFilters(prev => ({...prev, minPL: e.target.value}))}
                     />
                      <input 
                         className="w-full bg-zinc-800 border border-zinc-700 rounded px-1 py-1 text-xs text-white focus:outline-none focus:border-indigo-500"
-                        placeholder="Max"
+                        placeholder={tr("Max")}
                         type="number"
                         value={colFilters.maxPL}
                         onChange={e => setColFilters(prev => ({...prev, maxPL: e.target.value}))}
@@ -277,7 +279,7 @@ export default function TradesTable({ trades = [], onRefresh }) {
                 </td>
                 <td className="border-zinc-800">
                   <span className={`badge ${t.outcome === 'Win' ? 'bg-success' : t.outcome === 'Loss' ? 'bg-danger' : 'bg-secondary'}`}>
-                    {t.outcome || "—"}
+                    {t.outcome ? tr(t.outcome) : "—"}
                   </span>
                 </td>
                 <td
@@ -296,7 +298,7 @@ export default function TradesTable({ trades = [], onRefresh }) {
 
         {filtered.length === 0 && (
           <div className="text-center text-zinc-500 py-8">
-            No hay trades que coincidan con los filtros.
+            {tr("No hay trades que coincidan con los filtros.")}
           </div>
         )}
       </div>
@@ -328,7 +330,7 @@ export default function TradesTable({ trades = [], onRefresh }) {
                     />
                   ) : (
                     <div className="bg-zinc-800 rounded d-flex align-items-center justify-content-center text-zinc-600" style={{ width: '40px', height: '40px' }}>
-                       <span className="small">img</span>
+                       <span className="small">{tr("img")}</span>
                     </div>
                   )}
                  <div>
@@ -338,7 +340,7 @@ export default function TradesTable({ trades = [], onRefresh }) {
              </div>
              <div className="text-end">
                 <span className={`badge ${t.outcome === 'Win' ? 'bg-success' : t.outcome === 'Loss' ? 'bg-danger' : 'bg-secondary'} mb-1 d-block`}>
-                    {t.outcome || "Open"}
+                    {tr(t.outcome || "Open")}
                 </span>
                 <div className={`fw-bold ${Number(t.profit_loss) >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                    {t.profit_loss}
@@ -349,20 +351,20 @@ export default function TradesTable({ trades = [], onRefresh }) {
             {/* Card Body: Details Grid */}
             <div className="row g-2 text-sm text-zinc-300">
                <div className="col-6">
-                 <span className="text-zinc-500 d-block text-xs">Strategy</span>
+                 <span className="text-zinc-500 d-block text-xs">{tr("Strategy")}</span>
                  {t.strategy_type || "—"}
                </div>
                <div className="col-6">
-                 <span className="text-zinc-500 d-block text-xs">Pattern</span>
+                 <span className="text-zinc-500 d-block text-xs">{tr("Pattern")}</span>
                  {t.pattern || "—"}
                </div>
                <div className="col-12 mt-2 pt-2 border-t border-zinc-800 flex justify-between items-center">
-                 <span className="text-zinc-500 text-xs uppercase font-bold tracking-wider">Risk : Reward</span>
+                 <span className="text-zinc-500 text-xs uppercase font-bold tracking-wider">{tr("Risk : Reward")}</span>
                  <span className="text-indigo-400 font-black">1 : {t.rr_ratio || "0.00"}</span>
                </div>
                {t.exit_date && (
                 <div className="col-12 border-t border-zinc-800 pt-2 mt-2">
-                   <span className="text-zinc-500 d-block text-xs">Exit Date</span>
+                   <span className="text-zinc-500 d-block text-xs">{tr("Exit Date")}</span>
                    {t.exit_date?.slice(0, 16)}
                 </div>
                )}
@@ -372,7 +374,7 @@ export default function TradesTable({ trades = [], onRefresh }) {
 
         {filtered.length === 0 && (
           <div className="text-center text-zinc-500 py-8">
-            No trades found.
+            {tr("No trades found.")}
           </div>
         )}
       </div>

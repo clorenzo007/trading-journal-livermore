@@ -1,4 +1,5 @@
 import Modal from "./Modal";
+import { useLanguage } from "../../context/LanguageContext";
 
 
 
@@ -19,6 +20,7 @@ export default function ConfirmModal({
   title,
   message,
 }) {
+  const { t } = useLanguage();
   if (!open) return null;
 
   return (
@@ -39,14 +41,14 @@ export default function ConfirmModal({
             onClick={onClose}
             className="flex-1 bg-zinc-800/80 rounded-2xl py-3 hover:bg-zinc-700 transition-all font-semibold text-sm text-zinc-300"
           >
-            Cancelar
+            {t("Cancelar")}
           </button>
 
           <button
             onClick={onConfirm}
             className="flex-1 bg-rose-600 rounded-2xl py-3 hover:bg-rose-500 transition-all font-bold text-sm shadow-lg shadow-rose-900/20"
           >
-            Confirmar
+            {t("Confirmar")}
           </button>
         </div>
       </div>

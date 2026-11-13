@@ -1,7 +1,9 @@
+import { useLanguage } from "../../context/LanguageContext";
 function Row({ label, value }) {
+  const { t } = useLanguage();
   return (
     <div className="flex justify-between border-b border-zinc-800 py-1">
-      <span className="text-zinc-400">{label}</span>
+      <span className="text-zinc-400">{t(label)}</span>
       <span className="font-medium">{value || "—"}</span>
     </div>
   );
@@ -21,6 +23,7 @@ export default function StepConfirm({ trade, onNext, onBack }) {
   // ======================
   // VALIDATIONS
   // ======================
+  const { t } = useLanguage();
   const errors = [];
   const warnings = [];
 
@@ -78,7 +81,7 @@ export default function StepConfirm({ trade, onNext, onBack }) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Confirm trade</h2>
+      <h2 className="text-xl font-semibold">{t("Confirm trade")}</h2>
 
       <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 space-y-2 text-sm">
         <Row label="Symbol" value={trade.symbol} />
@@ -92,14 +95,14 @@ export default function StepConfirm({ trade, onNext, onBack }) {
         <Row label="Exit date" value={trade.exit_date} />
         <Row label="Exit price" value={trade.exit_price} />
         <Row label="P/L" value={trade.profit_loss} />
-        <Row label="Outcome" value={trade.outcome} />
+        <Row label="Outcome" value={trade.outcome ? t(trade.outcome) : ""} />
       </div>
 
       {/* ERRORS */}
       {errors.length > 0 && (
         <div className="bg-red-900/30 border border-red-800 text-red-300 text-sm rounded p-3 space-y-1">
           {errors.map((e, i) => (
-            <div key={i}>❌ {e}</div>
+            <div key={i}>❌ {t(e)}</div>
           ))}
         </div>
       )}
@@ -108,7 +111,7 @@ export default function StepConfirm({ trade, onNext, onBack }) {
       {warnings.length > 0 && (
         <div className="bg-yellow-900/20 border border-yellow-700 text-yellow-300 text-sm rounded p-3 space-y-1">
           {warnings.map((w, i) => (
-            <div key={i}>⚠ {w}</div>
+            <div key={i}>⚠ {t(w)}</div>
           ))}
         </div>
       )}
@@ -118,14 +121,14 @@ export default function StepConfirm({ trade, onNext, onBack }) {
         {trade.entryImage?.url && (
           <img
             src={trade.entryImage.url}
-            alt="Entry"
+            alt={t("Entry")}
             className="h-32 object-cover rounded border border-zinc-800"
           />
         )}
         {trade.reviewImage?.url && (
           <img
             src={trade.reviewImage.url}
-            alt="Review"
+            alt={t("Review")}
             className="h-32 object-cover rounded border border-zinc-800"
           />
         )}
@@ -136,7 +139,7 @@ export default function StepConfirm({ trade, onNext, onBack }) {
           onClick={onBack}
           className="px-4 py-2 rounded bg-zinc-800 hover:bg-zinc-700"
         >
-          Back
+          {t("Back")}
         </button>
 
         <button
@@ -148,7 +151,7 @@ export default function StepConfirm({ trade, onNext, onBack }) {
               : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
           }`}
         >
-          Confirm
+          {t("Confirm")}
         </button>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useLanguage } from "../../context/LanguageContext";
 
 /**
  * Reusable Mobile-Friendly Search and Select Input.
@@ -7,6 +8,7 @@ import { useState, useRef, useEffect } from "react";
  */
 export default function SearchSelect({ label, value, onChange, placeholder, options }) {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useLanguage();
   const containerRef = useRef(null);
 
   // Click outside listener to close dropdown
@@ -75,7 +77,7 @@ export default function SearchSelect({ label, value, onChange, placeholder, opti
             </div>
           ) : (
             <div className="px-4 py-2.5 text-sm text-zinc-500 italic">
-              {value?.trim() ? "No matches found." : "No options available."}
+              {value?.trim() ? t("No matches found.") : t("No options available.")}
             </div>
           )}
         </div>

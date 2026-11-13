@@ -20,6 +20,7 @@ import StepConfirm from "./StepConfirm";
 import StepFinish from "./StepFinish";
 import ProgressBar from "./ProgressBar";
 import LivermorePanel from "./LivermorePanel";
+import { useLanguage } from "../../context/LanguageContext";
 
 const EMPTY_TRADE = {
   symbol: "",
@@ -68,6 +69,7 @@ export default function TradeWizard() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const { t } = useLanguage();
 
   const [step, setStep] = useState(0);
   const [trade, setTrade] = useState(() => {
@@ -105,7 +107,7 @@ export default function TradeWizard() {
           setTrade(data);
         }
       } catch {
-        setError("Failed to load data");
+        setError(t("Failed to load data"));
       } finally {
         setLoading(false);
       }
@@ -133,16 +135,16 @@ export default function TradeWizard() {
 
     for (const [key, label] of required) {
       if (!trade[key] && trade[key] !== 0) {
-        return `Missing required field: ${label}`;
+        return t("Missing required field: {label}", { label: t(label) });
       }
     }
 
     if (trade.exit_date && !trade.exit_price) {
-      return "Exit price is required when exit date is set";
+      return t("Exit price is required when exit date is set");
     }
 
     if (trade.exit_price && !trade.outcome) {
-      return "Outcome is required when exit price is set";
+      return t("Outcome is required when exit price is set");
     }
 
     return null;
@@ -207,7 +209,7 @@ export default function TradeWizard() {
       navigate("/dashboard");
     } catch (err) {
       console.error(err);
-      setError("Failed to save trade");
+      setError(t("Failed to save trade"));
     } finally {
       setSaving(false);
     }
@@ -216,7 +218,7 @@ export default function TradeWizard() {
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center text-zinc-400">
-        Loading trade...
+        {t("Loading trade...")}
       </div>
     );
   }
@@ -226,13 +228,13 @@ export default function TradeWizard() {
       {/* HEADER */}
       <div className="border-b border-zinc-800 px-6 py-4 flex justify-between">
         <div className="font-semibold">
-          {isEdit ? "Edit trade" : "New trade"}
+          {isEdit ? t("Edit trade") : t("New trade")}
         </div>
         <button
           onClick={cancel}
           className="text-sm text-zinc-400 hover:text-white"
         >
-          Cancel
+          {t("Cancel")}
         </button>
       </div>
 

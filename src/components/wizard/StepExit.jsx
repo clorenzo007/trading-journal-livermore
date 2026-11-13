@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import WizardCard from "./WizardCard";
+import { useLanguage } from "../../context/LanguageContext";
 
 // 👉 Fecha y hora LOCAL compatible con datetime-local
 function nowLocalDatetime() {
@@ -20,6 +21,7 @@ export default function StepExit({
   onBack,
   onCancel,
 }) {
+  const { t } = useLanguage();
   const exitPrice = Number(trade.exit_price);
   const profit = trade.profit_loss !== "" ? Number(trade.profit_loss) : null;
 
@@ -62,15 +64,15 @@ export default function StepExit({
   const errors = [];
 
   if (exitPrice && !trade.exit_date) {
-    errors.push("Exit date is required when exit price is set.");
+    errors.push(t("Exit date is required when exit price is set."));
   }
 
   if (exitPrice && !trade.outcome) {
-    errors.push("Outcome is required for a closed trade.");
+    errors.push(t("Outcome is required for a closed trade."));
   }
 
   if (profit !== null && isNaN(profit)) {
-    errors.push("Profit / Loss must be a valid number.");
+    errors.push(t("Profit / Loss must be a valid number."));
   }
 
   const isValid = errors.length === 0;
@@ -80,7 +82,7 @@ export default function StepExit({
       <div className="space-y-4">
         {/* EXIT DATE */}
         <div>
-          <label className="block text-sm text-zinc-400 mb-1">Exit date</label>
+          <label className="block text-sm text-zinc-400 mb-1">{t("Exit date")}</label>
           <input
             type="datetime-local"
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
@@ -91,7 +93,7 @@ export default function StepExit({
 
         {/* EXIT PRICE */}
         <div>
-          <label className="block text-sm text-zinc-400 mb-1">Exit price</label>
+          <label className="block text-sm text-zinc-400 mb-1">{t("Exit price")}</label>
           <input
             type="number"
             step="any"
@@ -106,7 +108,7 @@ export default function StepExit({
         {/* HIGHEST / LOWEST PRICE REACHED */}
         <div>
           <label className="block text-sm text-zinc-400 mb-1">
-            Highest / Lowest Price Reached (Max Excursion)
+            {t("Highest / Lowest Price Reached (Max Excursion)")}
           </label>
           <input
             type="number"
@@ -114,7 +116,7 @@ export default function StepExit({
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
             value={trade.highest_lowest_price ?? ""}
             onChange={(e) => setTrade({ highest_lowest_price: e.target.value })}
-            placeholder="Furthest price reached"
+            placeholder={t("Furthest price reached")}
           />
           {/* Metrics Display */}
           {trade.entry_price && trade.stop_loss && trade.highest_lowest_price && (
@@ -148,19 +150,19 @@ export default function StepExit({
                    return (
                       <>
                         <div className="flex justify-between">
-                            <span className="text-zinc-400">Max Potential R:R:</span>
+                            <span className="text-zinc-400">{t("Max Potential R:R:")}</span>
                             <span className="text-white font-mono">{maxRR}R</span>
                         </div>
                         {tp && (
                             <div className="flex justify-between">
-                                <span className="text-zinc-400">Distance from TP:</span>
-                                <span className="text-amber-400 font-mono">{missedPips} pts</span>
+                                <span className="text-zinc-400">{t("Distance from TP:")}</span>
+                                <span className="text-amber-400 font-mono">{missedPips} {t("pts")}</span>
                             </div>
                         )}
                         <div className="text-xs text-zinc-500 pt-1 border-t border-zinc-800 mt-1">
                            {maxPotentialProfit > 0 
-                             ? "Trade went in your favor at some point." 
-                             : "Trade went immediately against you."}
+                             ? t("Trade went in your favor at some point.")
+                             : t("Trade went immediately against you.")}
                         </div>
                       </>
                    );
@@ -172,7 +174,7 @@ export default function StepExit({
         {/* PROFIT / LOSS */}
         <div>
           <label className="block text-sm text-zinc-400 mb-1">
-            Profit / Loss
+            {t("Profit / Loss")}
           </label>
           <input
             type="number"
@@ -180,22 +182,22 @@ export default function StepExit({
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
             value={trade.profit_loss ?? ""}
             onChange={(e) => setTrade({ profit_loss: e.target.value })}
-            placeholder="Positive or negative value"
+            placeholder={t("Positive or negative value")}
           />
         </div>
 
         {/* OUTCOME */}
         <div>
-          <label className="block text-sm text-zinc-400 mb-1">Outcome</label>
+          <label className="block text-sm text-zinc-400 mb-1">{t("Outcome")}</label>
           <select
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
             value={trade.outcome || ""}
             onChange={(e) => setTrade({ outcome: e.target.value })}
           >
             <option value="">—</option>
-            <option value="Win">Win</option>
-            <option value="Loss">Loss</option>
-            <option value="Break-even">Break-even</option>
+            <option value="Win">{t("Win")}</option>
+            <option value="Loss">{t("Loss")}</option>
+            <option value="Break-even">{t("Break-even")}</option>
           </select>
         </div>
 
@@ -214,7 +216,7 @@ export default function StepExit({
           onClick={onBack}
           className="px-5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700"
         >
-          Back
+          {t("Back")}
         </button>
 
         <button
@@ -226,7 +228,7 @@ export default function StepExit({
               : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
           }`}
         >
-          Next
+          {t("Next")}
         </button>
       </div>
     </WizardCard>

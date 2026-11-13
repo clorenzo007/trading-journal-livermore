@@ -1,8 +1,10 @@
+import { useLanguage } from "../../context/LanguageContext";
 /**
  * Wizard Progress Bar.
  * Visual indicator of the current step in the wizard.
  */
 export default function ProgressBar({ step, totalSteps }) {
+  const { t } = useLanguage();
   const safeTotal = Number(totalSteps) || 1;
   const safeStep = Number(step) || 1;
 
@@ -12,7 +14,7 @@ export default function ProgressBar({ step, totalSteps }) {
     <div className="mb-6">
       <div className="flex justify-between text-xs text-zinc-400 mb-1">
         <span>
-          Step {safeStep} / {safeTotal}
+          {t("Step")} {safeStep} / {safeTotal}
         </span>
         <span>{Math.round(percent)}%</span>
       </div>

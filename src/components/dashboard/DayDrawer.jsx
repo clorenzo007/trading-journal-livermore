@@ -2,6 +2,7 @@ import { useState } from "react";
 import TradeDetailModal from "./TradeDetailModal";
 import useDailyStats from "../../hooks/useDailyStats";
 import { formatNYSEDate } from "../../utils/formatDate";
+import { useLanguage } from "../../context/LanguageContext";
 
 function formatDateHuman(dateStr) {
   return formatNYSEDate(dateStr, {
@@ -32,11 +33,12 @@ export default function DayDrawer({
 }) {
   const [selectedTrade, setSelectedTrade] = useState(null);
   const stats = useDailyStats(trades);
+  const { t: tr } = useLanguage();
 
   function statCard(label, value, color = "text-zinc-200") {
     return (
       <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-3">
-        <div className="text-xs text-zinc-400">{label}</div>
+        <div className="text-xs text-zinc-400">{tr(label)}</div>
         <div className={`text-lg font-semibold ${color}`}>{value}</div>
       </div>
     );
@@ -49,7 +51,7 @@ export default function DayDrawer({
       <div className="fixed top-0 right-0 h-full w-[560px] bg-zinc-950 border-l border-zinc-800 z-[1050] p-4 flex flex-col">
         <div className="flex justify-between items-center mb-4">
           <div>
-            <div className="text-xs text-zinc-400">Trades for</div>
+            <div className="text-xs text-zinc-400">{tr("Trades for")}</div>
             <div className="text-lg font-semibold">{formatDateHuman(day)}</div>
           </div>
 
@@ -57,7 +59,7 @@ export default function DayDrawer({
             onClick={onClose}
             className="px-3 py-1 rounded bg-zinc-800 hover:bg-zinc-700"
           >
-            Close
+            {tr("Close")}
           </button>
         </div>
 
@@ -93,7 +95,7 @@ export default function DayDrawer({
         {/* Trades list */}
         <div className="flex-1 overflow-y-auto space-y-2">
           {trades.length === 0 && (
-            <div className="text-zinc-500 text-sm">No trades this day.</div>
+            <div className="text-zinc-500 text-sm">{tr("No trades this day.")}</div>
           )}
 
           {trades.map((t) => (
@@ -130,13 +132,13 @@ export default function DayDrawer({
             onClick={onPrevDay}
             className="px-3 py-1 rounded bg-zinc-800 hover:bg-zinc-700"
           >
-            ← Previous
+            ← {tr("Previous")}
           </button>
           <button
             onClick={onNextDay}
             className="px-3 py-1 rounded bg-zinc-800 hover:bg-zinc-700"
           >
-            Next →
+            {tr("Next")} →
           </button>
         </div>
       </div>

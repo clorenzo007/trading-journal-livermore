@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialData }) {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
   });
 
   const [newItem, setNewItem] = useState("");
+  const { t } = useLanguage();
 
   /* New State for Images */
   const [files, setFiles] = useState([]);
@@ -103,7 +105,7 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         <div className="p-6 border-b border-zinc-800 flex justify-between items-center sticky top-0 bg-zinc-900 z-10">
           <h2 className="text-xl font-bold text-white">
-            {initialData ? "Edit Concept" : "New Concept"}
+            {initialData ? t("Edit Concept") : t("New Concept")}
           </h2>
           <button onClick={onClose} className="text-zinc-400 hover:text-white transition-colors">
             <X size={24} />
@@ -114,14 +116,14 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
           
           {/* Image Upload */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Images (Optional)</label>
+            <label className="block text-sm font-medium text-zinc-400 mb-2">{t("Images (Optional)")}</label>
             <div className="space-y-4">
               {/* Previews Grid */}
               {imagePreviews.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {imagePreviews.map((src, idx) => (
                     <div key={idx} className="w-20 h-20 rounded-lg overflow-hidden border border-zinc-700 bg-zinc-800 shrink-0 relative group">
-                      <img src={src} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+                      <img src={src} alt={`${t("Preview")} ${idx}`} className="w-full h-full object-cover" />
                       {/* TODO: Add delete button for specific images if we implement delete logic */}
                     </div>
                   ))}
@@ -136,55 +138,55 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
                 className="text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer w-full"
               />
               <p className="text-xs text-zinc-500">
-                select one or more files. New files will be appended to existing ones.
+                {t("Select one or more files. New files will be appended to existing ones.")}
               </p>
             </div>
           </div>
 
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Title</label>
+            <label className="block text-sm font-medium text-zinc-400 mb-2">{t("Title")}</label>
             <input
               required
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500 transition-colors"
-              placeholder="e.g. Liquidity"
+              placeholder={t("e.g. Liquidity")}
             />
           </div>
 
           {/* Subtitle */}
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Subtitle (Optional)</label>
+            <label className="block text-sm font-medium text-zinc-400 mb-2">{t("Subtitle (Optional)")}</label>
             <input
               value={formData.subtitle}
               onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500 transition-colors"
-              placeholder="e.g. Bullish Impulse"
+              placeholder={t("e.g. Bullish Impulse")}
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Description (Optional)</label>
+            <label className="block text-sm font-medium text-zinc-400 mb-2">{t("Description (Optional)")}</label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500 transition-colors min-h-[100px]"
-              placeholder="Detailed explanation..."
+              placeholder={t("Detailed explanation...")}
             />
           </div>
 
           {/* Items List */}
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Key Points / Items</label>
+            <label className="block text-sm font-medium text-zinc-400 mb-2">{t("Key Points / Items")}</label>
             <div className="flex gap-2 mb-3">
               <input
                 value={newItem}
                 onChange={(e) => setNewItem(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addItem())}
                 className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500 transition-colors"
-                placeholder="Add a point..."
+                placeholder={t("Add a point...")}
               />
               <button
                 type="button"
@@ -222,12 +224,12 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
 
           {/* Note */}
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-2">Note (Optional)</label>
+            <label className="block text-sm font-medium text-zinc-400 mb-2">{t("Note (Optional)")}</label>
             <textarea
               value={formData.note}
               onChange={(e) => setFormData({ ...formData, note: e.target.value })}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500 transition-colors"
-              placeholder="Important note..."
+              placeholder={t("Important note...")}
             />
           </div>
 
@@ -237,13 +239,13 @@ export default function ConceptFormModal({ isOpen, onClose, onSubmit, initialDat
               onClick={onClose}
               className="px-4 py-2 text-zinc-400 hover:text-white transition-colors"
             >
-              Cancel
+              {t("Cancel")}
             </button>
             <button
               type="submit"
               className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg font-medium transition-colors"
             >
-              {initialData ? "Save Changes" : "Create Concept"}
+              {initialData ? t("Save Changes") : t("Create Concept")}
             </button>
           </div>
         </form>
