@@ -2,6 +2,8 @@
  * Utility functions to format dates globally to the NYSE timezone (America/New_York)
  */
 
+import { getLocale } from "../context/LanguageContext";
+
 export const NYSE_TIMEZONE = "America/New_York";
 
 /**
@@ -15,7 +17,7 @@ export function formatNYSEDate(date, options = {}) {
     try {
         const d = new Date(date);
         if (isNaN(d.getTime())) return "-";
-        return d.toLocaleDateString(undefined, {
+        return d.toLocaleDateString(getLocale(), {
             timeZone: NYSE_TIMEZONE,
             ...options,
         });
@@ -35,7 +37,7 @@ export function formatNYSETime(date, options = {}) {
     try {
         const d = new Date(date);
         if (isNaN(d.getTime())) return "-";
-        return d.toLocaleTimeString(undefined, {
+        return d.toLocaleTimeString(getLocale(), {
             timeZone: NYSE_TIMEZONE,
             ...options,
         });
@@ -55,7 +57,7 @@ export function formatNYSEDateTime(date, options = {}) {
     try {
         const d = new Date(date);
         if (isNaN(d.getTime())) return "-";
-        return d.toLocaleString(undefined, {
+        return d.toLocaleString(getLocale(), {
             timeZone: NYSE_TIMEZONE,
             ...options,
         });

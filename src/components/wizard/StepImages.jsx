@@ -3,6 +3,7 @@ import EntryImageUploader from "../EntryImageUploader";
 import ReviewImageUploader from "../ReviewImageUploader";
 import FullscreenViewer from "../FullscreenViewer";
 import { deleteReviewImage, deleteEntryImage } from "../../api/trades";
+import { useLanguage } from "../../context/LanguageContext";
 
 /**
  * Wizard Step: Images.
@@ -11,7 +12,8 @@ import { deleteReviewImage, deleteEntryImage } from "../../api/trades";
  */
 export default function StepImages({ trade, setTrade, onNext, onBack }) {
   const [view, setView] = useState(null);
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   const handleDelete = async (type) => {
     if (!trade._id) {
@@ -26,7 +28,7 @@ export default function StepImages({ trade, setTrade, onNext, onBack }) {
       else await deleteReviewImage(trade._id);
       setTrade({ [type === 'entry' ? 'entryImage' : 'reviewImage']: null });
     } catch {
-      alert("Error eliminando imagen");
+      alert(t("Error eliminando imagen"));
     } finally {
       setLoading(false);
     }
@@ -34,10 +36,10 @@ export default function StepImages({ trade, setTrade, onNext, onBack }) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Trade images</h2>
+      <h2 className="text-xl font-semibold">{t("Trade images")}</h2>
 
       <div className="text-sm text-zinc-500">
-        You can upload or change images here. Changes are saved immediately for existing trades.
+        {t("You can upload or change images here. Changes are saved immediately for existing trades.")}
       </div>
 
       <div className="row g-4">
@@ -50,13 +52,13 @@ export default function StepImages({ trade, setTrade, onNext, onBack }) {
         */}
         <div className="col-12 col-md-6">
           <div className="space-y-3">
-            <div className="text-xs font-bold uppercase tracking-widest text-zinc-500">Entry Image</div>
+            <div className="text-xs font-bold uppercase tracking-widest text-zinc-500">{t("Entry Image")}</div>
 
             {trade.entryImage?.url ? (
               <div className="relative group">
                 <img
                   src={trade.entryImage.url}
-                  alt="Entry"
+                  alt={t("Entry")}
                   className="w-full h-64 object-cover rounded-xl cursor-zoom-in border border-zinc-800"
                   onClick={() => setView(trade.entryImage.url)}
                 />
@@ -66,7 +68,7 @@ export default function StepImages({ trade, setTrade, onNext, onBack }) {
                      className="p-2 bg-rose-600 rounded-lg text-white text-xs shadow-lg"
                      disabled={loading}
                    >
-                     Eliminar
+                     {t("Eliminar")}
                    </button>
                 </div>
               </div>
@@ -87,13 +89,13 @@ export default function StepImages({ trade, setTrade, onNext, onBack }) {
         */}
         <div className="col-12 col-md-6">
           <div className="space-y-3">
-            <div className="text-xs font-bold uppercase tracking-widest text-zinc-500">Review Image</div>
+            <div className="text-xs font-bold uppercase tracking-widest text-zinc-500">{t("Review Image")}</div>
 
             {trade.reviewImage?.url ? (
               <div className="relative group">
                 <img
                   src={trade.reviewImage.url}
-                  alt="Review"
+                  alt={t("Review")}
                   className="w-full h-64 object-cover rounded-xl cursor-zoom-in border border-zinc-800"
                   onClick={() => setView(trade.reviewImage.url)}
                 />
@@ -103,7 +105,7 @@ export default function StepImages({ trade, setTrade, onNext, onBack }) {
                      className="p-2 bg-rose-600 rounded-lg text-white text-xs shadow-lg"
                      disabled={loading}
                    >
-                     Eliminar
+                     {t("Eliminar")}
                    </button>
                 </div>
               </div>
@@ -123,14 +125,14 @@ export default function StepImages({ trade, setTrade, onNext, onBack }) {
           onClick={onBack}
           className="px-6 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors font-medium"
         >
-          Back
+          {t("Back")}
         </button>
 
         <button
           onClick={onNext}
           className="px-6 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-all font-bold shadow-lg shadow-indigo-500/20"
         >
-          Next
+          {t("Next")}
         </button>
       </div>
     </div>

@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useMemo } from "react";
+import { useLanguage } from "../../context/LanguageContext";
 
 function getOutcome(trade) {
   const p = Number(trade.profit_loss);
@@ -21,6 +22,7 @@ function getOutcome(trade) {
  * Shows the absolute count of trades for each outcome.
  */
 export default function WinLossBar({ trades }) {
+  const { t } = useLanguage();
   const data = useMemo(() => {
     const counts = { Win: 0, Loss: 0, BE: 0 };
 
@@ -33,18 +35,18 @@ export default function WinLossBar({ trades }) {
     });
 
     return [
-      { name: "Win", value: counts.Win },
-      { name: "Loss", value: counts.Loss },
-      { name: "BE", value: counts.BE },
+      { key: "Win", name: t("Win"), value: counts.Win },
+      { key: "Loss", name: t("Loss"), value: counts.Loss },
+      { key: "BE", name: t("BE"), value: counts.BE },
     ].filter((d) => d.value > 0);
-  }, [trades]);
+  }, [trades, t]);
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 h-full">
-      <div className="text-sm text-zinc-400 mb-2">Win / Loss Distribution</div>
+      <div className="text-sm text-zinc-400 mb-2">{t("Win / Loss Distribution")}</div>
 
       {data.length === 0 ? (
-        <div className="text-zinc-500 text-sm">No data</div>
+        <div className="text-zinc-500 text-sm">{t("No data")}</div>
       ) : (
         <ResponsiveContainer width="100%" height={240}>
           <BarChart data={data}>

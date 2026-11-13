@@ -10,6 +10,7 @@ import {
 } from "../api/concepts";
 import { Plus, Edit2, Trash2, Save, MoveVertical, Image as ImageIcon, X } from "lucide-react";
 import ConceptFormModal from "../components/concepts/ConceptFormModal";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Concepts() {
   const [concepts, setConcepts] = useState([]);
@@ -18,6 +19,7 @@ export default function Concepts() {
   const [editingConcept, setEditingConcept] = useState(null);
 
   const { user } = useAuth();
+  const { t } = useLanguage();
   const isAdmin = user?.role === "admin";
 
   const [selectedImage, setSelectedImage] = useState(null);
@@ -51,18 +53,18 @@ export default function Concepts() {
       setEditingConcept(null);
     } catch (err) {
       console.error("Error saving concept", err);
-      alert("Failed to save concept: " + (err.message || "Unknown error"));
+      alert(t("Failed to save concept:") + " " + t(err.message || "Unknown error"));
     }
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this concept?")) return;
+    if (!confirm(t("Are you sure you want to delete this concept?"))) return;
     try {
       await deleteConcept(id);
       loadConcepts();
     } catch (err) {
       console.error("Error deleting concept", err);
-      alert("Failed to delete concept");
+      alert(t("Failed to delete concept"));
     }
   };
 
@@ -97,7 +99,7 @@ export default function Concepts() {
           <div className="relative max-w-7xl w-full max-h-screen flex items-center justify-center">
             <img 
               src={selectedImage} 
-              alt="Fullscreen" 
+              alt={t("Fullscreen")} 
               className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" 
             />
             <button 
@@ -116,7 +118,7 @@ export default function Concepts() {
         <aside className="hidden lg:block w-64 shrink-0">
           <div className="sticky top-24 space-y-4">
             <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
-              Contenido
+              {t("Contenido")}
             </h2>
 
             <nav className="space-y-2 text-sm flex flex-col">
@@ -135,7 +137,7 @@ export default function Concepts() {
                   onClick={openNewModal}
                   className="flex items-center gap-2 text-indigo-400 hover:text-indigo-300 px-3 py-2 mt-4 font-medium"
                 >
-                  <Plus size={16} /> New Concept
+                  <Plus size={16} /> {t("New Concept")}
                 </button>
               )}
             </nav>
@@ -149,10 +151,10 @@ export default function Concepts() {
           <header className="flex justify-between items-end border-b border-zinc-800 pb-6">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold text-zinc-100">
-                ICT Concepts
+                {t("ICT Concepts")}
               </h1>
               <p className="text-zinc-400">
-                Liquidez, estructura, dirección y criterios de entrada.
+                {t("Liquidez, estructura, dirección y criterios de entrada.")}
               </p>
             </div>
             {isAdmin && (
@@ -160,20 +162,20 @@ export default function Concepts() {
                 onClick={openNewModal}
                 className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
               >
-                <Plus size={18} /> Add Concept
+                <Plus size={18} /> {t("Add Concept")}
               </button>
             )}
           </header>
 
           {/* ===== LIST ===== */}
           {loading ? (
-            <div className="text-center py-12 text-zinc-500">Loading concepts...</div>
+            <div className="text-center py-12 text-zinc-500">{t("Loading concepts...")}</div>
           ) : concepts.length === 0 ? (
             <div className="text-center py-12 text-zinc-500 border border-zinc-800 rounded-xl bg-zinc-900/50">
-              <p className="mb-4">No concepts found.</p>
+              <p className="mb-4">{t("No concepts found.")}</p>
               {isAdmin && (
                 <button onClick={openNewModal} className="text-indigo-400 hover:underline">
-                  Create your first concept
+                  {t("Create your first concept")}
                 </button>
               )}
             </div>
@@ -187,21 +189,21 @@ export default function Concepts() {
                 <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
                   <h2 className="text-2xl font-semibold text-zinc-100 flex items-center gap-2">
                     {concept.title}
-                    {concept.image?.url && <ImageIcon size={20} className="text-zinc-500" title="Image attached" />}
+                    {concept.image?.url && <ImageIcon size={20} className="text-zinc-500" title={t("Image attached")} />}
                   </h2>
                   {isAdmin && (
                     <div className="flex gap-2 opacity-100 transition-opacity">
                       <button 
                         onClick={() => openEditModal(concept)}
                         className="p-1.5 text-zinc-400 hover:text-indigo-400 transition-colors"
-                        title="Edit"
+                        title={t("Edit")}
                       >
                         <Edit2 size={18} />
                       </button>
                       <button 
                         onClick={() => handleDelete(concept._id)}
                         className="p-1.5 text-zinc-400 hover:text-rose-400 transition-colors"
-                        title="Delete"
+                        title={t("Delete")}
                       >
                         <Trash2 size={18} />
                       </button>
@@ -238,10 +240,10 @@ export default function Concepts() {
                                 </div>
                                 <div className="text-left pr-4">
                                   <p className="text-sm font-medium text-zinc-300 group-hover:text-indigo-300 transition-colors">
-                                    {images.length > 1 ? `Image ${idx + 1}` : "Ver imagen"}
+                                    {images.length > 1 ? `${t("Image")} ${idx + 1}` : t("Ver imagen")}
                                   </p>
                                   <p className="text-xs text-zinc-500 group-hover:text-zinc-400">
-                                    Click para ampliar
+                                    {t("Click para ampliar")}
                                   </p>
                                 </div>
                               </button>
@@ -272,7 +274,7 @@ export default function Concepts() {
 
                   {concept.note && (
                     <div className="mt-4 bg-zinc-800/50 border border-zinc-700 rounded-lg p-4 text-sm text-zinc-300">
-                      <strong className="text-indigo-400 block mb-1">Nota:</strong> {concept.note}
+                      <strong className="text-indigo-400 block mb-1">{t("Nota:")}</strong> {concept.note}
                     </div>
                   )}
                   
@@ -282,7 +284,7 @@ export default function Concepts() {
                         to="/entries"
                         className="inline-block mt-4 text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
                       >
-                        → Ver setups de entrada
+                        → {t("Ver setups de entrada")}
                       </Link>
                    )}
                 </div>

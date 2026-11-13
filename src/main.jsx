@@ -6,9 +6,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext";
 import { AccountProvider } from "./context/AccountContext";
+import { LanguageProvider } from "./context/LanguageContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+    <LanguageProvider>
     <BrowserRouter>
       <AuthProvider>
         <AccountProvider>
@@ -16,5 +18,6 @@ createRoot(document.getElementById("root")).render(
         </AccountProvider>
       </AuthProvider>
     </BrowserRouter>
+    </LanguageProvider>
   </StrictMode>,
 );

@@ -1,33 +1,34 @@
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { translate as t } from "../context/LanguageContext";
 
 export function exportTradesToExcel(trades) {
   if (!trades?.length) return;
 
-  const rows = trades.map((t) => ({
-    Symbol: t.symbol,
-    Strategy: t.strategy_type,
-    Pattern: t.pattern,
+  const rows = trades.map((tr) => ({
+    [t("Symbol")]: tr.symbol,
+    [t("Strategy")]: tr.strategy_type,
+    [t("Pattern")]: tr.pattern,
 
-    "Entry Date": t.entry_date,
-    "Entry Price": t.entry_price,
-    "Position Size": t.position_size,
+    [t("Entry date")]: tr.entry_date,
+    [t("Entry price")]: tr.entry_price,
+    [t("Position size")]: tr.position_size,
 
-    "Stop Loss": t.stop_loss,
-    "Risk %": t.risk_percent,
+    [t("Stop loss")]: tr.stop_loss,
+    [t("Risk %")]: tr.risk_percent,
 
-    "Exit Date": t.exit_date,
-    "Exit Price": t.exit_price,
-    "Profit/Loss": t.profit_loss,
-    Outcome: t.outcome,
+    [t("Exit date")]: tr.exit_date,
+    [t("Exit price")]: tr.exit_price,
+    [t("Profit / Loss")]: tr.profit_loss,
+    [t("Outcome")]: tr.outcome ? t(tr.outcome) : "",
 
-    "Emotion Pre": t.emotional_state_pre,
-    "Reason Entry": t.reason_for_entry,
-    "Emotion Post": t.emotional_state_post,
-    "Reason Exit": t.reason_for_exit,
-    "Review Notes": t.review_notes,
+    [t("Emotion (pre)")]: tr.emotional_state_pre,
+    [t("Reason entry")]: tr.reason_for_entry,
+    [t("Emotion (post)")]: tr.emotional_state_post,
+    [t("Reason exit")]: tr.reason_for_exit,
+    [t("Review notes")]: tr.review_notes,
 
-    Session: t._session || "",
+    [t("Session")]: tr._session ? t(tr._session) : "",
   }));
 
   const worksheet = XLSX.utils.json_to_sheet(rows);

@@ -2,6 +2,7 @@ import WizardCard from "./WizardCard";
 import { useAccount } from "../../context/AccountContext";
 import { calculateRR } from "../../utils/calculations";
 import { useEffect } from "react";
+import { useLanguage } from "../../context/LanguageContext";
 
 /**
  * Wizard Step: Risk Management.
@@ -15,6 +16,7 @@ export default function StepRisk({
   onCancel,
 }) {
   const { activeAccount } = useAccount();
+  const { t } = useLanguage();
 
   // Auto-calculate RR whenever relevant fields change
   useEffect(() => {
@@ -50,11 +52,11 @@ export default function StepRisk({
   const errors = [];
 
   if (!stopLoss || stopLoss <= 0) {
-    errors.push("Stop loss must be a number greater than 0.");
+    errors.push(t("Stop loss must be a number greater than 0."));
   }
 
   if (!risk || risk <= 0 || risk > 100) {
-    errors.push("Risk % must be between 0 and 100.");
+    errors.push(t("Risk % must be between 0 and 100."));
   }
 
   const isValid = errors.length === 0;
@@ -64,7 +66,7 @@ export default function StepRisk({
       <div className="space-y-4">
         {/* STOP LOSS */}
         <div>
-          <label className="block text-sm text-zinc-400 mb-1">Stop loss</label>
+          <label className="block text-sm text-zinc-400 mb-1">{t("Stop loss")}</label>
           <input
             type="number"
             step="any"
@@ -72,40 +74,40 @@ export default function StepRisk({
             value={trade.stop_loss ?? ""}
             onChange={(e) => setTrade({ stop_loss: e.target.value })}
             onBlur={handleStopLossBlur}
-            placeholder="Price level"
+            placeholder={t("Price level")}
           />
         </div>
 
         {/* TAKE PROFIT */}
         <div>
-          <label className="block text-sm text-zinc-400 mb-1">Take Profit (Optional)</label>
+          <label className="block text-sm text-zinc-400 mb-1">{t("Take Profit (Optional)")}</label>
           <input
             type="number"
             step="any"
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
             value={trade.take_profit ?? ""}
             onChange={(e) => setTrade({ take_profit: e.target.value })}
-            placeholder="Target Price"
+            placeholder={t("Target Price")}
           />
         </div>
 
         {/* RISK:REWARD (AUTO) */}
         <div className="bg-indigo-900/10 border border-indigo-500/20 rounded-xl p-4 flex justify-between items-center">
           <div>
-            <div className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Risk : Reward</div>
+            <div className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">{t("Risk : Reward")}</div>
             <div className="text-2xl font-black text-white">
               1 : {trade.rr_ratio || "0.00"}
             </div>
           </div>
           <div className="text-right">
-            <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Formula</div>
-            <div className="text-xs text-zinc-400 italic">Auto-calculated</div>
+            <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">{t("Formula")}</div>
+            <div className="text-xs text-zinc-400 italic">{t("Auto-calculated")}</div>
           </div>
         </div>
 
         {/* RISK % */}
         <div>
-          <label className="block text-sm text-zinc-400 mb-1">Risk %</label>
+          <label className="block text-sm text-zinc-400 mb-1">{t("Risk %")}</label>
           <input
             type="number"
             step="any"
@@ -131,7 +133,7 @@ export default function StepRisk({
           onClick={onBack}
           className="px-5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700"
         >
-          Back
+          {t("Back")}
         </button>
 
         <button
@@ -143,7 +145,7 @@ export default function StepRisk({
               : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
           }`}
         >
-          Next
+          {t("Next")}
         </button>
       </div>
     </WizardCard>

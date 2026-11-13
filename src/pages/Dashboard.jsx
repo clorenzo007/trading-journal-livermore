@@ -19,6 +19,7 @@ import DayDrawer from "../components/dashboard/DayDrawer";
 import { withSession } from "../utils/sessions";
 import LivermorePanel from "../components/wizard/LivermorePanel";
 import { exportTradesToExcel } from "../utils/exportTrades";
+import { useLanguage } from "../context/LanguageContext";
 
 /**
  * Main Dashboard Page.
@@ -33,6 +34,7 @@ import { exportTradesToExcel } from "../utils/exportTrades";
  */
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const { activeAccount, loading: accountLoading } = useAccount();
 
   const [trades, setTrades] = useState([]);
@@ -96,7 +98,7 @@ export default function Dashboard() {
   // STATES
   // ==========================
   if (accountLoading || loading) {
-    return <div className="p-6 text-zinc-400">Loading dashboard…</div>;
+    return <div className="p-6 text-zinc-400">{t("Loading dashboard…")}</div>;
   }
 
   // 🔥 Estado vacío: no hay cuenta activa real (en DB)
@@ -105,17 +107,16 @@ export default function Dashboard() {
       <div className="p-6 max-w-2xl mx-auto">
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
           <h2 className="text-xl font-bold text-white mb-2">
-            No hay una cuenta activa
+            {t("No hay una cuenta activa")}
           </h2>
           <p className="text-sm text-zinc-400 mb-4">
-            Activá una cuenta desde <b>Cuentas</b> para poder ver el dashboard y
-            cargar trades.
+            {t("Activá una cuenta desde")} <b>{t("Cuentas")}</b> {t("para poder ver el dashboard y cargar trades.")}
           </p>
           <a
             href="/accounts"
             className="inline-block px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500"
           >
-            Ir a Cuentas
+            {t("Ir a Cuentas")}
           </a>
         </div>
       </div>
@@ -142,13 +143,13 @@ export default function Dashboard() {
             onClick={() => navigate("/new-trade")}
             className="btn btn-primary"
           >
-            New Trade
+            {t("New Trade")}
           </button>
           <button
             onClick={handleExport}
             className="btn btn-success"
           >
-            Export to Excel
+            {t("Export to Excel")}
           </button>
         </div>
       </div>
@@ -167,8 +168,8 @@ export default function Dashboard() {
               isSidebar={true}
               subtitle={
                 filtered[0]
-                  ? `Último trade: ${filtered[0].symbol || "—"} · ${String(filtered[0].entry_date || "").slice(0, 16).replace("T", " ")}`
-                  : "Todavía no hay trades"
+                  ? `${t("Último trade")}: ${filtered[0].symbol || "—"} · ${String(filtered[0].entry_date || "").slice(0, 16).replace("T", " ")}`
+                  : t("Todavía no hay trades")
               }
             />
           </div>
@@ -203,7 +204,7 @@ export default function Dashboard() {
       <div className="row mb-4">
         <div className="col-12">
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 shadow-sm">
-            <div className="text-xs text-zinc-400 mb-2 uppercase tracking-wider font-semibold">Filter by session</div>
+            <div className="text-xs text-zinc-400 mb-2 uppercase tracking-wider font-semibold">{t("Filter by session")}</div>
             <SessionFilter value={session} onChange={setSession} />
           </div>
         </div>
@@ -251,12 +252,12 @@ export default function Dashboard() {
         <div className="row animate-in fade-in slide-in-from-top-2 duration-300 mb-4">
           <div className="col-12">
             <div className="alert bg-zinc-900 border-zinc-800 text-zinc-300 d-flex align-items-center justify-content-between">
-              <span>Showing trades for: <strong className="text-white">{selectedDay}</strong></span>
+              <span>{t("Showing trades for:")} <strong className="text-white">{selectedDay}</strong></span>
               <button
                 onClick={() => setSelectedDay(null)}
                 className="btn btn-sm btn-link text-indigo-400 text-decoration-none"
               >
-                Clear
+                {t("Clear")}
               </button>
             </div>
           </div>

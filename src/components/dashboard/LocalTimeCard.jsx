@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
 import { formatNYSETime, formatNYSEDate } from "../../utils/formatDate";
+import { useLanguage } from "../../context/LanguageContext";
 
 /**
  * Simple Digital Clock.
@@ -8,6 +9,7 @@ import { formatNYSETime, formatNYSEDate } from "../../utils/formatDate";
  */
 export default function LocalTimeCard() {
   const [now, setNow] = useState(new Date());
+  const { t } = useLanguage();
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000);
@@ -22,7 +24,7 @@ export default function LocalTimeCard() {
 
       <div className="flex items-center gap-2 mb-4 relative z-10">
         <Clock size={14} className="text-zinc-500" />
-        <span className="text-xs font-black uppercase tracking-widest text-zinc-500">NYSE Time</span>
+        <span className="text-xs font-black uppercase tracking-widest text-zinc-500">{t("NYSE Time")}</span>
       </div>
 
       <div className="text-6xl font-black tracking-tighter text-white relative z-10 tabular-nums">

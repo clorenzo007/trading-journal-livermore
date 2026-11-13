@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import WizardCard from "./WizardCard";
+import { useLanguage } from "../../context/LanguageContext";
 
 // 👉 Fecha y hora LOCAL en formato datetime-local
 function nowLocalDatetime() {
@@ -19,6 +20,7 @@ export default function StepEntry({
   onBack,
   onCancel,
 }) {
+  const { t } = useLanguage();
   // 🔥 Setear fecha/hora actual SOLO al montar
   useEffect(() => {
     if (!trade.entry_date) {
@@ -38,7 +40,7 @@ export default function StepEntry({
       <div className="space-y-4">
         {/* DIRECTION */}
         <div>
-          <label className="block text-sm text-zinc-400 mb-1">Direction</label>
+          <label className="block text-sm text-zinc-400 mb-1">{t("Direction")}</label>
           <div className="flex gap-2">
             {["Long", "Short"].map((dir) => (
               <button
@@ -50,7 +52,7 @@ export default function StepEntry({
                     : "bg-zinc-950 border-zinc-800 text-zinc-400 hover:bg-zinc-900"
                 }`}
               >
-                {dir}
+                {t(dir)}
               </button>
             ))}
           </div>
@@ -58,7 +60,7 @@ export default function StepEntry({
 
         {/* ENTRY DATE */}
         <div>
-          <label className="block text-sm text-zinc-400 mb-1">Entry date</label>
+          <label className="block text-sm text-zinc-400 mb-1">{t("Entry date")}</label>
           <input
             type="datetime-local"
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
@@ -70,7 +72,7 @@ export default function StepEntry({
         {/* ENTRY PRICE */}
         <div>
           <label className="block text-sm text-zinc-400 mb-1">
-            Entry price
+            {t("Entry price")}
           </label>
           <input
             type="number"
@@ -85,7 +87,7 @@ export default function StepEntry({
         {/* POSITION SIZE */}
         <div>
           <label className="block text-sm text-zinc-400 mb-1">
-            Position size
+            {t("Position size")}
           </label>
           <input
             type="number"
@@ -100,8 +102,7 @@ export default function StepEntry({
         {/* VALIDATION */}
         {!isValid && (
           <div className="bg-red-900/20 border border-red-800 text-red-300 text-sm rounded p-3">
-            Entry date, entry price and position size are required and must be
-            greater than 0.
+            {t("Entry date, entry price and position size are required and must be greater than 0.")}
           </div>
         )}
       </div>
@@ -111,7 +112,7 @@ export default function StepEntry({
           onClick={onBack}
           className="px-5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700"
         >
-          Back
+          {t("Back")}
         </button>
 
         <button
@@ -123,7 +124,7 @@ export default function StepEntry({
               : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
           }`}
         >
-          Next
+          {t("Next")}
         </button>
       </div>
     </WizardCard>

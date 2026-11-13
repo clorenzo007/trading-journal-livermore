@@ -1,5 +1,6 @@
 import WizardCard from "./WizardCard";
 import SearchSelect from "../ui/SearchSelect";
+import { useLanguage } from "../../context/LanguageContext";
 
 /**
  * Wizard Step: Post-Trade Psychology.
@@ -12,6 +13,7 @@ export default function StepPsychologyPost({
   onBack,
   onCancel,
 }) {
+  const { t } = useLanguage();
   const presets = [
     "Satisfied",
     "Frustrated",
@@ -20,22 +22,22 @@ export default function StepPsychologyPost({
     "Disappointed",
     "Confident",
     "Relieved",
-  ];
+  ].map((p) => t(p));
 
   return (
     <WizardCard title="Psychology (After)" onCancel={onCancel}>
       <div className="space-y-4">
         <SearchSelect
-          label="Emotional state"
+          label={t("Emotional state")}
           value={trade.emotional_state_post || ""}
           onChange={(val) => setTrade({ emotional_state_post: val })}
-          placeholder="Select or type…"
+          placeholder={t("Select or type…")}
           options={presets}
         />
 
         <div>
           <label className="block text-sm text-zinc-400 mb-1">
-            Reason for exit
+            {t("Reason for exit")}
           </label>
           <textarea
             rows={4}
@@ -44,13 +46,13 @@ export default function StepPsychologyPost({
             onChange={(e) =>
               setTrade({ reason_for_exit: e.target.value })
             }
-            placeholder="Why did you exit this trade?"
+            placeholder={t("Why did you exit this trade?")}
           />
         </div>
 
         <div>
           <label className="block text-sm text-zinc-400 mb-1">
-            Review notes
+            {t("Review notes")}
           </label>
           <textarea
             rows={3}
@@ -59,7 +61,7 @@ export default function StepPsychologyPost({
             onChange={(e) =>
               setTrade({ review_notes: e.target.value })
             }
-            placeholder="Any other thoughts?"
+            placeholder={t("Any other thoughts?")}
           />
         </div>
       </div>
@@ -69,14 +71,14 @@ export default function StepPsychologyPost({
           onClick={onBack}
           className="px-5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700"
         >
-          Back
+          {t("Back")}
         </button>
 
         <button
           onClick={onNext}
           className="px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-medium transition"
         >
-          Next
+          {t("Next")}
         </button>
       </div>
     </WizardCard>
