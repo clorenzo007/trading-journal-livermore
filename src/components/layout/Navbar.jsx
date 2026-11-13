@@ -82,13 +82,12 @@ export default function Navbar() {
                 Accounts
               </NavLink>
             </li>
-            {user?.role === "admin" && (
-              <li className="nav-item">
-                <NavLink to="/setup" className={linkClass} onClick={() => setIsNavCollapsed(true)}>
-                  Setup
-                </NavLink>
-              </li>
-            )}
+            {/* Setup es para todos (strategies, patterns, listas propias); la pestaña Users solo la ve el admin */}
+            <li className="nav-item">
+              <NavLink to="/setup" className={linkClass} onClick={() => setIsNavCollapsed(true)}>
+                Setup
+              </NavLink>
+            </li>
           </ul>
 
           <div className="d-flex align-items-center gap-3 mt-3 mt-md-0">
