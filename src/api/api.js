@@ -44,6 +44,13 @@ export async function api(path, options = {}) {
       throw new Error(`Server returned non-JSON response (${res.status} ${res.statusText})`);
     }
 
+    // Usuario desactivado por un admin: cerrar sesión y volver al login
+    if (res.status === 403 && data.error === "User disabled") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+    }
+
     if (!res.ok) throw new Error(data.error || "API error");
 
     return data;
