@@ -330,11 +330,18 @@ function ItemManager({ section, notify }) {
     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
       {/* Add */}
       <form onSubmit={add} className="flex flex-col sm:flex-row gap-2 mb-5">
-        <input
-          className="bg-zinc-950 border-[1px] border-zinc-800 rounded-xl px-4 py-2.5 text-white flex-1 outline-none focus:border-indigo-500 transition-colors text-sm"
+        <textarea
+          rows={1}
+          className="bg-zinc-950 border-[1px] border-zinc-800 rounded-xl px-4 py-2.5 text-white flex-1 outline-none focus:border-indigo-500 transition-colors text-sm resize-y min-h-[42px]"
           placeholder={t("Write a new value and press Enter")}
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              add();
+            }
+          }}
         />
         <button
           disabled={adding || !value.trim()}
@@ -379,13 +386,17 @@ function ItemManager({ section, notify }) {
             >
               {editingId === item._id ? (
                 <>
-                  <input
+                  <textarea
                     autoFocus
-                    className="bg-zinc-900 border-[1px] border-indigo-500/60 rounded-lg px-3 py-1.5 text-white flex-1 outline-none text-sm"
+                    rows={Math.min(6, Math.max(1, editValue.split("\n").length))}
+                    className="bg-zinc-900 border-[1px] border-indigo-500/60 rounded-lg px-3 py-1.5 text-white flex-1 outline-none text-sm resize-y"
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") saveEdit(item._id);
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        saveEdit(item._id);
+                      }
                       if (e.key === "Escape") setEditingId(null);
                     }}
                   />
@@ -398,7 +409,7 @@ function ItemManager({ section, notify }) {
                 </>
               ) : (
                 <>
-                  <span className="text-zinc-200 text-sm break-words min-w-0 flex-1">{item[field]}</span>
+                  <span className="text-zinc-200 text-sm break-words whitespace-pre-wrap min-w-0 flex-1">{item[field]}</span>
                   <IconButton
                     label={t("Edit")}
                     onClick={() => {
