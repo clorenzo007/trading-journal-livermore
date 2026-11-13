@@ -12,6 +12,7 @@ import ImportTrades from "./pages/ImportTrades";
 import Accounts from "./pages/Accounts";
 import Trades from "./pages/Trades";
 import Setup from "./pages/Setup";
+import Help from "./pages/Help";
 import StatusBar from "./components/layout/StatusBar";
 import { useLanguage } from "./context/LanguageContext";
 
@@ -49,6 +50,7 @@ export default function App() {
           <Route path="import" element={<ImportTrades />} />
           <Route path="accounts" element={<Accounts />} />
           <Route path="setup" element={<Setup />} />
+          <Route path="help" element={<Help />} />
         </Route>
       </Route>
 
