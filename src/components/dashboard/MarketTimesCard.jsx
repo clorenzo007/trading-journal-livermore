@@ -3,15 +3,46 @@ import { Globe, Activity, Zap } from "lucide-react";
 import { NYSE_TIMEZONE, formatNYSETime } from "../../utils/formatDate";
 import { useLanguage } from "../../context/LanguageContext";
 
-function getNowInTZ(tz) {
-  return new Date(new Date().toLocaleString("en-US", { timeZone: tz }));
+/**
+ * Minutes a timezone's wall clock is ahead of UTC at the given instant
+ * (e.g. +540 for Asia/Tokyo, -240 for America/New_York in EDT).
+ * Computed from the real Intl conversion, so DST is handled correctly.
+ */
+function getOffsetMinutes(timeZone, date) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).formatToParts(date);
+  const p = Object.fromEntries(parts.map((x) => [x.type, x.value]));
+  const asUTC = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second);
+  return Math.round((asUTC - date.getTime()) / 60000);
 }
 
-function buildMarketDate(base, time) {
-  const [h, m] = time.split(":").map(Number);
-  const d = new Date(base);
-  d.setHours(h, m, 0, 0);
-  return d;
+/** Today's Y/M/D as seen from inside `timeZone`, at the given instant. */
+function getZonedYMD(timeZone, date) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const p = Object.fromEntries(parts.map((x) => [x.type, x.value]));
+  return { y: +p.year, m: +p.month, d: +p.day };
+}
+
+/** Real UTC instant for "HH:MM today" as seen from inside `timeZone`. */
+function zonedTimeToInstant(timeZone, now, hhmm) {
+  const [h, min] = hhmm.split(":").map(Number);
+  const { y, m, d } = getZonedYMD(timeZone, now);
+  const naiveUTC = Date.UTC(y, m - 1, d, h, min, 0, 0);
+  const offset = getOffsetMinutes(timeZone, new Date(naiveUTC));
+  return naiveUTC - offset * 60000;
 }
 
 function minutesBetween(a, b) {
@@ -35,27 +66,34 @@ function MarketRow({ name, tz, open, close }) {
     return () => clearInterval(i);
   }, []);
 
-  const localNow = new Date();
-  const marketNow = getNowInTZ(tz);
+  const now = new Date();
 
-  let openM = buildMarketDate(marketNow, open);
-  let closeM = buildMarketDate(marketNow, close);
+  // Today's open/close as real instants, computed from tz's own wall clock
+  // (handles DST correctly; no double timezone conversion).
+  const todayOpen = zonedTimeToInstant(tz, now, open);
+  let todayClose = zonedTimeToInstant(tz, now, close);
+  if (todayClose <= todayOpen) todayClose += 24 * 60 * 60000; // overnight session (e.g. Sydney)
 
-  if (closeM < openM) closeM.setDate(closeM.getDate() + 1);
+  // A session that wraps past midnight may have started yesterday (tz-local);
+  // check that window too so "now" lands in the right one.
+  const yestOpen = todayOpen - 24 * 60 * 60000;
+  const yestClose = todayClose - 24 * 60 * 60000;
 
-  const localOpen = new Date(
-    openM.toLocaleString("en-US", {
-      timeZone: NYSE_TIMEZONE,
-    })
-  );
+  const nowMs = now.getTime();
+  let isOpen = false;
+  let activeOpen = todayOpen;
+  let activeClose = todayClose;
 
-  const localClose = new Date(
-    closeM.toLocaleString("en-US", {
-      timeZone: NYSE_TIMEZONE,
-    })
-  );
+  if (nowMs >= todayOpen && nowMs < todayClose) {
+    isOpen = true;
+  } else if (nowMs >= yestOpen && nowMs < yestClose) {
+    isOpen = true;
+    activeOpen = yestOpen;
+    activeClose = yestClose;
+  }
 
-  const isOpen = localNow >= localOpen && localNow <= localClose;
+  const localOpen = new Date(todayOpen); // today's session, for the displayed label
+  const localClose = new Date(todayClose);
 
   let label = t("Closed");
   let sub = "";
@@ -63,14 +101,13 @@ function MarketRow({ name, tz, open, close }) {
 
   if (isOpen) {
     label = t("OPEN");
-    const total = minutesBetween(localOpen, localClose);
-    const elapsed = minutesBetween(localOpen, localNow);
+    const total = minutesBetween(activeOpen, activeClose);
+    const elapsed = minutesBetween(activeOpen, nowMs);
     progress = Math.min(100, Math.round((elapsed / total) * 100));
-    sub = t("{time} left", { time: format(minutesBetween(localNow, localClose)) });
-  } else if (localNow < localOpen) {
-    sub = t("Opens in {time}", { time: format(minutesBetween(localNow, localOpen)) });
+    sub = t("{time} left", { time: format(minutesBetween(nowMs, activeClose)) });
   } else {
-    sub = t("Opens tomorrow");
+    const nextOpen = nowMs < todayOpen ? todayOpen : todayOpen + 24 * 60 * 60000;
+    sub = t("Opens in {time}", { time: format(minutesBetween(nowMs, nextOpen)) });
   }
 
   return (

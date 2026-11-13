@@ -92,8 +92,10 @@ export const AccountProvider = ({ children }) => {
     <AccountContext.Provider
       value={{
         accounts,
+        setAccounts,
         activeAccount,
         changeAccount,
+        refreshAccounts,
         loading,
       }}
     >
