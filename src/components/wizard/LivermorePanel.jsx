@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CheckCircle2, Circle, Quote } from "lucide-react";
 import { evaluateRules } from "../../utils/livermore";
+import mikiLogo from "../../assets/mikiLogo";
 
 /**
  * Livermore Rules Panel (Sidebar/Dropdown).
@@ -64,12 +65,15 @@ export default function LivermorePanel({ form, isSidebar = false, subtitle }) {
 
       {/* Header */}
       <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800/50 pb-6 relative z-10 ${isSidebar ? "mb-4" : "mb-8"}`}>
-        <div className="space-y-1">
-          <h2 className={`${isSidebar ? "text-2xl" : "text-3xl"} font-black text-white tracking-tighter uppercase flex items-center gap-3`}>
-            <span className={`w-2 ${isSidebar ? "h-6" : "h-8"} bg-indigo-500 rounded-full inline-block`} />
-            Reglas Livermore
+        <div className="space-y-3 flex flex-col items-center md:items-start w-full">
+          <h2 className="m-0 w-full flex justify-center">
+            <img
+              src={mikiLogo}
+              alt="MIKI Trading — Reglas Livermore"
+              className={`${isSidebar ? "w-28" : "w-36"} h-auto rounded-2xl shadow-lg`}
+            />
           </h2>
-          <p className="text-zinc-500 text-xs font-medium ml-5">{subtitle || "Protocolo de Operación Disciplinada"}</p>
+          <p className="text-zinc-500 text-xs font-medium text-center w-full">{subtitle || "Protocolo de Operación Disciplinada"}</p>
         </div>
 
         <button
