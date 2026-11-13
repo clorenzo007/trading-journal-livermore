@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useAccount } from "../../context/AccountContext";
 import { useLanguage, LanguageSwitcher } from "../../context/LanguageContext";
 import { LogOut } from "lucide-react";
+import mikiLogo from "../../assets/mikiLogo";
 
 /**
  * Main Navigation Bar.
@@ -30,7 +31,8 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-xxl navbar-dark bg-zinc-900 border-b border-zinc-800 py-2">
       <div className="container-fluid px-4">
-        <span className="navbar-brand font-semibold text-white">
+        <span className="navbar-brand font-semibold text-white d-flex align-items-center gap-2">
+          <img src={mikiLogo} alt="MIKI Trading" className="rounded" style={{ width: 28, height: 28, objectFit: "contain" }} />
           Trading Journal
         </span>
 
