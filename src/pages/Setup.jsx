@@ -182,7 +182,7 @@ function ListManager({ type }) {
                 </div>
               ) : (
                 <>
-                  <span className="text-zinc-300 break-words min-w-0 flex-1 mr-4">{item.value}</span>
+                  <span className="text-zinc-300 break-words whitespace-pre-wrap min-w-0 flex-1 mr-4">{item.value}</span>
                   <div className="flex gap-2 shrink-0 transition-opacity">
                     <button
                       onClick={() => {
