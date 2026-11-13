@@ -93,6 +93,11 @@ export default function Navbar() {
                 {t("Setup")}
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink to="/help" className={linkClass} onClick={() => setIsNavCollapsed(true)}>
+                {t("Ayuda")}
+              </NavLink>
+            </li>
           </ul>
 
           <div className="d-flex align-items-center gap-3 mt-3 mt-xxl-0">
