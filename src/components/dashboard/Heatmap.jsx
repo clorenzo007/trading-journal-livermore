@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import DayTooltip from "./DayTooltip";
+import { useLanguage } from "../../context/LanguageContext";
 
 function formatDate(d) {
   return d.toISOString().slice(0, 10);
@@ -34,6 +35,7 @@ const NEUTRAL = "#27272a";
  */
 export default function Heatmap({ trades }) {
   const today = new Date();
+  const { t: tr, locale } = useLanguage();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
 
@@ -121,7 +123,7 @@ export default function Heatmap({ trades }) {
         </button>
 
         <div className="font-semibold">
-          {new Date(year, month).toLocaleString("default", {
+          {new Date(year, month).toLocaleString(locale, {
             month: "long",
             year: "numeric",
           })}
@@ -159,7 +161,7 @@ export default function Heatmap({ trades }) {
 
       {/* Leyenda */}
       <div className="flex items-center gap-2 mt-4 text-xs text-zinc-400">
-        <span>Low</span>
+        <span>{tr("Low")}</span>
         <div
           className="w-4 h-4 rounded"
           style={{ background: interpolateColor(RED_LIGHT, RED_DARK, 1) }}
@@ -169,7 +171,7 @@ export default function Heatmap({ trades }) {
           className="w-4 h-4 rounded"
           style={{ background: interpolateColor(GREEN_LIGHT, GREEN_DARK, 1) }}
         />
-        <span>High</span>
+        <span>{tr("High")}</span>
       </div>
 
       {hoveredDay && statsMap[hoveredDay] && (

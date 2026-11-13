@@ -4,6 +4,7 @@ import EntryImageUploader from "../EntryImageUploader";
 import ReviewImageUploader from "../ReviewImageUploader";
 import { calculateRR } from "../../utils/calculations";
 import { useEffect } from "react";
+import { useLanguage } from "../../context/LanguageContext";
 
 const TABS = ["General", "Risk", "Psychology", "Review", "Images"];
 
@@ -21,6 +22,7 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
   const [tab, setTab] = useState("General");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { t: tr } = useLanguage();
 
   const update = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -48,14 +50,14 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
       }
     } catch (e) {
       console.error(e);
-      setError("Error saving trade");
+      setError(tr("Error saving trade"));
     } finally {
       setLoading(false);
     }
   }
 
   async function remove() {
-    if (!confirm("Delete this trade?")) return;
+    if (!confirm(tr("Delete this trade?"))) return;
     await deleteTrade(form._id);
     if (typeof onSaved === "function") {
       onSaved();
@@ -67,7 +69,7 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-3xl p-4 sm:p-6 text-white max-h-[90vh] overflow-y-auto space-y-4 shadow-2xl">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold">Edit Trade — {form.symbol}</h2>
+          <h2 className="text-xl font-bold">{tr("Edit Trade")} — {form.symbol}</h2>
           <button onClick={onClose}>✕</button>
         </div>
 
@@ -81,7 +83,7 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
                 tab === t ? "bg-indigo-600" : "bg-zinc-800 hover:bg-zinc-700"
               }`}
             >
-              {t}
+              {tr(t)}
             </button>
           ))}
         </div>
@@ -187,7 +189,7 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
                 value={form.highest_lowest_price ?? ""}
                 onChange={(e) => update("highest_lowest_price", Number(e.target.value))}
                 className="input"
-                placeholder="Highest/Lowest"
+                placeholder={tr("Highest/Lowest")}
               />
             </Field>
 
@@ -266,8 +268,8 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
                 onChange={(e) => update("reviewed", e.target.value === "true")}
                 className="input"
               >
-                <option value="true">Yes</option>
-                <option value="false">No</option>
+                <option value="true">{tr("Yes")}</option>
+                <option value="false">{tr("No")}</option>
               </select>
             </Field>
 
@@ -291,19 +293,19 @@ export default function TradeEditModal({ trade, onClose, onSaved }) {
         {/* Footer */}
         <div className="flex justify-between pt-4 border-t border-zinc-800">
           <button onClick={remove} className="bg-red-600 px-3 py-1 rounded">
-            Delete
+            {tr("Delete")}
           </button>
 
           <div className="space-x-2">
             <button onClick={onClose} className="bg-zinc-700 px-3 py-1 rounded">
-              Cancel
+              {tr("Cancel")}
             </button>
             <button
               onClick={save}
               disabled={loading}
               className="bg-indigo-600 px-3 py-1 rounded disabled:opacity-50"
             >
-              {loading ? "Saving..." : "Save"}
+              {loading ? tr("Saving...") : tr("Save")}
             </button>
           </div>
         </div>
@@ -317,9 +319,10 @@ function Grid({ children }) {
 }
 
 function Field({ label, children }) {
+  const { t } = useLanguage();
   return (
     <div>
-      <div className="text-sm text-zinc-400 mb-1">{label}</div>
+      <div className="text-sm text-zinc-400 mb-1">{t(label)}</div>
       {children}
     </div>
   );

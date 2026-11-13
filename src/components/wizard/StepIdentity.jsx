@@ -1,11 +1,13 @@
 import WizardCard from "./WizardCard";
 import SearchSelect from "../ui/SearchSelect";
+import { useLanguage } from "../../context/LanguageContext";
 
 /**
  * Wizard Step: Identity.
  * Captures basic trade info: Symbol, Strategy, and Pattern.
  */
 export default function StepIdentity({ trade, setTrade, onNext, strategies = [], patterns = [], onCancel }) {
+  const { t } = useLanguage();
   const isValid =
     trade.symbol?.trim() &&
     trade.strategy_type?.trim() &&
@@ -15,7 +17,7 @@ export default function StepIdentity({ trade, setTrade, onNext, strategies = [],
     <WizardCard title="Trade identity" onCancel={onCancel}>
       <div className="space-y-4">
         <div>
-          <label className="block text-sm text-zinc-400 mb-1">Symbol</label>
+          <label className="block text-sm text-zinc-400 mb-1">{t("Symbol")}</label>
           <input
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
             value={trade.symbol || ""}
@@ -25,24 +27,24 @@ export default function StepIdentity({ trade, setTrade, onNext, strategies = [],
         </div>
 
         <SearchSelect
-          label="Strategy"
+          label={t("Strategy")}
           value={trade.strategy_type || ""}
           onChange={(val) => setTrade({ strategy_type: val })}
-          placeholder="Select or type strategy..."
+          placeholder={t("Select or type strategy...")}
           options={strategies}
         />
 
         <SearchSelect
-          label="Pattern"
+          label={t("Pattern")}
           value={trade.pattern || ""}
           onChange={(val) => setTrade({ pattern: val })}
-          placeholder="Select or type pattern..."
+          placeholder={t("Select or type pattern...")}
           options={patterns}
         />
 
         {!isValid && (
           <div className="text-sm text-red-400">
-            Please complete all fields to continue.
+            {t("Please complete all fields to continue.")}
           </div>
         )}
       </div>
@@ -57,7 +59,7 @@ export default function StepIdentity({ trade, setTrade, onNext, strategies = [],
               : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
           }`}
         >
-          Next
+          {t("Next")}
         </button>
       </div>
     </WizardCard>

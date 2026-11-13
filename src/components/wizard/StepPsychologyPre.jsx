@@ -1,5 +1,6 @@
 import WizardCard from "./WizardCard";
 import SearchSelect from "../ui/SearchSelect";
+import { useLanguage } from "../../context/LanguageContext";
 
 /**
  * Wizard Step: Pre-Trade Psychology.
@@ -12,6 +13,7 @@ export default function StepPsychologyPre({
   onBack,
   onCancel,
 }) {
+  const { t } = useLanguage();
   const presets = [
     "Calm",
     "Focused",
@@ -20,7 +22,7 @@ export default function StepPsychologyPre({
     "Fearful",
     "Tired",
     "Revenge mode",
-  ];
+  ].map((p) => t(p));
 
   const isValid =
     trade.emotional_state_pre?.trim() && trade.reason_for_entry?.trim();
@@ -29,29 +31,29 @@ export default function StepPsychologyPre({
     <WizardCard title="Psychology (Before)" onCancel={onCancel}>
       <div className="space-y-4">
         <SearchSelect
-          label="Emotional state"
+          label={t("Emotional state")}
           value={trade.emotional_state_pre || ""}
           onChange={(val) => setTrade({ emotional_state_pre: val })}
-          placeholder="Select or type…"
+          placeholder={t("Select or type…")}
           options={presets}
         />
 
         <div>
           <label className="block text-sm text-zinc-400 mb-1">
-            Reason for entry
+            {t("Reason for entry")}
           </label>
           <textarea
             rows={4}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2"
             value={trade.reason_for_entry || ""}
             onChange={(e) => setTrade({ reason_for_entry: e.target.value })}
-            placeholder="Why did you take this trade?"
+            placeholder={t("Why did you take this trade?")}
           />
         </div>
 
         {!isValid && (
           <div className="text-sm text-red-400">
-            Emotional state and reason for entry are required.
+            {t("Emotional state and reason for entry are required.")}
           </div>
         )}
       </div>
@@ -61,7 +63,7 @@ export default function StepPsychologyPre({
           onClick={onBack}
           className="px-5 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700"
         >
-          Back
+          {t("Back")}
         </button>
 
         <button
@@ -73,7 +75,7 @@ export default function StepPsychologyPre({
               : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
           }`}
         >
-          Next
+          {t("Next")}
         </button>
       </div>
     </WizardCard>

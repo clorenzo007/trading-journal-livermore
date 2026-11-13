@@ -13,6 +13,7 @@ import Accounts from "./pages/Accounts";
 import Trades from "./pages/Trades";
 import Setup from "./pages/Setup";
 import StatusBar from "./components/layout/StatusBar";
+import { useLanguage } from "./context/LanguageContext";
 
 /**
  * Application Entry Point.
@@ -24,6 +25,7 @@ import StatusBar from "./components/layout/StatusBar";
  * - Catch-all: 404.
  */
 export default function App() {
+  const { t } = useLanguage();
   return (
     <>
     <Routes>
@@ -53,7 +55,7 @@ export default function App() {
       {/* Fallback */}
       <Route
         path="*"
-        element={<div style={{ padding: 40 }}>404 NOT FOUND</div>}
+        element={<div style={{ padding: 40 }}>{t("404 NOT FOUND")}</div>}
       />
     </Routes>
     <StatusBar />

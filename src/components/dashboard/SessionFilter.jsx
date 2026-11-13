@@ -1,4 +1,6 @@
+import { useLanguage } from "../../context/LanguageContext";
 export default function SessionFilter({ value, onChange }) {
+  const { t } = useLanguage();
   const options = ["All", "Asia", "London", "NY", "Europe", "Other"];
 
   return (
@@ -13,7 +15,7 @@ export default function SessionFilter({ value, onChange }) {
               : "bg-zinc-900 border-zinc-800 text-zinc-300 hover:bg-zinc-800"
           }`}
         >
-          {o}
+          {t(o)}
         </button>
       ))}
     </div>

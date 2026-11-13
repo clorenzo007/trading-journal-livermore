@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useMemo } from "react";
+import { useLanguage } from "../../context/LanguageContext";
 
 /**
  * Equity Curve Chart.
@@ -18,6 +19,7 @@ import { useMemo } from "react";
  * - Renders a line chart using Recharts.
  */
 export default function EquityCurve({ trades }) {
+  const { t } = useLanguage();
   const data = useMemo(() => {
     if (!Array.isArray(trades) || trades.length === 0) return [];
 
@@ -41,10 +43,10 @@ export default function EquityCurve({ trades }) {
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-      <div className="text-sm text-zinc-400 mb-2">Equity Curve (%)</div>
+      <div className="text-sm text-zinc-400 mb-2">{t("Equity Curve (%)")}</div>
 
       {data.length === 0 ? (
-        <div className="text-zinc-500 text-sm">No equity data</div>
+        <div className="text-zinc-500 text-sm">{t("No equity data")}</div>
       ) : (
         <ResponsiveContainer width="100%" height={260}>
           <LineChart data={data}>
@@ -58,8 +60,8 @@ export default function EquityCurve({ trades }) {
                 background: "#18181b",
                 border: "1px solid #27272a",
               }}
-              labelFormatter={(v) => `Trade ${v}`}
-              formatter={(v) => [`${v}%`, "Equity"]}
+              labelFormatter={(v) => `${t("Trade")} ${v}`}
+              formatter={(v) => [`${v}%`, t("Equity")]}
             />
             <Line
               type="monotone"

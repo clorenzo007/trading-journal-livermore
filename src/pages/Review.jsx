@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getTradeById } from "../api/trades";
 import FullscreenViewer from "../components/FullscreenViewer";
+import { useLanguage } from "../context/LanguageContext";
 
 function Row({ label, value }) {
+  const { t } = useLanguage();
   return (
     <div className="flex justify-between border-b border-zinc-800 py-2 text-sm">
-      <span className="text-zinc-400">{label}</span>
+      <span className="text-zinc-400">{t(label)}</span>
       <span>{value || "—"}</span>
     </div>
   );
@@ -22,6 +24,7 @@ export default function Review() {
   const navigate = useNavigate();
   const [trade, setTrade] = useState(null);
   const [viewer, setViewer] = useState(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     async function load() {
@@ -35,11 +38,11 @@ export default function Review() {
     load();
   }, [id]);
 
-  if (!trade) return <div className="p-6 text-zinc-400">Loading trade...</div>;
+  if (!trade) return <div className="p-6 text-zinc-400">{t("Loading trade...")}</div>;
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
-      <h1 className="text-2xl font-semibold">Trade Overview</h1>
+      <h1 className="text-2xl font-semibold">{t("Trade Overview")}</h1>
 
       {/* DATA CARD */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-1">
@@ -54,7 +57,7 @@ export default function Review() {
         <Row label="Exit date" value={trade.exit_date} />
         <Row label="Exit price" value={trade.exit_price} />
         <Row label="P/L" value={trade.profit_loss} />
-        <Row label="Outcome" value={trade.outcome} />
+        <Row label="Outcome" value={trade.outcome ? t(trade.outcome) : ""} />
         <Row label="Emotion (pre)" value={trade.emotional_state_pre} />
         <Row label="Reason entry" value={trade.reason_for_entry} />
         <Row label="Emotion (post)" value={trade.emotional_state_post} />
@@ -66,7 +69,7 @@ export default function Review() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {trade.entryImage?.url && (
           <div>
-            <div className="text-sm text-zinc-400 mb-2">Entry Image</div>
+            <div className="text-sm text-zinc-400 mb-2">{t("Entry Image")}</div>
             <img
               src={trade.entryImage.url}
               className="rounded-lg border border-zinc-800 cursor-zoom-in hover:opacity-80 transition-opacity"
@@ -76,12 +79,12 @@ export default function Review() {
         )}
 
         {!trade.entryImage?.url && (
-          <div className="text-zinc-600 text-sm">No entry image</div>
+          <div className="text-zinc-600 text-sm">{t("No entry image")}</div>
         )}
 
         {trade.reviewImage?.url && (
           <div>
-            <div className="text-sm text-zinc-400 mb-2">Review Image</div>
+            <div className="text-sm text-zinc-400 mb-2">{t("Review Image")}</div>
             <img
               src={trade.reviewImage.url}
               className="rounded-lg border border-zinc-800 cursor-pointer hover:opacity-80"
@@ -91,7 +94,7 @@ export default function Review() {
         )}
       </div>
       {!trade.reviewImage?.url && (
-        <div className="text-zinc-600 text-sm">No review image</div>
+        <div className="text-zinc-600 text-sm">{t("No review image")}</div>
       )}
 
       {/* ACTIONS */}
@@ -100,14 +103,14 @@ export default function Review() {
           onClick={() => navigate(-1)}
           className="bg-zinc-700 px-4 py-2 rounded"
         >
-          Exit
+          {t("Exit")}
         </button>
 
         <button
           onClick={() => navigate(`/edit/${trade._id}`)}
           className="bg-indigo-600 px-4 py-2 rounded"
         >
-          Edit Trade
+          {t("Edit Trade")}
         </button>
       </div>
 

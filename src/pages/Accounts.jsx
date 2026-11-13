@@ -6,6 +6,7 @@ import {
   archiveAccount,
 } from "../services/accounts";
 import { formatNYSEDate } from "../utils/formatDate";
+import { useLanguage, getLocale } from "../context/LanguageContext";
 
 const EMPTY = {
   name: "",
@@ -35,6 +36,7 @@ export default function Accounts() {
   const [editingId, setEditingId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState("all"); // all, active, archived
+  const { t } = useLanguage();
 
   const startEdit = (acc) => {
     setEditingId(acc._id);
@@ -70,32 +72,32 @@ export default function Accounts() {
       }
       reset();
     } catch (err) {
-      alert(err.message || "Error guardando cuenta");
+      alert(t(err.message || "Error guardando cuenta"));
     } finally {
       setSaving(false);
     }
   };
 
   const archive = async (id) => {
-    if (!confirm("¿Archivar esta cuenta?")) return;
+    if (!confirm(t("¿Archivar esta cuenta?"))) return;
     try {
       const updated = await archiveAccount(id);
       setAccounts((prev) =>
         prev.map((a) => (a._id === updated._id ? updated : a)),
       );
     } catch {
-      alert("Error archivando cuenta");
+      alert(t("Error archivando cuenta"));
     }
   };
 
   return (
     <div className="container py-4">
-      <h1 className="h3 fw-bold mb-4">Cuentas</h1>
+      <h1 className="h3 fw-bold mb-4">{t("Cuentas")}</h1>
 
       {/* Form */}
       <div className="card bg-zinc-900 border-zinc-800 rounded-3 p-4 mb-5 shadow-sm">
         <div className="text-secondary small mb-3 uppercase tracking-wider font-semibold">
-          {editingId ? "Editar cuenta" : "Nueva cuenta"}
+          {editingId ? t("Editar cuenta") : t("Nueva cuenta")}
         </div>
 
         <div className="row g-3">
@@ -128,9 +130,9 @@ export default function Accounts() {
                   setForm({ ...form, accountType: e.target.value })
                 }
               >
-                <option value="real">Real</option>
-                <option value="fondeo">Fondeo</option>
-                <option value="demo">Demo</option>
+                <option value="real">{t("Real")}</option>
+                <option value="fondeo">{t("Fondeo")}</option>
+                <option value="demo">{t("Demo")}</option>
               </select>
             </Field>
           </div>
@@ -196,7 +198,7 @@ export default function Accounts() {
         <div className="d-flex gap-2 justify-content-end mt-4">
           {editingId && (
             <button onClick={reset} className="btn btn-secondary px-4">
-              Cancelar
+              {t("Cancelar")}
             </button>
           )}
           <button
@@ -204,13 +206,13 @@ export default function Accounts() {
             disabled={saving}
             className="btn btn-primary px-4 shadow-sm"
           >
-            {saving ? "Guardando…" : "Guardar"}
+            {saving ? t("Guardando…") : t("Guardar")}
           </button>
         </div>
       </div>
 
       {/* List */}
-      <h2 className="h5 fw-bold mb-3">Tus Cuentas</h2>
+      <h2 className="h5 fw-bold mb-3">{t("Tus Cuentas")}</h2>
 
       {/* Filter Tabs */}
       <div className="flex gap-2 mb-4">
@@ -223,7 +225,7 @@ export default function Accounts() {
               : "text-zinc-500 hover:text-zinc-300"
               }`}
           >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
+            {t({ all: "Todas", active: "Activas", archived: "Archivadas" }[f])}
           </button>
         ))}
       </div>
@@ -245,7 +247,7 @@ export default function Accounts() {
                   <div className="fw-bold d-flex align-items-center gap-2 text-lg">
                     {a.name}
                     {activeAccount?._id === a._id && (
-                      <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 fw-medium text-xs">Activa</span>
+                      <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 fw-medium text-xs">{t("Activa")}</span>
                     )}
                   </div>
                   <div className="d-flex gap-2">
@@ -254,34 +256,34 @@ export default function Accounts() {
                         onClick={() => changeAccount(a._id)}
                         className="btn btn-sm btn-outline-light border-zinc-800 py-1 px-2 text-xs"
                       >
-                        Activar
+                        {t("Activar")}
                       </button>
                     )}
                     <button
                       onClick={() => startEdit(a)}
                       className="btn btn-sm btn-outline-light border-zinc-800 py-1 px-2 text-xs"
                     >
-                      Editar
+                      {t("Editar")}
                     </button>
                     {a.status === "active" && (
                       <button
                         onClick={() => archive(a._id)}
                         className="btn btn-sm btn-outline-danger border-danger border-opacity-20 py-1 px-2 text-xs"
                       >
-                        Archivar
+                        {t("Archivar")}
                       </button>
                     )}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-zinc-400">
-                  <div>Provider: <span className="text-zinc-200">{a.provider || "-"}</span></div>
-                  <div>Type: <span className="text-zinc-200 capitalize">{a.accountType}</span></div>
-                  <div>Number: <span className="text-zinc-200">{a.accountNumber || "-"}</span></div>
-                  <div>Currency: <span className="text-zinc-200">{a.currency}</span></div>
-                  <div>Balance: <span className="text-zinc-200">{a.initialBalance?.toLocaleString()}</span></div>
-                  <div>Created: <span className="text-zinc-200">{a.creationDate ? formatNYSEDate(a.creationDate) : "-"}</span></div>
-                  <div>Melting: <span className="text-zinc-200">{a.meltingDate ? formatNYSEDate(a.meltingDate) : "-"}</span></div>
+                  <div>{t("Provider")}: <span className="text-zinc-200">{a.provider || "-"}</span></div>
+                  <div>{t("Type")}: <span className="text-zinc-200 capitalize">{t({ real: "Real", fondeo: "Fondeo", demo: "Demo" }[a.accountType] || a.accountType)}</span></div>
+                  <div>{t("Number")}: <span className="text-zinc-200">{a.accountNumber || "-"}</span></div>
+                  <div>{t("Currency")}: <span className="text-zinc-200">{a.currency}</span></div>
+                  <div>{t("Balance")}: <span className="text-zinc-200">{a.initialBalance?.toLocaleString(getLocale())}</span></div>
+                  <div>{t("Created")}: <span className="text-zinc-200">{a.creationDate ? formatNYSEDate(a.creationDate) : "-"}</span></div>
+                  <div>{t("Melting")}: <span className="text-zinc-200">{a.meltingDate ? formatNYSEDate(a.meltingDate) : "-"}</span></div>
                 </div>
               </div>
             </div>
@@ -292,9 +294,10 @@ export default function Accounts() {
 }
 
 function Field({ label, children }) {
+  const { t } = useLanguage();
   return (
     <div className="mb-2">
-      <label className="form-label small text-secondary fw-semibold mb-1">{label}</label>
+      <label className="form-label small text-secondary fw-semibold mb-1">{t(label)}</label>
       {children}
     </div>
   );

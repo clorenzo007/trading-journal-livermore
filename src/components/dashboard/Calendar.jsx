@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import DayTooltip from "./DayTooltip";
+import { useLanguage } from "../../context/LanguageContext";
 
 function formatDate(d) {
   return d.toISOString().slice(0, 10);
@@ -35,6 +36,7 @@ function getMonthDays(year, month) {
  */
 export default function Calendar({ trades, onSelectDay }) {
   const today = new Date();
+  const { t: tr, locale } = useLanguage();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [hoveredDay, setHoveredDay] = useState(null);
@@ -110,7 +112,7 @@ export default function Calendar({ trades, onSelectDay }) {
         </button>
 
         <div className="font-semibold">
-          {new Date(year, month).toLocaleString("default", {
+          {new Date(year, month).toLocaleString(locale, {
             month: "long",
             year: "numeric",
           })}
@@ -123,13 +125,9 @@ export default function Calendar({ trades, onSelectDay }) {
 
       {/* Weekdays */}
       <div className="grid grid-cols-7 gap-2 text-center text-xs text-zinc-400 mb-2">
-        <div>Sun</div>
-        <div>Mon</div>
-        <div>Tue</div>
-        <div>Wed</div>
-        <div>Thu</div>
-        <div>Fri</div>
-        <div>Sat</div>
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((w) => (
+          <div key={w}>{tr(w)}</div>
+        ))}
       </div>
 
       {/* Days */}
@@ -162,8 +160,7 @@ export default function Calendar({ trades, onSelectDay }) {
 
               {dayTrades && (
                 <div className="text-[10px]">
-                  {dayTrades.length} trade
-                  {dayTrades.length > 1 ? "s" : ""}
+                  {dayTrades.length} {dayTrades.length > 1 ? tr("trades") : tr("trade")}
                 </div>
               )}
             </div>

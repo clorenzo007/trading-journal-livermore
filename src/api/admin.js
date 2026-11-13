@@ -115,3 +115,10 @@ export function deleteUser(id) {
     method: "DELETE",
   });
 }
+
+export function createUser({ email, password, role }) {
+  return api("/admin/users", {
+    method: "POST",
+    body: JSON.stringify({ email, password, role }),
+  });
+}

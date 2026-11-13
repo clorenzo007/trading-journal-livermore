@@ -8,6 +8,7 @@ import {
   updateSetupsOrder,
 } from "../api/setups";
 import FullscreenViewer from "../components/FullscreenViewer";
+import { useLanguage } from "../context/LanguageContext";
 
 /**
  * Entry Setups Management Page.
@@ -28,6 +29,7 @@ export default function Entries() {
   const [error, setError] = useState(null);
 
   const { user } = useAuth();
+  const { t } = useLanguage();
   const isAdmin = user?.role === "admin";
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export default function Entries() {
       setSetups(data);
     } catch (err) {
       console.error(err);
-      setError("Error cargando setups. Por favor revisa tu conexión.");
+      setError(t("Error cargando setups. Por favor revisa tu conexión."));
     } finally {
       setLoading(false);
     }
@@ -59,12 +61,12 @@ export default function Entries() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("¿Eliminar este setup?")) return;
+    if (!confirm(t("¿Eliminar este setup?"))) return;
     try {
       await deleteSetup(id);
       setSetups((prev) => prev.filter((s) => s._id !== id));
     } catch {
-      alert("Error eliminando setup");
+      alert(t("Error eliminando setup"));
     }
   };
 
@@ -94,9 +96,9 @@ export default function Entries() {
         {/* Header */}
         <header className="flex justify-between items-end">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-zinc-100">Entry Setups</h1>
+            <h1 className="text-3xl font-bold text-zinc-100">{t("Entry Setups")}</h1>
             <p className="text-zinc-400">
-              Configuraciones operativas personalizadas
+              {t("Configuraciones operativas personalizadas")}
             </p>
           </div>
           {isAdmin && (
@@ -104,13 +106,13 @@ export default function Entries() {
               onClick={openAdd}
               className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-medium transition-colors"
             >
-              + Nuevo Setup
+              + {t("Nuevo Setup")}
             </button>
           )}
         </header>
 
         {loading ? (
-          <div className="py-20 text-center text-zinc-500">Cargando setups...</div>
+          <div className="py-20 text-center text-zinc-500">{t("Cargando setups...")}</div>
         ) : (
           <>
             {error && (
@@ -121,9 +123,9 @@ export default function Entries() {
           
             {/* ===== ALCISTAS ===== */}
             <section className="space-y-8">
-              <SectionTitle>Tendencias Alcistas</SectionTitle>
+              <SectionTitle>{t("Tendencias Alcistas")}</SectionTitle>
               {!error && bullishSetups.length === 0 && (
-                <div className="text-zinc-600 text-sm italic">Sin setups alcistas</div>
+                <div className="text-zinc-600 text-sm italic">{t("Sin setups alcistas")}</div>
               )}
               <div className="grid grid-cols-1 gap-8">
                 {bullishSetups.map((s) => (
@@ -142,9 +144,9 @@ export default function Entries() {
 
             {/* ===== BAJISTAS ===== */}
             <section className="space-y-8">
-              <SectionTitle>Tendencias Bajistas</SectionTitle>
+              <SectionTitle>{t("Tendencias Bajistas")}</SectionTitle>
               {!error && bearishSetups.length === 0 && (
-                <div className="text-zinc-600 text-sm italic">Sin setups bajistas</div>
+                <div className="text-zinc-600 text-sm italic">{t("Sin setups bajistas")}</div>
               )}
               <div className="grid grid-cols-1 gap-8">
                 {bearishSetups.map((s) => (
@@ -193,6 +195,7 @@ function SectionTitle({ children }) {
 }
 
 function SetupCard({ setup, isAdmin, onMove, onEdit, onDelete, onView }) {
+  const { t } = useLanguage();
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-4 hover:border-zinc-700 transition-colors">
       <div className="flex justify-between items-start">
@@ -210,13 +213,13 @@ function SetupCard({ setup, isAdmin, onMove, onEdit, onDelete, onView }) {
               onClick={onEdit}
               className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-400 hover:text-white transition-colors"
             >
-              Editar
+              {t("Editar")}
             </button>
             <button
               onClick={onDelete}
               className="p-2 hover:bg-rose-900/20 rounded-lg text-zinc-400 hover:text-rose-400 transition-colors"
             >
-              Eliminar
+              {t("Eliminar")}
             </button>
           </div>
         )}
@@ -231,19 +234,20 @@ function SetupCard({ setup, isAdmin, onMove, onEdit, onDelete, onView }) {
 }
 
 function ImageBlock({ src, label, onClick }) {
+  const { t } = useLanguage();
   return (
     <div className="space-y-2">
       <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">
-        {label}
+        {t(label)}
       </div>
       <div 
         className={`aspect-video bg-zinc-950 rounded-xl border border-zinc-800 overflow-hidden flex items-center justify-center ${src ? 'cursor-zoom-in' : ''}`}
         onClick={src ? onClick : undefined}
       >
         {src ? (
-          <img src={src} alt={label} className="w-full h-full object-cover hover:scale-105 transition-transform" />
+          <img src={src} alt={t(label)} className="w-full h-full object-cover hover:scale-105 transition-transform" />
         ) : (
-          <span className="text-zinc-700 text-xs italic">Sin imagen</span>
+          <span className="text-zinc-700 text-xs italic">{t("Sin imagen")}</span>
         )}
       </div>
     </div>
@@ -254,6 +258,7 @@ function SetupModal({ initial, onClose, onSaved }) {
   const [form, setForm] = useState(initial);
   const [loading, setLoading] = useState(false);
   const isEdit = Boolean(initial._id);
+  const { t } = useLanguage();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -280,7 +285,7 @@ function SetupModal({ initial, onClose, onSaved }) {
       }
       onSaved(saved);
     } catch (err) {
-      alert("Error guardando setup");
+      alert(t("Error guardando setup"));
     } finally {
       setLoading(false);
     }
@@ -305,7 +310,7 @@ function SetupModal({ initial, onClose, onSaved }) {
       >
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">
-            {isEdit ? "Editar Setup" : "Nuevo Setup"}
+            {isEdit ? t("Editar Setup") : t("Nuevo Setup")}
           </h2>
           <button type="button" onClick={onClose} className="text-zinc-500 hover:text-white">
             ✕
@@ -314,41 +319,41 @@ function SetupModal({ initial, onClose, onSaved }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-xs text-zinc-400 font-medium">Título</label>
+            <label className="text-xs text-zinc-400 font-medium">{t("Título")}</label>
             <input
               required
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 outline-none"
-              placeholder="Ej: Sweep + BOS"
+              placeholder={t("Ej: Sweep + BOS")}
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs text-zinc-400 font-medium">Tipo</label>
+            <label className="text-xs text-zinc-400 font-medium">{t("Tipo")}</label>
             <select
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value })}
               className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm outline-none"
             >
-              <option value="Bullish">Bullish</option>
-              <option value="Bearish">Bearish</option>
+              <option value="Bullish">{t("Bullish")}</option>
+              <option value="Bearish">{t("Bearish")}</option>
             </select>
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs text-zinc-400 font-medium">Descripción</label>
+          <label className="text-xs text-zinc-400 font-medium">{t("Descripción")}</label>
           <textarea
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 outline-none h-20"
-            placeholder="Breve explicación del setup..."
+            placeholder={t("Breve explicación del setup...")}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4 pt-2">
             <div className="space-y-2 text-center">
-              <div className="text-[10px] text-zinc-500 font-bold uppercase">Img Teoría</div>
+              <div className="text-[10px] text-zinc-500 font-bold uppercase">{t("Img Teoría")}</div>
               <input type="file" onChange={(e) => handleImageSelect("theory", e.target.files[0])} className="text-xs w-full"/>
               {form.localTheoryPreview && (
                 <div className="mt-2 aspect-video rounded overflow-hidden border border-zinc-800">
@@ -357,7 +362,7 @@ function SetupModal({ initial, onClose, onSaved }) {
               )}
             </div>
             <div className="space-y-2 text-center">
-              <div className="text-[10px] text-zinc-500 font-bold uppercase">Img Ejemplo</div>
+              <div className="text-[10px] text-zinc-500 font-bold uppercase">{t("Img Ejemplo")}</div>
               <input type="file" onChange={(e) => handleImageSelect("example", e.target.files[0])} className="text-xs w-full"/>
               {form.localExamplePreview && (
                 <div className="mt-2 aspect-video rounded overflow-hidden border border-zinc-800">
@@ -373,14 +378,14 @@ function SetupModal({ initial, onClose, onSaved }) {
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium hover:bg-zinc-800 rounded-lg transition-colors"
           >
-            Cancelar
+            {t("Cancelar")}
           </button>
           <button
             type="submit"
             disabled={loading}
             className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 rounded-lg text-sm font-bold transition-all shadow-lg shadow-indigo-500/20"
           >
-            {loading ? "Guardando..." : "Guardar Setup"}
+            {loading ? t("Guardando...") : t("Guardar Setup")}
           </button>
         </div>
       </form>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CheckCircle2, Circle, Quote } from "lucide-react";
 import { evaluateRules } from "../../utils/livermore";
 import mikiLogo from "../../assets/mikiLogo";
+import { useLanguage } from "../../context/LanguageContext";
 
 /**
  * Livermore Rules Panel (Sidebar/Dropdown).
@@ -14,6 +15,7 @@ import mikiLogo from "../../assets/mikiLogo";
  */
 export default function LivermorePanel({ form, isSidebar = false, subtitle }) {
   const [open, setOpen] = useState(false);
+  const { t } = useLanguage();
 
   const rules = evaluateRules(form || {});
   const pre = rules.filter((r) => r.group === "pre");
@@ -42,7 +44,7 @@ export default function LivermorePanel({ form, isSidebar = false, subtitle }) {
               <Circle className={`${iconSize} stroke-[1.5] opacity-30`} />
             )}
           </div>
-          <span className="font-bold tracking-tight">{r.label}</span>
+          <span className="font-bold tracking-tight">{t(r.label)}</span>
         </li>
       ))}
     </ul>
@@ -50,7 +52,7 @@ export default function LivermorePanel({ form, isSidebar = false, subtitle }) {
 
   const sectionTitle = (text, list) => (
     <div className="flex items-center justify-between mt-4 mb-2 px-1">
-      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">{text}</span>
+      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">{t(text)}</span>
       <span className="text-[10px] font-bold text-zinc-500">
         {list.filter((r) => r.ok).length}/{list.length}
       </span>
@@ -69,18 +71,18 @@ export default function LivermorePanel({ form, isSidebar = false, subtitle }) {
           <h2 className="m-0 w-full flex justify-center">
             <img
               src={mikiLogo}
-              alt="MIKI Trading — Reglas Livermore"
+              alt={t("MIKI Trading — Reglas Livermore")}
               className={`${isSidebar ? "w-28" : "w-36"} h-auto rounded-2xl shadow-lg`}
             />
           </h2>
-          <p className="text-zinc-500 text-xs font-medium text-center w-full">{subtitle || "Protocolo de Operación Disciplinada"}</p>
+          <p className="text-zinc-500 text-xs font-medium text-center w-full">{subtitle || t("Protocolo de Operación Disciplinada")}</p>
         </div>
 
         <button
           onClick={() => setOpen(!open)}
           className="lg:hidden px-4 py-2 bg-zinc-800/50 hover:bg-zinc-800 rounded-full text-sm text-zinc-300 transition-all font-bold"
         >
-          {open ? "Cerrar" : "Ver Reglas"} {open ? "▲" : "▼"}
+          {open ? t("Cerrar") : t("Ver Reglas")} {open ? "▲" : "▼"}
         </button>
       </div>
 
@@ -88,7 +90,7 @@ export default function LivermorePanel({ form, isSidebar = false, subtitle }) {
       <div className="relative z-10 mb-2">
         <div className="flex items-center justify-between text-xs font-bold mb-1">
           <span className={complete ? "text-emerald-400" : "text-zinc-400"}>
-            {complete ? "Trade completo" : "Completitud del trade"}
+            {complete ? t("Trade completo") : t("Completitud del trade")}
           </span>
           <span className={complete ? "text-emerald-400" : "text-zinc-400"}>
             {done}/{rules.length} · {pct}%
@@ -117,7 +119,7 @@ export default function LivermorePanel({ form, isSidebar = false, subtitle }) {
           <div className="max-w-4xl mx-auto text-center space-y-4">
             <p className={`${isSidebar ? "text-lg" : "text-3xl"} text-zinc-100 font-extrabold italic leading-tight tracking-tight px-4 flex flex-col items-center`}>
               <span className={`text-indigo-400 opacity-50 mb-4 h-1 ${isSidebar ? "w-10" : "w-20"} bg-gradient-to-r from-transparent via-indigo-500 to-transparent`} />
-              “Mejor pocas operaciones precisas que muchas no tanto...”
+              “{t("Mejor pocas operaciones precisas que muchas no tanto...")}”
             </p>
             <p className="text-zinc-500 text-xs font-black uppercase tracking-[0.2em] pt-4">— Jesse Livermore —</p>
           </div>

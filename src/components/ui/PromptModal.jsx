@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Modal from "./Modal";
+import { useLanguage } from "../../context/LanguageContext";
 
 
 
@@ -13,10 +14,11 @@ export default function PromptModal({
   onConfirm,
   title,
   message,
-  placeholder = "Enter value...",
+  placeholder,
   type = "text",
 }) {
   const [value, setValue] = useState("");
+  const { t } = useLanguage();
 
   if (!open) return null;
 
@@ -44,7 +46,7 @@ export default function PromptModal({
             type={type}
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder={placeholder}
+            placeholder={placeholder ?? t("Enter value...")}
             className="w-full bg-zinc-950 border border-zinc-800 p-4 rounded-2xl text-white text-center text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
           />
         </div>
@@ -55,14 +57,14 @@ export default function PromptModal({
             onClick={() => { setValue(""); onClose(); }}
             className="flex-1 bg-zinc-800/80 rounded-2xl py-3 hover:bg-zinc-700 transition-all font-semibold text-sm text-zinc-300"
           >
-            Cancelar
+            {t("Cancelar")}
           </button>
 
           <button
             type="submit"
             className="flex-1 bg-indigo-600 rounded-2xl py-3 hover:bg-indigo-500 transition-all font-bold text-sm shadow-lg shadow-indigo-900/20"
           >
-            Confirmar
+            {t("Confirmar")}
           </button>
         </div>
       </form>
